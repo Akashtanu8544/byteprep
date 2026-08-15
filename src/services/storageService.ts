@@ -64,6 +64,17 @@ export const DEFAULT_SOCIAL_ACCOUNTS: SocialAccountConfig[] = [
     autoAddHashtags: true,
   },
   {
+    id: 'tiktok',
+    name: 'TikTok Creator',
+    platform: 'tiktok',
+    connected: true,
+    username: '@byteprep_cs',
+    channelTitle: 'BytePrep CS TikTok',
+    accountType: 'creator',
+    lastSyncAt: new Date().toISOString(),
+    autoAddHashtags: true,
+  },
+  {
     id: 'webhook',
     name: 'Auto-Post Webhook (Zapier / Make / Buffer)',
     platform: 'webhook',

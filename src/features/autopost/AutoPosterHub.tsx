@@ -281,7 +281,7 @@ export const AutoPosterHub: React.FC<AutoPosterHubProps> = ({ onOpenShortsStudio
               Social Auto-Poster & Scheduler
             </h1>
             <p className="text-xs sm:text-sm text-slate-400 max-w-xl">
-              Connect accounts once, auto-increment title series (e.g. 10 Sec Challenge #1, #2...), and automatically post high-retention 9:16 Shorts.
+              Log in to social media accounts once, auto-increment challenge title series (e.g. 10 Sec Challenge #1, #2...), and automatically post high-retention 9:16 Shorts.
             </p>
           </div>
 
@@ -292,7 +292,7 @@ export const AutoPosterHub: React.FC<AutoPosterHubProps> = ({ onOpenShortsStudio
             >
               <Sliders className="w-4 h-4 text-emerald-400" />
               <span>
-                Connected Channels ({connectedCount})
+                Social Logins & Access ({connectedCount}/5)
               </span>
             </button>
 
@@ -315,7 +315,7 @@ export const AutoPosterHub: React.FC<AutoPosterHubProps> = ({ onOpenShortsStudio
           className="p-4 bg-slate-900/80 border border-slate-800 rounded-2xl hover:border-slate-700 transition-all cursor-pointer group"
         >
           <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
-            <span className="font-bold">Active Channels</span>
+            <span className="font-bold">Social Login Status</span>
             <ExternalLink className="w-3.5 h-3.5 group-hover:text-white" />
           </div>
           <div className="flex items-center gap-2 mt-2">
@@ -331,7 +331,7 @@ export const AutoPosterHub: React.FC<AutoPosterHubProps> = ({ onOpenShortsStudio
               </div>
             </div>
             <span className="text-xs font-black text-emerald-400">
-              {connectedCount} Connected
+              {connectedCount} Logged In & Active
             </span>
           </div>
         </div>

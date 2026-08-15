@@ -8,6 +8,7 @@ import { QuestionBankView } from './features/questions/QuestionBankView';
 import { BrandKitModal } from './features/brand/BrandKitModal';
 import { SettingsModal } from './features/settings/SettingsModal';
 import { QuestionEditorModal } from './features/questions/QuestionEditorModal';
+import { ConnectedAccountsModal } from './features/autopost/ConnectedAccountsModal';
 import { StorageService } from './services/storageService';
 import { NormalizedQuestion, ChallengeSettings } from './types';
 
@@ -24,6 +25,7 @@ export default function App() {
   // Modals
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
   const [isBrandKitOpen, setIsBrandKitOpen] = useState<boolean>(false);
+  const [isSocialLoginOpen, setIsSocialLoginOpen] = useState<boolean>(false);
 
   useEffect(() => {
     setSettings(StorageService.getSettings());
@@ -41,6 +43,7 @@ export default function App() {
         onNavigate={view => setCurrentView(view)}
         onOpenSettings={() => setIsSettingsOpen(true)}
         onOpenBrandKit={() => setIsBrandKitOpen(true)}
+        onOpenSocialLogin={() => setIsSocialLoginOpen(true)}
         onOpenBackup={() => {}}
         onOpenShortcuts={() => {}}
       />
@@ -84,6 +87,13 @@ export default function App() {
       </main>
 
       {currentView !== 'studio' && <Footer appUrl={settings.appUrl} />}
+
+      {/* Social Login & Permissions Modal */}
+      <ConnectedAccountsModal
+        isOpen={isSocialLoginOpen}
+        onClose={() => setIsSocialLoginOpen(false)}
+        onAccountsUpdated={() => {}}
+      />
 
       {/* Brand Kit Modal */}
       <BrandKitModal

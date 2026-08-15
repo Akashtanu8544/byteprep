@@ -360,11 +360,12 @@ export const DirectPublishModal: React.FC<DirectPublishModalProps> = ({
               {/* Select Channels */}
               <div className="space-y-2">
                 <label className="text-xs font-bold text-slate-300">Target Social Platforms:</label>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
                   {[
                     { id: 'youtube', name: 'YouTube Shorts', icon: Youtube, color: 'text-red-400' },
                     { id: 'instagram', name: 'Instagram Reels', icon: Instagram, color: 'text-pink-400' },
                     { id: 'facebook', name: 'Facebook Reels', icon: Facebook, color: 'text-blue-400' },
+                    { id: 'tiktok', name: 'TikTok', icon: Share2, color: 'text-cyan-400' },
                     { id: 'webhook', name: 'Webhook / Bot', icon: Webhook, color: 'text-purple-400' },
                   ].map(plat => {
                     const isSelected = selectedPlatforms.includes(plat.id);
