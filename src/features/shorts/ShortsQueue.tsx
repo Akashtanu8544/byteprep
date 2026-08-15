@@ -110,7 +110,8 @@ export const ShortsQueue: React.FC<ShortsQueueProps> = ({ queue, setQueue }) => 
     const url = item.videoUrl || URL.createObjectURL(item.blob);
     link.href = url;
     const sanitizedSubject = item.question.subject.replace(/[^a-zA-Z0-9]/g, '_');
-    link.download = `BytePrep_CS_${sanitizedSubject}_${item.question.id}.webm`;
+    const ext = item.blob.type.includes('mp4') ? 'mp4' : 'webm';
+    link.download = `BytePrep_CS_${sanitizedSubject}_${item.question.id}.${ext}`;
     link.click();
     StorageService.recordShortDownloaded(item.question.id);
   };
@@ -126,7 +127,8 @@ export const ShortsQueue: React.FC<ShortsQueueProps> = ({ queue, setQueue }) => 
 
       completed.forEach((item, idx) => {
         const sanitizedSubject = item.question.subject.replace(/[^a-zA-Z0-9]/g, '_');
-        const filename = `${String(idx + 1).padStart(2, '0')}_${sanitizedSubject}_${item.question.id}.webm`;
+        const ext = item.blob!.type.includes('mp4') ? 'mp4' : 'webm';
+        const filename = `${String(idx + 1).padStart(2, '0')}_${sanitizedSubject}_${item.question.id}.${ext}`;
         if (folder && item.blob) {
           folder.file(filename, item.blob);
           const viral = generateViralContent(item.question, item.config.hookText);
@@ -238,7 +240,7 @@ export const ShortsQueue: React.FC<ShortsQueueProps> = ({ queue, setQueue }) => 
       <div className="space-y-3 max-h-96 overflow-y-auto pr-1">
         {queue.map((item, idx) => (
           <div
-            key={item.id}
+            key={`${item.id}-${idx}`}
             className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3.5 bg-slate-950/80 border border-slate-800 hover:border-slate-700 rounded-2xl gap-3 transition-all"
           >
             <div className="flex items-center gap-3 min-w-0 flex-1">

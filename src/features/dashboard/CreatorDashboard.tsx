@@ -147,60 +147,81 @@ export const CreatorDashboard: React.FC<CreatorDashboardProps> = ({
       )}
 
       {/* Core Action Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         {/* 1. Shorts Studio (Main Editor) */}
         <div
           onClick={() => onOpenShortsStudio()}
-          className="p-6 bg-slate-900 border border-slate-800 hover:border-rose-500/50 rounded-3xl transition-all cursor-pointer space-y-4 group shadow-xl hover:shadow-rose-500/10"
+          className="p-5 bg-slate-900 border border-slate-800 hover:border-rose-500/50 rounded-3xl transition-all cursor-pointer space-y-4 group shadow-xl hover:shadow-rose-500/10"
         >
           <div className="flex items-center justify-between">
-            <div className="p-3.5 bg-rose-500/20 text-rose-400 rounded-2xl">
-              <Video className="w-6 h-6 fill-current" />
+            <div className="p-3 bg-rose-500/20 text-rose-400 rounded-2xl">
+              <Video className="w-5 h-5 fill-current" />
             </div>
-            <ChevronRight className="w-5 h-5 text-slate-500 group-hover:text-rose-400 group-hover:translate-x-1 transition-all" />
+            <ChevronRight className="w-4 h-4 text-slate-500 group-hover:text-rose-400 group-hover:translate-x-1 transition-all" />
           </div>
           <div>
-            <h3 className="text-base font-black text-white">Shorts Studio Editor</h3>
+            <h3 className="text-sm font-black text-white">Shorts Studio</h3>
             <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-              Customize themes, hooks, countdown timers, sound effects, and watermarks with live 9:16 preview.
+              9:16 Video Editor with animated timers, sound & themes.
             </p>
           </div>
         </div>
 
-        {/* 2. 1-Click Instant Random Video */}
+        {/* 2. Auto-Poster & Series Incrementer */}
+        <div
+          onClick={() => onNavigate('autopost')}
+          className="p-5 bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-3xl transition-all cursor-pointer space-y-4 group shadow-xl hover:shadow-amber-500/10"
+        >
+          <div className="flex items-center justify-between">
+            <div className="p-3 bg-amber-500/20 text-amber-400 rounded-2xl">
+              <Zap className="w-5 h-5 fill-current" />
+            </div>
+            <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20">
+              #1, #2 Series
+            </span>
+          </div>
+          <div>
+            <h3 className="text-sm font-black text-white">Social Auto-Poster</h3>
+            <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+              1-Click post to FB, YouTube, IG with auto # series and queue.
+            </p>
+          </div>
+        </div>
+
+        {/* 3. 1-Click Instant Random Video */}
         <div
           onClick={handleQuickRandomShort}
-          className="p-6 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-3xl transition-all cursor-pointer space-y-4 group shadow-xl hover:shadow-emerald-500/10"
+          className="p-5 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-3xl transition-all cursor-pointer space-y-4 group shadow-xl hover:shadow-emerald-500/10"
         >
           <div className="flex items-center justify-between">
-            <div className="p-3.5 bg-emerald-500/20 text-emerald-400 rounded-2xl">
-              <Zap className="w-6 h-6 fill-current" />
+            <div className="p-3 bg-emerald-500/20 text-emerald-400 rounded-2xl">
+              <Sparkles className="w-5 h-5" />
             </div>
-            <ChevronRight className="w-5 h-5 text-slate-500 group-hover:text-emerald-400 group-hover:translate-x-1 transition-all" />
+            <ChevronRight className="w-4 h-4 text-slate-500 group-hover:text-emerald-400 group-hover:translate-x-1 transition-all" />
           </div>
           <div>
-            <h3 className="text-base font-black text-white">1-Click Instant Short</h3>
+            <h3 className="text-sm font-black text-white">Instant Random Short</h3>
             <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-              Picks a random high-impact PYQ and launches the video generator with optimal presets.
+              Picks a random high-impact PYQ and launches generator.
             </p>
           </div>
         </div>
 
-        {/* 3. Question Bank */}
+        {/* 4. Question Bank */}
         <div
           onClick={() => onNavigate('questions')}
-          className="p-6 bg-slate-900 border border-slate-800 hover:border-sky-500/50 rounded-3xl transition-all cursor-pointer space-y-4 group shadow-xl hover:shadow-sky-500/10"
+          className="p-5 bg-slate-900 border border-slate-800 hover:border-sky-500/50 rounded-3xl transition-all cursor-pointer space-y-4 group shadow-xl hover:shadow-sky-500/10"
         >
           <div className="flex items-center justify-between">
-            <div className="p-3.5 bg-sky-500/20 text-sky-400 rounded-2xl">
-              <BookOpen className="w-6 h-6" />
+            <div className="p-3 bg-sky-500/20 text-sky-400 rounded-2xl">
+              <BookOpen className="w-5 h-5" />
             </div>
-            <ChevronRight className="w-5 h-5 text-slate-500 group-hover:text-sky-400 group-hover:translate-x-1 transition-all" />
+            <ChevronRight className="w-4 h-4 text-slate-500 group-hover:text-sky-400 group-hover:translate-x-1 transition-all" />
           </div>
           <div>
-            <h3 className="text-base font-black text-white">Browse Question Bank</h3>
+            <h3 className="text-sm font-black text-white">Question Bank</h3>
             <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-              Filter through {datasetStats.totalQuestions} questions by subject or search keyword to create videos.
+              Browse {datasetStats.totalQuestions} questions by subject & exam.
             </p>
           </div>
         </div>
@@ -257,9 +278,9 @@ export const CreatorDashboard: React.FC<CreatorDashboardProps> = ({
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {historyRecords.slice(0, 6).map(record => (
+            {historyRecords.slice(0, 6).map((record, idx) => (
               <div
-                key={record.id}
+                key={`${record.id}-${idx}`}
                 onClick={() => onOpenShortsStudio(record.questionId)}
                 className="p-4 bg-slate-950 border border-slate-800 hover:border-slate-700 rounded-2xl flex items-center justify-between gap-3 transition-all cursor-pointer group"
               >

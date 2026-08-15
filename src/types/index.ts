@@ -253,6 +253,7 @@ export interface ShortConfig {
   voiceStyle?: VoiceStyle;
   durationMode?: 'viral' | 'standard' | 'extended';
   renderQuality?: '1080p' | '720p' | 'fast';
+  exportFormat?: 'mp4' | 'webm';
   fps?: number;
   phaseDurations?: {
     intro?: number;
@@ -541,3 +542,65 @@ export interface QueueItem {
   blob?: Blob;
   error?: string;
 }
+
+export interface SocialAccountConfig {
+  id: 'youtube' | 'instagram' | 'facebook' | 'tiktok' | 'webhook';
+  name: string;
+  platform: 'youtube' | 'instagram' | 'facebook' | 'tiktok' | 'webhook';
+  connected: boolean;
+  username?: string;
+  avatarUrl?: string;
+  channelTitle?: string;
+  accountType?: 'creator' | 'business' | 'personal';
+  lastSyncAt?: string;
+  defaultPrivacy?: 'public' | 'unlisted' | 'private';
+  autoAddHashtags?: boolean;
+  webhookUrl?: string;
+  apiToken?: string;
+  pageId?: string;
+}
+
+export interface SeriesTitleConfig {
+  template: string;
+  currentNumber: number;
+  zeroPadding: number;
+  autoIncrement: boolean;
+  customHashtags: string;
+  includeSubjectInTitle: boolean;
+  includeHookInTitle: boolean;
+}
+
+export interface ScheduledPostItem {
+  id: string;
+  questionId: string;
+  question: NormalizedQuestion;
+  shortConfig: ShortConfig;
+  seriesNumber: number;
+  formattedTitle: string;
+  caption: string;
+  hashtags: string[];
+  targetPlatforms: ('youtube' | 'instagram' | 'facebook' | 'tiktok' | 'webhook')[];
+  scheduledTime: string;
+  status: 'scheduled' | 'rendering' | 'publishing' | 'published' | 'failed' | 'paused';
+  publishedAt?: string;
+  videoUrl?: string;
+  blob?: Blob;
+  postUrls?: {
+    youtube?: string;
+    instagram?: string;
+    facebook?: string;
+    tiktok?: string;
+  };
+  error?: string;
+}
+
+export interface AutoPilotScheduleSettings {
+  enabled: boolean;
+  postIntervalHours: number;
+  preferredTimeOfDay: string;
+  targetPlatforms: ('youtube' | 'instagram' | 'facebook' | 'tiktok' | 'webhook')[];
+  seriesConfig: SeriesTitleConfig;
+  autoRenderOnSchedule: boolean;
+  notifyOnPublish: boolean;
+}
+

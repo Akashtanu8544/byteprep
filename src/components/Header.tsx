@@ -15,6 +15,7 @@ import { BytePrepLogo } from './BytePrepLogo';
 export type AppView =
   | 'home'
   | 'studio'
+  | 'autopost'
   | 'questions'
   | 'play'
   | 'result';
@@ -69,6 +70,18 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <Video className="w-3.5 h-3.5 fill-current" />
             <span>Shorts Studio</span>
+          </button>
+
+          <button
+            onClick={() => onNavigate('autopost')}
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl transition-all cursor-pointer ${
+              currentView === 'autopost'
+                ? 'bg-amber-500 text-slate-950 shadow-md font-black'
+                : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+            }`}
+          >
+            <Zap className="w-3.5 h-3.5 text-amber-400" />
+            <span>Auto-Poster</span>
           </button>
 
           <button

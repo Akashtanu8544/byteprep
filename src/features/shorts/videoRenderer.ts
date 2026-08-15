@@ -1,6 +1,8 @@
 import { ShortConfig } from '../../types';
 import { SHORTS_THEMES } from './themes';
 import { drawCanvasBytePrepLogo } from '../../components/BytePrepLogo';
+import { Muxer, ArrayBufferTarget } from 'mp4-muxer';
+import ysFixWebmDuration from 'fix-webm-duration';
 
 export const CANVAS_WIDTH = 1080;
 export const CANVAS_HEIGHT = 1920;
@@ -1171,7 +1173,7 @@ function createAudioTrack(
           .then(res => res.arrayBuffer())
           .then(buf => audioCtx.decodeAudioData(buf))
           .then(audioBuf => {
-            const src = audioCtx.createBufferSource();
+            const src = audioCtx.bufferSource ? (audioCtx as any).bufferSource() : audioCtx.createBufferSource();
             src.buffer = audioBuf;
             src.loop = true;
             const bgGain = audioCtx.createGain();
@@ -1293,19 +1295,178 @@ function createAudioTrack(
 }
 
 /**
- * Render and record a short video to WebM blob using high-speed non-blocking HTML5 Canvas + MediaRecorder.
- * Supports:
- * - Anti-hang watchdog protection
+ * Patch WebM duration in EBML header to fix YouTube Shorts & media player processing errors
+ */
+async function patchWebmDuration(rawBlob: Blob, durationMs: number): Promise<Blob> {
+  return new Promise(resolve => {
+    try {
+      const fixFn = (ysFixWebmDuration as any).default || ysFixWebmDuration;
+      if (typeof fixFn === 'function') {
+        fixFn(rawBlob, durationMs, (fixedBlob: Blob) => {
+          resolve(fixedBlob || rawBlob);
+        });
+      } else {
+        resolve(rawBlob);
+      }
+    } catch (err) {
+      console.warn('Could not patch WebM duration:', err);
+      resolve(rawBlob);
+    }
+  });
+}
+
+/**
+ * Fast WebCodecs H.264 MP4 Offline Exporter (Instagram Reels & YouTube Shorts 100% Compatible)
+ */
+async function renderWithWebCodecsMp4(
+  canvas: HTMLCanvasElement,
+  ctx: CanvasRenderingContext2D,
+  config: ShortConfig,
+  durations: TimelineDurations,
+  layoutCache: any,
+  scaleFactor: number,
+  callbacks: RenderCallbacks,
+  isCancelledRef: { current: boolean }
+): Promise<{ blob: Blob; videoUrl: string } | null> {
+  if (typeof window === 'undefined' || !(window as any).VideoEncoder || !(window as any).VideoFrame) {
+    return null;
+  }
+
+  const is720p = config.renderQuality === '720p' || config.renderQuality === 'fast';
+  const targetW = is720p ? 720 : CANVAS_WIDTH;
+  const targetH = is720p ? 1280 : CANVAS_HEIGHT;
+  const fps = config.fps || 30;
+  const totalDuration = durations.total;
+  const totalFrames = Math.max(1, Math.floor(totalDuration * fps));
+
+  const VideoEncoderClass = (window as any).VideoEncoder;
+  const VideoFrameClass = (window as any).VideoFrame;
+
+  try {
+    const configCheck = await VideoEncoderClass.isConfigSupported({
+      codec: 'avc1.42001f', // Baseline Profile Level 3.1
+      width: targetW,
+      height: targetH,
+      bitrate: is720p ? 4000000 : 8000000,
+      framerate: fps,
+    });
+    if (!configCheck || !configCheck.supported) {
+      return null;
+    }
+  } catch {
+    return null;
+  }
+
+  try {
+    const muxer = new Muxer({
+      target: new ArrayBufferTarget(),
+      video: {
+        codec: 'avc',
+        width: targetW,
+        height: targetH,
+        frameRate: fps,
+      },
+      fastStart: 'in-memory',
+      firstTimestampBehavior: 'strict',
+    });
+
+    let encoderError: any = null;
+    const encoder = new VideoEncoderClass({
+      output: (chunk: any, meta: any) => {
+        muxer.addVideoChunk(chunk, meta);
+      },
+      error: (e: any) => {
+        console.warn('VideoEncoder error:', e);
+        encoderError = e;
+      },
+    });
+
+    encoder.configure({
+      codec: 'avc1.42001f',
+      width: targetW,
+      height: targetH,
+      bitrate: is720p ? 4000000 : 8000000,
+      framerate: fps,
+    });
+
+    callbacks.onProgress(5, 'Encoding Instagram & YouTube Ready MP4 Video (H.264)...', 0, totalFrames);
+
+    const batchSize = 12;
+    for (let f = 0; f < totalFrames; f++) {
+      if (isCancelledRef.current) {
+        try { encoder.close(); } catch { /* ignore */ }
+        return null;
+      }
+      if (encoderError) {
+        try { encoder.close(); } catch { /* ignore */ }
+        throw encoderError;
+      }
+
+      const currentSec = (f / fps);
+      ctx.save();
+      if (scaleFactor !== 1.0) {
+        ctx.scale(scaleFactor, scaleFactor);
+      }
+      drawShortFrame(ctx, CANVAS_WIDTH, CANVAS_HEIGHT, currentSec, config, layoutCache);
+      ctx.restore();
+
+      const timestampUs = Math.round((f / fps) * 1_000_000);
+      const durationUs = Math.round((1 / fps) * 1_000_000);
+
+      const frame = new VideoFrameClass(canvas, {
+        timestamp: timestampUs,
+        duration: durationUs,
+      });
+
+      const isKeyFrame = f % (fps * 2) === 0;
+      encoder.encode(frame, { keyFrame: isKeyFrame });
+      frame.close();
+
+      if (f % batchSize === 0 || f === totalFrames - 1) {
+        const pct = Math.min(95, Math.floor(5 + ((f + 1) / totalFrames) * 90));
+        callbacks.onProgress(
+          pct,
+          `Generating MP4 Video: ${((f + 1) / fps).toFixed(1)}s / ${totalDuration.toFixed(1)}s (${pct}%)`,
+          f + 1,
+          totalFrames
+        );
+        await new Promise(r => setTimeout(r, 0));
+      }
+    }
+
+    callbacks.onProgress(97, 'Finalizing MP4 container for Instagram & YouTube...');
+    await encoder.flush();
+    encoder.close();
+
+    muxer.finalize();
+    const buffer = muxer.target.buffer;
+    const mp4Blob = new Blob([buffer], { type: 'video/mp4' });
+    const videoUrl = URL.createObjectURL(mp4Blob);
+
+    callbacks.onProgress(100, `Instagram & YouTube Ready MP4 (${totalDuration.toFixed(1)}s)!`);
+    callbacks.onComplete(mp4Blob, videoUrl);
+
+    return { blob: mp4Blob, videoUrl };
+  } catch (encErr) {
+    console.warn('WebCodecs MP4 rendering encountered an issue, falling back to MediaRecorder:', encErr);
+    return null;
+  }
+}
+
+/**
+ * Render and record a short video to MP4/WebM blob.
+ * Optimized for Instagram Reels, YouTube Shorts, TikTok, and WhatsApp:
+ * - Direct H.264 MP4 export via WebCodecs + mp4-muxer
+ * - Automatic EBML duration header patch via fix-webm-duration to prevent YouTube upload errors
  * - Fast timeline duration modes
  * - 720p / 1080p quality scaling
- * - Audio track synthesis (countdown ticks & victory chime)
  * - Immediate abort / cancel support
  */
 export function exportShortVideo(
   config: ShortConfig,
   callbacks: RenderCallbacks
 ): RenderControl {
-  let isCancelled = false;
+  const isCancelledRef = { current: false };
   let mediaRecorder: MediaRecorder | null = null;
   let audioCleanup: (() => void) | null = null;
   let streamTracks: MediaStreamTrack[] = [];
@@ -1314,7 +1475,7 @@ export function exportShortVideo(
   let intervalTimer: any = null;
 
   const cancel = () => {
-    isCancelled = true;
+    isCancelledRef.current = true;
     if (animFrameId) cancelAnimationFrame(animFrameId);
     if (intervalTimer) clearInterval(intervalTimer);
     if (watchdogTimeout) clearTimeout(watchdogTimeout);
@@ -1353,17 +1514,40 @@ export function exportShortVideo(
 
       const durations = getTimelineDurations(config);
       const totalDuration = durations.total;
-      const fps = config.fps || (is720p ? 24 : 30);
+      const fps = config.fps || 30;
       const totalFrames = Math.max(1, Math.floor(totalDuration * fps));
 
       // Build Layout Cache ONCE for maximum performance
-      callbacks.onProgress(5, 'Precomputing typography layout cache...');
+      callbacks.onProgress(4, 'Precomputing typography layout cache...');
       ctx.save();
       if (scaleFactor !== 1.0) {
         ctx.scale(scaleFactor, scaleFactor);
       }
       const layoutCache = buildLayoutCache(ctx, CANVAS_WIDTH, config);
       ctx.restore();
+
+      // 1. FAST PATH: Attempt WebCodecs H.264 MP4 Export if not explicitly requesting WebM
+      const preferMp4 = config.exportFormat !== 'webm';
+      if (preferMp4) {
+        const mp4Result = await renderWithWebCodecsMp4(
+          canvas,
+          ctx,
+          config,
+          durations,
+          layoutCache,
+          scaleFactor,
+          callbacks,
+          isCancelledRef
+        );
+        if (mp4Result) {
+          return;
+        }
+      }
+
+      if (isCancelledRef.current) return;
+
+      // 2. FALLBACK PATH: MediaRecorder with Duration-Fixed Container
+      callbacks.onProgress(6, 'Initializing Real-Time Stream Recorder...');
 
       // Audio setup (ticks, background music & chime synthesized via Web Audio)
       const audio = createAudioTrack(durations, config.includeAudio, config);
@@ -1387,7 +1571,7 @@ export function exportShortVideo(
       streamTracks = combinedTracks;
       let stream = new MediaStream(combinedTracks);
 
-      const bitrate = is720p ? 3000000 : 6000000;
+      const bitrate = is720p ? 3500000 : 7000000;
       let mimeType = getPreferredMimeType(combinedTracks.length > 1);
 
       try {
@@ -1397,7 +1581,6 @@ export function exportShortVideo(
         });
       } catch (initErr) {
         console.warn('Initial MediaRecorder failed with audio, falling back to video-only stream:', initErr);
-        // Fallback to video-only track
         stream = new MediaStream(canvasStream.getVideoTracks());
         streamTracks = [...canvasStream.getVideoTracks()];
         mimeType = getPreferredMimeType(false);
@@ -1415,9 +1598,8 @@ export function exportShortVideo(
       };
 
       mediaRecorder.onerror = (err: any) => {
-        if (isCancelled) return;
+        if (isCancelledRef.current) return;
         console.warn('MediaRecorder warning/error:', err);
-        // If we have some chunks recorded, we still try to finalize
         if (chunks.length > 0) {
           finalizeExport();
         } else {
@@ -1425,19 +1607,25 @@ export function exportShortVideo(
         }
       };
 
-      const finalizeExport = () => {
-        if (isCancelled) return;
+      const finalizeExport = async () => {
+        if (isCancelledRef.current) return;
         if (watchdogTimeout) clearTimeout(watchdogTimeout);
 
-        callbacks.onProgress(98, 'Finalizing video file...');
+        callbacks.onProgress(97, 'Patching video headers for Instagram & YouTube compatibility...');
 
         if (chunks.length === 0) {
           callbacks.onError('Video encoding produced no frames. Please retry with standard settings.');
           return;
         }
 
-        const blob = new Blob(chunks, { type: mimeType || 'video/webm' });
-        const videoUrl = URL.createObjectURL(blob);
+        let rawBlob = new Blob(chunks, { type: mimeType || 'video/webm' });
+
+        // Apply EBML duration patch so YouTube and media players recognize the duration and cues
+        if (!mimeType.includes('mp4')) {
+          rawBlob = await patchWebmDuration(rawBlob, totalDuration * 1000);
+        }
+
+        const videoUrl = URL.createObjectURL(rawBlob);
 
         streamTracks.forEach(t => {
           try { t.stop(); } catch { /* ignore */ }
@@ -1445,7 +1633,7 @@ export function exportShortVideo(
         if (audioCleanup) audioCleanup();
 
         callbacks.onProgress(100, `Video Ready (${totalDuration.toFixed(1)}s)!`);
-        callbacks.onComplete(blob, videoUrl);
+        callbacks.onComplete(rawBlob, videoUrl);
       };
 
       mediaRecorder.onstop = () => {
@@ -1461,12 +1649,12 @@ export function exportShortVideo(
       let hasCompleted = false;
 
       const finishRecording = () => {
-        if (hasCompleted || isCancelled) return;
+        if (hasCompleted || isCancelledRef.current) return;
         hasCompleted = true;
         if (animFrameId) cancelAnimationFrame(animFrameId);
         if (intervalTimer) clearInterval(intervalTimer);
 
-        callbacks.onProgress(96, `Encoding ${totalDuration.toFixed(1)}s video stream...`, totalFrames, totalFrames);
+        callbacks.onProgress(95, `Encoding ${totalDuration.toFixed(1)}s video stream...`, totalFrames, totalFrames);
 
         if (mediaRecorder && mediaRecorder.state !== 'inactive') {
           try {
@@ -1480,7 +1668,7 @@ export function exportShortVideo(
             finalizeExport();
           }
 
-          // Anti-hang Watchdog: If onstop doesn't fire within 3500ms, force finalization
+          // Anti-hang Watchdog
           watchdogTimeout = setTimeout(() => {
             if (chunks.length > 0) {
               finalizeExport();
@@ -1494,7 +1682,7 @@ export function exportShortVideo(
       };
 
       const tick = () => {
-        if (isCancelled || hasCompleted) return;
+        if (isCancelledRef.current || hasCompleted) return;
 
         const now = performance.now();
         const elapsedSec = (now - renderStartTime) / 1000;
@@ -1508,11 +1696,11 @@ export function exportShortVideo(
         ctx.restore();
 
         const currentFrameIndex = Math.min(totalFrames, Math.floor(currentSec * fps));
-        const currentTenth = Math.floor(currentSec * 2) / 2; // Every 0.5s
+        const currentTenth = Math.floor(currentSec * 2) / 2;
 
         if (currentTenth !== lastReportedTenth || currentSec >= totalDuration) {
           lastReportedTenth = currentTenth;
-          const pct = Math.min(95, Math.floor(10 + (currentSec / totalDuration) * 85));
+          const pct = Math.min(94, Math.floor(10 + (currentSec / totalDuration) * 84));
           callbacks.onProgress(
             pct,
             `Recording video: ${currentSec.toFixed(1)}s / ${totalDuration.toFixed(1)}s (${pct}%)`,
@@ -1526,9 +1714,8 @@ export function exportShortVideo(
         }
       };
 
-      // Real-time animation loop for high precision 30/60fps capture
       const runRaf = () => {
-        if (isCancelled || hasCompleted) return;
+        if (isCancelledRef.current || hasCompleted) return;
         tick();
         if (!hasCompleted) {
           animFrameId = requestAnimationFrame(runRaf);
@@ -1536,16 +1723,15 @@ export function exportShortVideo(
       };
       animFrameId = requestAnimationFrame(runRaf);
 
-      // Background tab safety interval (in case browser throttles rAF)
       intervalTimer = setInterval(() => {
-        if (isCancelled || hasCompleted) {
+        if (isCancelledRef.current || hasCompleted) {
           clearInterval(intervalTimer);
           return;
         }
         tick();
       }, 30);
     } catch (err: any) {
-      if (!isCancelled) {
+      if (!isCancelledRef.current) {
         callbacks.onError(err.message || 'Failed to render short video');
       }
     }

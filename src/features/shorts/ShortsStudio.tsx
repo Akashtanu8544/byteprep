@@ -8,6 +8,7 @@ import { ShortsPreview } from './ShortsPreview';
 import { ThemePreviewCard } from './ThemePreviewCard';
 import { ViralCaptionsCard } from './ViralCaptionsCard';
 import { ShortsQueue } from './ShortsQueue';
+import { DirectPublishModal } from '../autopost/DirectPublishModal';
 import { exportShortVideo, exportFrameSnapshot, getTimelineDurations, calculateAutoSyncedPhases, RenderControl } from './videoRenderer';
 import {
   Video,
@@ -71,6 +72,7 @@ export const ShortsStudio: React.FC<ShortsStudioProps> = ({ onBack, preselectedQ
   // Video Speed & Quality Settings
   const [durationMode, setDurationMode] = useState<'viral' | 'standard' | 'extended'>('viral');
   const [renderQuality, setRenderQuality] = useState<'720p' | '1080p'>('720p');
+  const [exportFormat, setExportFormat] = useState<'mp4' | 'webm'>('mp4');
   const [includeAudio, setIncludeAudio] = useState<boolean>(true);
 
   // Auto-Sync & Background Audio
@@ -111,6 +113,7 @@ export const ShortsStudio: React.FC<ShortsStudioProps> = ({ onBack, preselectedQ
   const [renderingStage, setRenderingStage] = useState<string>('');
   const [renderedBlob, setRenderedBlob] = useState<Blob | null>(null);
   const [renderedVideoUrl, setRenderedVideoUrl] = useState<string | null>(null);
+  const [isPublishModalOpen, setIsPublishModalOpen] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const renderControlRef = useRef<RenderControl | null>(null);
 
@@ -346,6 +349,7 @@ export const ShortsStudio: React.FC<ShortsStudioProps> = ({ onBack, preselectedQ
     ctaEnabled: true,
     durationMode,
     renderQuality,
+    exportFormat,
     appUrl: StorageService.getSettings().appUrl,
     // Auto-Sync Audio
     autoSyncAudio,
@@ -405,9 +409,11 @@ export const ShortsStudio: React.FC<ShortsStudioProps> = ({ onBack, preselectedQ
 
   const handleDownloadVideo = () => {
     if (!renderedBlob || !currentQuestion) return;
+    const isMp4 = renderedBlob.type.includes('mp4');
+    const ext = isMp4 ? 'mp4' : 'webm';
     const link = document.createElement('a');
     link.href = URL.createObjectURL(renderedBlob);
-    link.download = `BytePrepCS_${currentQuestion.id}_Short.webm`;
+    link.download = `BytePrepCS_${currentQuestion.id}_Short.${ext}`;
     link.click();
     StorageService.recordShortDownloaded(currentQuestion.id);
   };
@@ -738,17 +744,39 @@ export const ShortsStudio: React.FC<ShortsStudioProps> = ({ onBack, preselectedQ
               </div>
             </div>
 
-            {/* Quality Row */}
-            <div className="pt-3 border-t border-slate-800 flex items-center justify-between">
-              <label className="text-xs font-bold text-slate-300">Resolution:</label>
-              <select
-                value={renderQuality}
-                onChange={e => setRenderQuality(e.target.value as any)}
-                className="bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-xl px-3 py-1.5 outline-none focus:border-emerald-500 cursor-pointer"
-              >
-                <option value="720p">⚡ Fast 720p (720x1280 - Recommended)</option>
-                <option value="1080p">💎 Full HD 1080p (1080x1920)</option>
-              </select>
+            {/* Quality & Format Row */}
+            <div className="pt-3 border-t border-slate-800 space-y-3">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-bold text-slate-300">Resolution:</label>
+                <select
+                  value={renderQuality}
+                  onChange={e => setRenderQuality(e.target.value as any)}
+                  className="bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-xl px-3 py-1.5 outline-none focus:border-emerald-500 cursor-pointer"
+                >
+                  <option value="720p">⚡ Fast 720p (720x1280 - Recommended)</option>
+                  <option value="1080p">💎 Full HD 1080p (1080x1920)</option>
+                </select>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div>
+                  <label className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+                    <span>Export Format:</span>
+                    <span className="px-1.5 py-0.2 bg-emerald-500/15 text-emerald-400 text-[10px] font-bold rounded">
+                      IG / YT Ready
+                    </span>
+                  </label>
+                  <p className="text-[10px] text-slate-500">Instagram Reels & YouTube Shorts compatible</p>
+                </div>
+                <select
+                  value={exportFormat}
+                  onChange={e => setExportFormat(e.target.value as any)}
+                  className="bg-slate-950 border border-slate-800 text-emerald-400 font-bold text-xs rounded-xl px-3 py-1.5 outline-none focus:border-emerald-500 cursor-pointer"
+                >
+                  <option value="mp4">📱 MP4 (Instagram Reels, YouTube Shorts, TikTok)</option>
+                  <option value="webm">🎬 WebM (Fixed Duration & Cues)</option>
+                </select>
+              </div>
             </div>
           </div>
 
@@ -920,9 +948,21 @@ export const ShortsStudio: React.FC<ShortsStudioProps> = ({ onBack, preselectedQ
                   <CheckCircle2 className="w-5 h-5" />
                   <span>Video Short Ready!</span>
                 </div>
-                <span className="text-[11px] font-mono text-slate-400">
-                  {getTimelineDurations(currentConfig).total.toFixed(1)}s • WebM
+                <span className="text-[11px] font-mono text-slate-300 font-bold bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-800">
+                  {getTimelineDurations(currentConfig).total.toFixed(1)}s • {renderedBlob?.type.includes('mp4') ? '📱 MP4 (H.264)' : '🎬 WebM'}
                 </span>
+              </div>
+
+              {/* Compatibility confirmation badges */}
+              <div className="grid grid-cols-2 gap-2 text-[11px] font-bold">
+                <div className="flex items-center gap-1.5 p-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-emerald-300">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  <span>Instagram Reels (9:16)</span>
+                </div>
+                <div className="flex items-center gap-1.5 p-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-emerald-300">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  <span>YouTube Shorts Ready</span>
+                </div>
               </div>
 
               {/* In-App HTML5 Video Player */}
@@ -937,12 +977,23 @@ export const ShortsStudio: React.FC<ShortsStudioProps> = ({ onBack, preselectedQ
                 />
               </div>
 
+              {/* 1-Click Auto-Post to FB, YT, IG */}
+              <button
+                onClick={() => setIsPublishModalOpen(true)}
+                className="w-full flex items-center justify-center gap-2 py-3.5 px-4 bg-gradient-to-r from-rose-500 via-pink-500 to-amber-500 hover:from-rose-400 hover:to-amber-400 text-white font-black text-sm rounded-2xl transition-all shadow-xl shadow-rose-500/25 cursor-pointer"
+              >
+                <Zap className="w-4 h-4 fill-current" />
+                <span>🚀 1-CLICK AUTO-POST (FB • YT • IG)</span>
+              </button>
+
               <button
                 onClick={handleDownloadVideo}
-                className="w-full flex items-center justify-center gap-2 py-3.5 px-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm rounded-2xl transition-all shadow-lg shadow-emerald-500/25 cursor-pointer"
+                className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-slate-800 hover:bg-slate-700 text-emerald-400 font-bold text-xs rounded-2xl transition-all border border-slate-700 cursor-pointer"
               >
                 <Download className="w-4 h-4" />
-                <span>DOWNLOAD VIDEO (.WEBM)</span>
+                <span>
+                  DOWNLOAD {renderedBlob?.type.includes('mp4') ? 'MP4 FILE' : 'WEBM FILE'}
+                </span>
               </button>
             </div>
           )}
@@ -956,6 +1007,18 @@ export const ShortsStudio: React.FC<ShortsStudioProps> = ({ onBack, preselectedQ
           )}
         </div>
       </div>
+
+      {/* Direct Auto-Publish Modal */}
+      {currentQuestion && (
+        <DirectPublishModal
+          isOpen={isPublishModalOpen}
+          onClose={() => setIsPublishModalOpen(false)}
+          question={currentQuestion}
+          shortConfig={currentConfig}
+          videoBlob={renderedBlob || undefined}
+          videoUrl={renderedVideoUrl || undefined}
+        />
+      )}
     </div>
   );
 };

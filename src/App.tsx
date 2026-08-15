@@ -3,6 +3,7 @@ import { Header, AppView } from './components/Header';
 import { Footer } from './components/Footer';
 import { CreatorDashboard } from './features/dashboard/CreatorDashboard';
 import { ShortsStudio } from './features/shorts/ShortsStudio';
+import { AutoPosterHub } from './features/autopost/AutoPosterHub';
 import { QuestionBankView } from './features/questions/QuestionBankView';
 import { BrandKitModal } from './features/brand/BrandKitModal';
 import { SettingsModal } from './features/settings/SettingsModal';
@@ -59,6 +60,13 @@ export default function App() {
           <ShortsStudio
             onBack={() => setCurrentView('home')}
             preselectedQuestionId={preselectedStudioQId}
+          />
+        )}
+
+        {/* Auto-Poster & Scheduler Hub */}
+        {currentView === 'autopost' && (
+          <AutoPosterHub
+            onOpenShortsStudio={handleOpenStudio}
           />
         )}
 
