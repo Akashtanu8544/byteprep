@@ -9,6 +9,7 @@ import { ThemePreviewCard } from './ThemePreviewCard';
 import { ViralCaptionsCard } from './ViralCaptionsCard';
 import { ShortsQueue } from './ShortsQueue';
 import { DirectPublishModal } from '../autopost/DirectPublishModal';
+import { SocialPostMethodsModal } from '../extension/SocialPostMethodsModal';
 import { exportShortVideo, exportFrameSnapshot, getTimelineDurations, calculateAutoSyncedPhases, RenderControl } from './videoRenderer';
 import {
   Video,
@@ -38,6 +39,7 @@ import {
   AlertCircle,
   Copy,
   Check,
+  Puzzle,
 } from 'lucide-react';
 
 interface ShortsStudioProps {
@@ -114,6 +116,7 @@ export const ShortsStudio: React.FC<ShortsStudioProps> = ({ onBack, preselectedQ
   const [renderedBlob, setRenderedBlob] = useState<Blob | null>(null);
   const [renderedVideoUrl, setRenderedVideoUrl] = useState<string | null>(null);
   const [isPublishModalOpen, setIsPublishModalOpen] = useState<boolean>(false);
+  const [isExtensionModalOpen, setIsExtensionModalOpen] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const renderControlRef = useRef<RenderControl | null>(null);
 
@@ -986,15 +989,25 @@ export const ShortsStudio: React.FC<ShortsStudioProps> = ({ onBack, preselectedQ
                 <span>🚀 1-CLICK AUTO-POST (FB • YT • IG)</span>
               </button>
 
-              <button
-                onClick={handleDownloadVideo}
-                className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-slate-800 hover:bg-slate-700 text-emerald-400 font-bold text-xs rounded-2xl transition-all border border-slate-700 cursor-pointer"
-              >
-                <Download className="w-4 h-4" />
-                <span>
-                  DOWNLOAD {renderedBlob?.type.includes('mp4') ? 'MP4 FILE' : 'WEBM FILE'}
-                </span>
-              </button>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  onClick={() => setIsExtensionModalOpen(true)}
+                  className="flex items-center justify-center gap-2 py-3 px-3 bg-gradient-to-r from-purple-950/40 to-slate-800 hover:bg-slate-700 text-purple-300 font-bold text-xs rounded-2xl transition-all border border-purple-500/30 cursor-pointer"
+                >
+                  <Puzzle className="w-4 h-4 text-purple-400" />
+                  <span>CHROME EXTENSION</span>
+                </button>
+
+                <button
+                  onClick={handleDownloadVideo}
+                  className="flex items-center justify-center gap-2 py-3 px-3 bg-slate-800 hover:bg-slate-700 text-emerald-400 font-bold text-xs rounded-2xl transition-all border border-slate-700 cursor-pointer"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>
+                    DOWNLOAD {renderedBlob?.type.includes('mp4') ? 'MP4' : 'WEBM'}
+                  </span>
+                </button>
+              </div>
             </div>
           )}
 
@@ -1015,6 +1028,19 @@ export const ShortsStudio: React.FC<ShortsStudioProps> = ({ onBack, preselectedQ
           onClose={() => setIsPublishModalOpen(false)}
           question={currentQuestion}
           shortConfig={currentConfig}
+          videoBlob={renderedBlob || undefined}
+          videoUrl={renderedVideoUrl || undefined}
+        />
+      )}
+
+      {/* Chrome Extension & Posting Methods Modal */}
+      {currentQuestion && (
+        <SocialPostMethodsModal
+          isOpen={isExtensionModalOpen}
+          onClose={() => setIsExtensionModalOpen(false)}
+          currentTitle={`10 Sec CS Challenge: ${currentQuestion.question}`}
+          currentCaption={`🧠 Can you solve this ${currentQuestion.subject} challenge in 10 seconds? Drop your answer below!`}
+          currentHashtags="#BytePrep #ComputerScience #Shorts #CodingChallenge"
           videoBlob={renderedBlob || undefined}
           videoUrl={renderedVideoUrl || undefined}
         />

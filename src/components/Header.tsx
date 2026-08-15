@@ -15,6 +15,7 @@ import {
   CheckCircle2,
   Share2,
   ShieldCheck,
+  Puzzle,
 } from 'lucide-react';
 import { BytePrepLogo } from './BytePrepLogo';
 import {
@@ -38,6 +39,7 @@ interface HeaderProps {
   onOpenSettings: () => void;
   onOpenBrandKit: () => void;
   onOpenSocialLogin?: () => void;
+  onOpenExtensionModal?: () => void;
   onOpenBackup?: () => void;
   onOpenShortcuts?: () => void;
 }
@@ -48,6 +50,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenSettings,
   onOpenBrandKit,
   onOpenSocialLogin,
+  onOpenExtensionModal,
 }) => {
   const [googleUser, setGoogleUser] = useState<any>(getCurrentUser());
   const [channelInfo, setChannelInfo] = useState<YouTubeChannelInfo | null>(null);
@@ -163,8 +166,18 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
         </nav>
 
-        {/* Right Actions: Social Logins, Brand Kit, Settings */}
+        {/* Right Actions: Social Extension, Logins, Brand Kit, Settings */}
         <div className="flex items-center gap-2 shrink-0">
+          {/* Chrome Extension & Posting Methods Button */}
+          <button
+            onClick={onOpenExtensionModal}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-rose-500/20 to-purple-500/20 hover:from-rose-500/30 hover:to-purple-500/30 text-rose-300 border border-rose-500/40 rounded-xl transition-all cursor-pointer shadow-sm text-xs font-black"
+            title="Download Chrome Extension & Posting Methods"
+          >
+            <Puzzle className="w-3.5 h-3.5 text-rose-400" />
+            <span className="hidden sm:inline">Chrome Extension</span>
+          </button>
+
           {/* Social Logins & Access Pill */}
           <button
             onClick={onOpenSocialLogin}
@@ -173,7 +186,7 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <div className="flex items-center gap-1.5 text-xs font-bold text-slate-200">
               <Share2 className="w-3.5 h-3.5 text-rose-400 group-hover:scale-110 transition-transform" />
-              <span className="hidden sm:inline text-[11px] font-black">
+              <span className="hidden md:inline text-[11px] font-black">
                 {loggedInCount > 0 ? `Social Access (${loggedInCount})` : 'Social Login'}
               </span>
               {loggedInCount > 0 ? (
@@ -192,7 +205,7 @@ export const Header: React.FC<HeaderProps> = ({
             title="Brand Watermark & Settings"
           >
             <Palette className="w-3.5 h-3.5 text-rose-400" />
-            <span className="hidden md:inline">Brand Kit</span>
+            <span className="hidden lg:inline">Brand Kit</span>
           </button>
 
           <button

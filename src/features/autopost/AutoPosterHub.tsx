@@ -24,6 +24,7 @@ import {
   TrendingUp,
   AlertCircle,
   Video,
+  Puzzle,
 } from 'lucide-react';
 import {
   SocialAccountConfig,
@@ -37,6 +38,7 @@ import { StorageService } from '../../services/storageService';
 import { QuestionLoader } from '../../services/questionLoader';
 import { SeriesTitleCustomizer } from './SeriesTitleCustomizer';
 import { ConnectedAccountsModal } from './ConnectedAccountsModal';
+import { SocialPostMethodsModal } from '../extension/SocialPostMethodsModal';
 import { YouTubeService } from '../../services/youtubeService';
 import { getCachedAccessToken } from '../../services/authService';
 
@@ -54,6 +56,7 @@ export const AutoPosterHub: React.FC<AutoPosterHubProps> = ({ onOpenShortsStudio
   );
   const [queue, setQueue] = useState<ScheduledPostItem[]>([]);
   const [isAccountsModalOpen, setIsAccountsModalOpen] = useState<boolean>(false);
+  const [isExtensionModalOpen, setIsExtensionModalOpen] = useState<boolean>(false);
   const [isProcessingQueue, setIsProcessingQueue] = useState<boolean>(false);
   const [publishingId, setPublishingId] = useState<string | null>(null);
   const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
@@ -286,6 +289,16 @@ export const AutoPosterHub: React.FC<AutoPosterHubProps> = ({ onOpenShortsStudio
           </div>
 
           <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+            <button
+              onClick={() => setIsExtensionModalOpen(true)}
+              className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-rose-500/20 to-purple-500/20 hover:from-rose-500/30 hover:to-purple-500/30 text-rose-300 font-bold text-xs rounded-2xl border border-rose-500/40 shadow-md transition-all cursor-pointer"
+            >
+              <Puzzle className="w-4 h-4 text-rose-400" />
+              <span>
+                Chrome Extension & Posting Tools
+              </span>
+            </button>
+
             <button
               onClick={() => setIsAccountsModalOpen(true)}
               className="flex items-center gap-2 px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs rounded-2xl border border-slate-700 shadow-md transition-all cursor-pointer"
@@ -628,6 +641,12 @@ export const AutoPosterHub: React.FC<AutoPosterHubProps> = ({ onOpenShortsStudio
           refreshData();
         }}
         onAccountsUpdated={refreshData}
+      />
+
+      {/* Chrome Extension & Posting Methods Modal */}
+      <SocialPostMethodsModal
+        isOpen={isExtensionModalOpen}
+        onClose={() => setIsExtensionModalOpen(false)}
       />
     </div>
   );

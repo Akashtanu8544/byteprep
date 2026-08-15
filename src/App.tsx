@@ -9,6 +9,7 @@ import { BrandKitModal } from './features/brand/BrandKitModal';
 import { SettingsModal } from './features/settings/SettingsModal';
 import { QuestionEditorModal } from './features/questions/QuestionEditorModal';
 import { ConnectedAccountsModal } from './features/autopost/ConnectedAccountsModal';
+import { SocialPostMethodsModal } from './features/extension/SocialPostMethodsModal';
 import { StorageService } from './services/storageService';
 import { NormalizedQuestion, ChallengeSettings } from './types';
 
@@ -26,6 +27,7 @@ export default function App() {
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
   const [isBrandKitOpen, setIsBrandKitOpen] = useState<boolean>(false);
   const [isSocialLoginOpen, setIsSocialLoginOpen] = useState<boolean>(false);
+  const [isExtensionModalOpen, setIsExtensionModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
     setSettings(StorageService.getSettings());
@@ -44,6 +46,7 @@ export default function App() {
         onOpenSettings={() => setIsSettingsOpen(true)}
         onOpenBrandKit={() => setIsBrandKitOpen(true)}
         onOpenSocialLogin={() => setIsSocialLoginOpen(true)}
+        onOpenExtensionModal={() => setIsExtensionModalOpen(true)}
         onOpenBackup={() => {}}
         onOpenShortcuts={() => {}}
       />
@@ -87,6 +90,12 @@ export default function App() {
       </main>
 
       {currentView !== 'studio' && <Footer appUrl={settings.appUrl} />}
+
+      {/* Chrome Extension & Posting Methods Modal */}
+      <SocialPostMethodsModal
+        isOpen={isExtensionModalOpen}
+        onClose={() => setIsExtensionModalOpen(false)}
+      />
 
       {/* Social Login & Permissions Modal */}
       <ConnectedAccountsModal
