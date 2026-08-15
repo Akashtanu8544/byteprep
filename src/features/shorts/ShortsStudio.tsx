@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { QuestionLoader } from '../../services/questionLoader';
 import { StorageService } from '../../services/storageService';
 import { NormalizedQuestion, ShortConfig, QueueItem } from '../../types';
@@ -9,7 +9,8 @@ import { ThemePreviewCard } from './ThemePreviewCard';
 import { ViralCaptionsCard } from './ViralCaptionsCard';
 import { ThumbnailGenerator } from './ThumbnailGenerator';
 import { ShortsQueue } from './ShortsQueue';
-import { exportShortVideo } from './videoRenderer';
+import { SocialPosterStudio } from './SocialPosterStudio';
+import { exportShortVideo, exportFrameSnapshot, RenderControl } from './videoRenderer';
 import { PollPostMaker } from '../polls/PollPostMaker';
 import { FlashCardMaker } from '../flashcards/FlashCardMaker';
 import {
@@ -29,12 +30,21 @@ import {
   Terminal,
   Share2,
   FileImage,
+  Zap,
+  ShieldCheck,
+  Camera,
+  Sliders,
+  XCircle,
+  RotateCcw,
+  Image as ImageIcon,
 } from 'lucide-react';
 
 interface ShortsStudioProps {
   onBack: () => void;
   preselectedQuestionId?: string | null;
 }
+
+const AUTOSAVE_KEY = 'byteprep_shorts_studio_autosave_state';
 
 export const ShortsStudio: React.FC<ShortsStudioProps> = ({ onBack, preselectedQuestionId }) => {
   const allSubjects = ['All', ...QuestionLoader.getAllSubjects()];
@@ -54,18 +64,63 @@ export const ShortsStudio: React.FC<ShortsStudioProps> = ({ onBack, preselectedQ
   const [themeId, setThemeId] = useState<string>('byteprep-dark');
   const [backgroundStyle, setBackgroundStyle] = useState<'auto' | 'stars' | 'matrix' | 'sql' | 'network' | 'os'>('auto');
 
+  // Video Speed & Quality Settings
+  const [durationMode, setDurationMode] = useState<'viral' | 'standard' | 'extended'>('viral');
+  const [renderQuality, setRenderQuality] = useState<'720p' | '1080p'>('720p');
+  const [includeAudio, setIncludeAudio] = useState<boolean>(true);
+
+  // Auto-Save Tracking
+  const [lastAutoSaved, setLastAutoSaved] = useState<Date | null>(null);
+  const [isDraftRestored, setIsDraftRestored] = useState<boolean>(false);
+
   // Video Export States
   const [isRendering, setIsRendering] = useState<boolean>(false);
   const [renderingProgress, setRenderingProgress] = useState<number>(0);
   const [renderingStage, setRenderingStage] = useState<string>('');
   const [renderedBlob, setRenderedBlob] = useState<Blob | null>(null);
   const [renderedVideoUrl, setRenderedVideoUrl] = useState<string | null>(null);
+  const renderControlRef = useRef<RenderControl | null>(null);
 
   // Queue & Bulk Generation
   const [queue, setQueue] = useState<QueueItem[]>([]);
   const [bulkCount, setBulkCount] = useState<number>(5);
-  const [activeTab, setActiveTab] = useState<'video' | 'poll' | 'flashcard' | 'history'>('video');
+  const [activeTab, setActiveTab] = useState<'video' | 'posters' | 'poll' | 'flashcard' | 'history'>('video');
 
+  // 1. Restore state from localStorage on mount
+  useEffect(() => {
+    try {
+      const savedData = localStorage.getItem(AUTOSAVE_KEY);
+      if (savedData) {
+        const parsed = JSON.parse(savedData);
+        if (parsed.selectedSubject) setSelectedSubject(parsed.selectedSubject);
+        if (parsed.selectedTopic) setSelectedTopic(parsed.selectedTopic);
+        if (parsed.selectedMock) setSelectedMock(parsed.selectedMock);
+        if (parsed.selectedDifficulty) setSelectedDifficulty(parsed.selectedDifficulty);
+        if (parsed.timerSeconds) setTimerSeconds(parsed.timerSeconds);
+        if (parsed.hookText) setHookText(parsed.hookText);
+        if (parsed.themeId) setThemeId(parsed.themeId);
+        if (parsed.backgroundStyle) setBackgroundStyle(parsed.backgroundStyle);
+        if (parsed.durationMode) setDurationMode(parsed.durationMode);
+        if (parsed.renderQuality) setRenderQuality(parsed.renderQuality);
+        if (typeof parsed.includeAudio === 'boolean') setIncludeAudio(parsed.includeAudio);
+        if (parsed.bulkCount) setBulkCount(parsed.bulkCount);
+        if (parsed.savedAt) setLastAutoSaved(new Date(parsed.savedAt));
+        setIsDraftRestored(true);
+
+        if (parsed.currentQuestionId && !preselectedQuestionId) {
+          const q = QuestionLoader.getQuestionById(parsed.currentQuestionId);
+          if (q) {
+            setCurrentQuestion(q);
+            return;
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('Could not read autosave state', e);
+    }
+  }, [preselectedQuestionId]);
+
+  // Load questions
   useEffect(() => {
     const questions = QuestionLoader.getAllQuestions();
     setQuestionList(questions);
@@ -78,10 +133,81 @@ export const ShortsStudio: React.FC<ShortsStudioProps> = ({ onBack, preselectedQ
       }
     }
 
-    if (questions.length > 0) {
+    if (!currentQuestion && questions.length > 0) {
       setCurrentQuestion(questions[0]);
     }
   }, [preselectedQuestionId]);
+
+  // 2. Periodic Auto-Save Every 5 Seconds to LocalStorage
+  const draftStateRef = useRef({
+    selectedSubject,
+    selectedTopic,
+    selectedMock,
+    selectedDifficulty,
+    currentQuestionId: currentQuestion?.id,
+    timerSeconds,
+    hookText,
+    themeId,
+    backgroundStyle,
+    durationMode,
+    renderQuality,
+    includeAudio,
+    bulkCount,
+  });
+
+  draftStateRef.current = {
+    selectedSubject,
+    selectedTopic,
+    selectedMock,
+    selectedDifficulty,
+    currentQuestionId: currentQuestion?.id,
+    timerSeconds,
+    hookText,
+    themeId,
+    backgroundStyle,
+    durationMode,
+    renderQuality,
+    includeAudio,
+    bulkCount,
+  };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      try {
+        const payload = {
+          ...draftStateRef.current,
+          savedAt: Date.now(),
+        };
+        localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(payload));
+        setLastAutoSaved(new Date());
+      } catch (err) {
+        console.warn('Auto-save error', err);
+      }
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleResetDraft = () => {
+    localStorage.removeItem(AUTOSAVE_KEY);
+    setSelectedSubject('All');
+    setSelectedTopic('All');
+    setSelectedMock('All');
+    setSelectedDifficulty('mixed');
+    setTimerSeconds(10);
+    setHookText(HOOK_TEMPLATES[0]);
+    setThemeId('byteprep-dark');
+    setBackgroundStyle('auto');
+    setDurationMode('viral');
+    setRenderQuality('720p');
+    setIncludeAudio(true);
+    const questions = QuestionLoader.getAllQuestions();
+    if (questions.length > 0) {
+      setCurrentQuestion(questions[0]);
+    }
+    setLastAutoSaved(null);
+    setIsDraftRestored(false);
+  };
 
   // Handle Filter Change
   useEffect(() => {
@@ -100,7 +226,7 @@ export const ShortsStudio: React.FC<ShortsStudioProps> = ({ onBack, preselectedQ
     }
 
     setQuestionList(pool);
-    if (pool.length > 0) {
+    if (pool.length > 0 && !pool.some(q => q.id === currentQuestion?.id)) {
       setCurrentQuestion(pool[0]);
     }
   }, [selectedSubject, selectedTopic, selectedMock, selectedDifficulty]);
@@ -132,33 +258,51 @@ export const ShortsStudio: React.FC<ShortsStudioProps> = ({ onBack, preselectedQ
     hookText,
     themeId: themeId as any,
     backgroundStyle,
-    includeAudio: true,
+    includeAudio,
     ctaEnabled: true,
+    durationMode,
+    renderQuality,
     appUrl: StorageService.getSettings().appUrl,
   };
 
   const handleRenderSingleVideo = () => {
-    if (!currentQuestion) return;
+    if (!currentQuestion || isRendering) return;
     setIsRendering(true);
     setRenderingProgress(0);
-    setRenderingStage('Initializing canvas...');
+    setRenderingStage('Starting High-Speed Video Engine...');
 
-    exportShortVideo(currentConfig, {
+    const control = exportShortVideo(currentConfig, {
       onProgress: (progress, stage) => {
         setRenderingProgress(progress);
         setRenderingStage(stage);
       },
       onComplete: (blob, videoUrl) => {
         setIsRendering(false);
+        renderControlRef.current = null;
         setRenderedBlob(blob);
         setRenderedVideoUrl(videoUrl);
         StorageService.recordShortGenerated(currentQuestion.id, hookText, themeId);
       },
       onError: err => {
         setIsRendering(false);
-        alert(`Render Error: ${err}`);
+        renderControlRef.current = null;
+        if (!err.includes('cancelled')) {
+          alert(`Render Error: ${err}`);
+        }
       },
     });
+
+    renderControlRef.current = control;
+  };
+
+  const handleCancelRender = () => {
+    if (renderControlRef.current) {
+      renderControlRef.current.cancel();
+      renderControlRef.current = null;
+    }
+    setIsRendering(false);
+    setRenderingProgress(0);
+    setRenderingStage('Render cancelled by user. Resources freed.');
   };
 
   const handleDownloadVideo = () => {
@@ -168,6 +312,19 @@ export const ShortsStudio: React.FC<ShortsStudioProps> = ({ onBack, preselectedQ
     link.download = `BytePrepCS_10SecondChallenge_${currentQuestion.id}.webm`;
     link.click();
     StorageService.recordShortDownloaded(currentQuestion.id);
+  };
+
+  const handleQuickPosterDownload = async () => {
+    if (!currentQuestion) return;
+    try {
+      const dataUrl = await exportFrameSnapshot(currentConfig, 'question');
+      const link = document.createElement('a');
+      link.href = dataUrl;
+      link.download = `BytePrep_Poster_${currentQuestion.id}.png`;
+      link.click();
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const handleGenerateQueue = () => {
@@ -185,8 +342,10 @@ export const ShortsStudio: React.FC<ShortsStudioProps> = ({ onBack, preselectedQ
         hookText: getRandomHook(),
         themeId: themeId as any,
         backgroundStyle,
-        includeAudio: true,
+        includeAudio,
         ctaEnabled: true,
+        durationMode,
+        renderQuality,
         appUrl: StorageService.getSettings().appUrl,
       },
       status: 'pending',
@@ -210,16 +369,37 @@ export const ShortsStudio: React.FC<ShortsStudioProps> = ({ onBack, preselectedQ
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <h1 className="text-2xl font-black text-white tracking-tight flex items-center gap-2">
                 <span>🎬 SHORTS STUDIO</span>
                 <span className="px-2 py-0.5 bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-bold rounded-full">
                   9:16 Creator
                 </span>
+                <span className="px-2 py-0.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] font-mono font-bold rounded-full flex items-center gap-1">
+                  <Zap className="w-3 h-3" /> Fast Render ⚡
+                </span>
               </h1>
+
+              {/* Auto-save Status Indicator */}
+              <div className="flex items-center gap-2 ml-2">
+                <span className="flex items-center gap-1 text-[11px] font-mono text-emerald-400 bg-emerald-950/60 border border-emerald-500/30 px-2 py-0.5 rounded-md">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span>Auto-saved (5s sync)</span>
+                </span>
+                {isDraftRestored && (
+                  <button
+                    onClick={handleResetDraft}
+                    className="flex items-center gap-1 text-[10px] font-mono text-slate-400 hover:text-rose-400 bg-slate-900 border border-slate-800 hover:border-rose-500/30 px-2 py-0.5 rounded-md transition-colors cursor-pointer"
+                    title="Reset all settings to defaults and clear saved draft"
+                  >
+                    <RotateCcw className="w-3 h-3" />
+                    <span>Reset Draft</span>
+                  </button>
+                )}
+              </div>
             </div>
             <p className="text-slate-400 text-xs mt-0.5">
-              Turn BytePrep CS MCQs into high-converting Instagram Reels & YouTube Shorts
+              Turn BytePrep CS MCQs into high-converting Instagram Reels, YouTube Shorts, & Social Image Posters
             </p>
           </div>
         </div>
@@ -237,6 +417,17 @@ export const ShortsStudio: React.FC<ShortsStudioProps> = ({ onBack, preselectedQ
             <span>Shorts Video</span>
           </button>
           <button
+            onClick={() => setActiveTab('posters')}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+              activeTab === 'posters'
+                ? 'bg-indigo-500 text-white shadow-md shadow-indigo-500/20'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <ImageIcon className="w-3.5 h-3.5 text-indigo-300" />
+            <span>Social Posters (9:16, 1:1, 16:9)</span>
+          </button>
+          <button
             onClick={() => setActiveTab('poll')}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
               activeTab === 'poll'
@@ -245,7 +436,7 @@ export const ShortsStudio: React.FC<ShortsStudioProps> = ({ onBack, preselectedQ
             }`}
           >
             <Share2 className="w-3.5 h-3.5 text-sky-400" />
-            <span>Poll / Quiz Post</span>
+            <span>Poll Post</span>
           </button>
           <button
             onClick={() => setActiveTab('flashcard')}
@@ -256,7 +447,7 @@ export const ShortsStudio: React.FC<ShortsStudioProps> = ({ onBack, preselectedQ
             }`}
           >
             <FileImage className="w-3.5 h-3.5 text-amber-400" />
-            <span>1-Click FlashCard</span>
+            <span>FlashCard</span>
           </button>
           <button
             onClick={() => setActiveTab('history')}
@@ -272,7 +463,7 @@ export const ShortsStudio: React.FC<ShortsStudioProps> = ({ onBack, preselectedQ
         </div>
       </div>
 
-      {activeTab === 'poll' && currentQuestion ? (
+      {activeTab === 'posters' && currentQuestion ? (
         <div className="max-w-4xl mx-auto space-y-6">
           <div className="flex items-center justify-between bg-slate-900 border border-slate-800 p-4 rounded-2xl">
             <div className="text-xs">
@@ -281,7 +472,24 @@ export const ShortsStudio: React.FC<ShortsStudioProps> = ({ onBack, preselectedQ
             </div>
             <button
               onClick={handleRandomQuestion}
-              className="flex items-center gap-1 px-3 py-1.5 bg-slate-950 hover:bg-slate-800 text-sky-400 border border-slate-700 rounded-xl text-xs font-bold shrink-0 ml-3"
+              className="flex items-center gap-1 px-3 py-1.5 bg-slate-950 hover:bg-slate-800 text-sky-400 border border-slate-700 rounded-xl text-xs font-bold shrink-0 ml-3 cursor-pointer"
+            >
+              <Shuffle className="w-3 h-3" />
+              <span>Next Q</span>
+            </button>
+          </div>
+          <SocialPosterStudio config={currentConfig} />
+        </div>
+      ) : activeTab === 'poll' && currentQuestion ? (
+        <div className="max-w-4xl mx-auto space-y-6">
+          <div className="flex items-center justify-between bg-slate-900 border border-slate-800 p-4 rounded-2xl">
+            <div className="text-xs">
+              <span className="text-slate-400">Selected Question: </span>
+              <span className="text-white font-bold">{currentQuestion.question}</span>
+            </div>
+            <button
+              onClick={handleRandomQuestion}
+              className="flex items-center gap-1 px-3 py-1.5 bg-slate-950 hover:bg-slate-800 text-sky-400 border border-slate-700 rounded-xl text-xs font-bold shrink-0 ml-3 cursor-pointer"
             >
               <Shuffle className="w-3 h-3" />
               <span>Next Q</span>
@@ -298,7 +506,7 @@ export const ShortsStudio: React.FC<ShortsStudioProps> = ({ onBack, preselectedQ
             </div>
             <button
               onClick={handleRandomQuestion}
-              className="flex items-center gap-1 px-3 py-1.5 bg-slate-950 hover:bg-slate-800 text-sky-400 border border-slate-700 rounded-xl text-xs font-bold shrink-0 ml-3"
+              className="flex items-center gap-1 px-3 py-1.5 bg-slate-950 hover:bg-slate-800 text-sky-400 border border-slate-700 rounded-xl text-xs font-bold shrink-0 ml-3 cursor-pointer"
             >
               <Shuffle className="w-3 h-3" />
               <span>Next Q</span>
@@ -328,9 +536,9 @@ export const ShortsStudio: React.FC<ShortsStudioProps> = ({ onBack, preselectedQ
                       <div className="flex items-center gap-3 text-xs text-slate-400 mt-1">
                         <span className="text-sky-400">{q?.subject}</span>
                         <span>•</span>
-                        <span>Hook: {rec.template}</span>
+                        <span>Hook: {rec.template || rec.hook}</span>
                         <span>•</span>
-                        <span>{new Date(rec.generatedAt).toLocaleDateString()}</span>
+                        <span>{new Date(rec.generatedAt || rec.createdAt || Date.now()).toLocaleDateString()}</span>
                       </div>
                     </div>
                     {rec.downloaded && (
@@ -426,147 +634,216 @@ export const ShortsStudio: React.FC<ShortsStudioProps> = ({ onBack, preselectedQ
                     onChange={e => setSelectedDifficulty(e.target.value)}
                     className="w-full bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-xl p-2.5 outline-none focus:border-sky-500 cursor-pointer"
                   >
-                    <option value="mixed">Mixed Difficulty</option>
-                    <option value="easy">Easy</option>
-                    <option value="medium">Medium</option>
-                    <option value="hard">Hard</option>
+                    <option value="mixed">Mixed Difficulties</option>
+                    <option value="easy">Easy Only</option>
+                    <option value="medium">Medium Only</option>
+                    <option value="hard">Hard Only</option>
                   </select>
                 </div>
               </div>
 
-              <div>
-                <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
-                  Pick Specific Question ({questionList.length} Available)
-                </label>
-                <select
-                  value={currentQuestion?.id || ''}
-                  onChange={e => {
-                    const q = questionList.find(item => item.id === e.target.value);
-                    if (q) setCurrentQuestion(q);
-                  }}
-                  className="w-full bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-xl p-2.5 outline-none focus:border-sky-500 cursor-pointer truncate"
+              {/* Current Question Display Box */}
+              {currentQuestion && (
+                <div className="bg-slate-950 border border-slate-800 p-4 rounded-xl space-y-2">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="px-2 py-0.5 bg-sky-500/10 text-sky-400 border border-sky-500/20 rounded-md font-bold">
+                      {currentQuestion.subject} • {currentQuestion.exam}
+                    </span>
+                    <span className="text-slate-400 font-mono text-[11px]">
+                      ID: {currentQuestion.id}
+                    </span>
+                  </div>
+                  <p className="text-white text-sm font-semibold leading-relaxed">
+                    {currentQuestion.question}
+                  </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2">
+                    {currentQuestion.options.map((opt, i) => (
+                      <div
+                        key={i}
+                        className={`text-xs p-2 rounded-lg border flex items-center gap-2 ${
+                          i === currentQuestion.correctAnswer
+                            ? 'bg-emerald-950/30 border-emerald-500/40 text-emerald-300 font-bold'
+                            : 'bg-slate-900 border-slate-800 text-slate-300'
+                        }`}
+                      >
+                        <span className="w-5 h-5 rounded-full bg-slate-800 flex items-center justify-center text-[10px] shrink-0">
+                          {String.fromCharCode(65 + i)}
+                        </span>
+                        <span className="truncate">{opt}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* 2. Viral Hook Selector */}
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3 shadow-xl">
+              <div className="flex items-center justify-between">
+                <h3 className="text-white font-bold text-sm flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-amber-400" />
+                  <span>Hook Headline (First 2.5s)</span>
+                </h3>
+                <button
+                  onClick={() => setHookText(getRandomHook())}
+                  className="text-xs font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1 cursor-pointer"
                 >
-                  {questionList.map(q => (
-                    <option key={q.id} value={q.id}>
-                      [{q.subject}] {q.question.substring(0, 60)}...
-                    </option>
-                  ))}
-                </select>
+                  <Shuffle className="w-3 h-3" />
+                  <span>Random Hook</span>
+                </button>
+              </div>
+
+              <input
+                type="text"
+                value={hookText}
+                onChange={e => setHookText(e.target.value)}
+                className="w-full bg-slate-950 border border-slate-800 text-slate-100 text-sm rounded-xl p-3 outline-none focus:border-amber-500 font-medium"
+                placeholder="Enter catchy hook headline..."
+              />
+
+              <div className="flex flex-wrap gap-1.5 pt-1">
+                {HOOK_TEMPLATES.slice(0, 4).map((tpl, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setHookText(tpl)}
+                    className="text-[11px] bg-slate-950 border border-slate-800 hover:border-slate-700 text-slate-300 px-2.5 py-1 rounded-lg transition-colors cursor-pointer truncate max-w-[240px]"
+                  >
+                    {tpl}
+                  </button>
+                ))}
               </div>
             </div>
 
-            {/* 2. Customization (Hook, Theme, Timer) */}
+            {/* 3. Theme & Background Style Selector */}
             <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-xl">
               <h3 className="text-white font-bold text-sm flex items-center gap-2">
-                <Palette className="w-4 h-4 text-sky-400" />
-                <span>Short Customization</span>
+                <Palette className="w-4 h-4 text-purple-400" />
+                <span>Visual Theme & Dynamic FX Background</span>
               </h3>
 
-              <div>
-                <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
-                  Content Hook Template
-                </label>
-                <select
-                  value={hookText}
-                  onChange={e => setHookText(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-xl p-2.5 outline-none focus:border-sky-500 cursor-pointer"
-                >
-                  {HOOK_TEMPLATES.map(h => (
-                    <option key={h} value={h}>
-                      {h}
-                    </option>
-                  ))}
-                </select>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                {Object.values(SHORTS_THEMES).map(t => (
+                  <button
+                    key={t.id}
+                    onClick={() => setThemeId(t.id)}
+                    className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
+                      themeId === t.id
+                        ? 'border-purple-500 bg-purple-500/10 shadow-lg shadow-purple-500/10'
+                        : 'border-slate-800 bg-slate-950 hover:border-slate-700'
+                    }`}
+                  >
+                    <div className="flex items-center gap-1.5 mb-1">
+                      <span className="w-3 h-3 rounded-full" style={{ backgroundColor: t.accentColor }} />
+                      <span className="text-xs font-bold text-white truncate">{t.name}</span>
+                    </div>
+                    <p className="text-[10px] text-slate-400 line-clamp-1 capitalize">{t.backgroundAnimation || 'Dynamic'} Style</p>
+                  </button>
+                ))}
               </div>
 
-              {/* Live Theme Previews */}
-              <div>
-                <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">
-                  Select Visual Theme (Live 9:16 Previews)
-                </label>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  {Object.values(SHORTS_THEMES).map(t => (
-                    <ThemePreviewCard
-                      key={t.id}
-                      theme={t}
-                      isSelected={themeId === t.id}
-                      onSelect={() => setThemeId(t.id)}
-                      config={currentConfig}
-                    />
-                  ))}
-                </div>
-              </div>
-
-              {/* Live Background Animation Selector */}
-              <div>
+              {/* Dynamic Live Background Pattern Selection */}
+              <div className="pt-2 border-t border-slate-800">
                 <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                  <Stars className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Live Animated Background</span>
+                  <Stars className="w-3.5 h-3.5 text-sky-400" />
+                  <span>Subject Motion Graphic Background</span>
                 </label>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
                   {[
-                    { id: 'stars', name: '✨ Falling Stars', desc: 'Glowing Meteors' },
-                    { id: 'matrix', name: '💻 Matrix Code', desc: 'Digital Green Rain' },
-                    { id: 'sql', name: '🗄️ SQL Queries', desc: 'Database Streams' },
-                    { id: 'network', name: '🌐 Network Nodes', desc: 'Packet Routing' },
-                    { id: 'os', name: '⚙️ CPU & OS', desc: 'Process Scheduling' },
-                    { id: 'auto', name: '⚡ Subject Auto', desc: 'Auto by Topic' },
-                  ].map(b => (
+                    { id: 'auto', label: 'Auto FX' },
+                    { id: 'matrix', label: 'Matrix' },
+                    { id: 'sql', label: 'SQL DB' },
+                    { id: 'network', label: 'Network' },
+                    { id: 'stars', label: 'Cyber Stars' },
+                    { id: 'os', label: 'Processes' },
+                  ].map(bg => (
                     <button
-                      key={b.id}
-                      onClick={() => setBackgroundStyle(b.id as any)}
-                      className={`p-2.5 rounded-xl border text-left text-xs transition-all cursor-pointer ${
-                        backgroundStyle === b.id
-                          ? 'border-sky-400 bg-sky-500/10 text-white font-bold shadow-md shadow-sky-500/10'
-                          : 'border-slate-800 bg-slate-950 text-slate-400 hover:border-slate-700 hover:text-slate-200'
+                      key={bg.id}
+                      onClick={() => setBackgroundStyle(bg.id as any)}
+                      className={`p-2 rounded-xl text-[11px] font-bold border transition-all cursor-pointer text-center ${
+                        backgroundStyle === bg.id
+                          ? 'bg-sky-500/15 border-sky-500 text-sky-400 shadow-sm'
+                          : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-300'
                       }`}
                     >
-                      <span className="block truncate font-bold text-slate-200">{b.name}</span>
-                      <span className="block text-[10px] text-slate-500 truncate">{b.desc}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
-                  Timer Duration
-                </label>
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  {[5, 10, 15, 20, 30].map(sec => (
-                    <button
-                      key={sec}
-                      onClick={() => setTimerSeconds(sec)}
-                      className={`px-3 py-2 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
-                        timerSeconds === sec
-                          ? 'border-sky-400 bg-sky-500 text-slate-950 shadow-md'
-                          : 'border-slate-800 bg-slate-950 text-slate-400 hover:border-slate-700'
-                      }`}
-                    >
-                      {sec}s
+                      {bg.label}
                     </button>
                   ))}
                 </div>
               </div>
             </div>
 
-            {/* 3. Auto Short Generator Queue Builder */}
+            {/* 4. Speed, Duration & Quality Engine Controls */}
             <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-xl">
-              <div className="flex items-center justify-between">
+              <h3 className="text-white font-bold text-sm flex items-center gap-2">
+                <Sliders className="w-4 h-4 text-emerald-400" />
+                <span>Speed, Quality & Audio Synthesis</span>
+              </h3>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {/* Duration Mode */}
                 <div>
-                  <h3 className="text-white font-bold text-sm flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-sky-400" />
-                    <span>⚡ Auto Short Generator</span>
-                  </h3>
-                  <p className="text-slate-400 text-xs">
-                    Bulk generate up to 50 shorts in sequential batch queue
-                  </p>
+                  <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+                    Timeline Pacing
+                  </label>
+                  <select
+                    value={durationMode}
+                    onChange={e => setDurationMode(e.target.value as any)}
+                    className="w-full bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-xl p-2.5 outline-none focus:border-emerald-500 cursor-pointer"
+                  >
+                    <option value="viral">⚡ Viral Fast (~14s)</option>
+                    <option value="standard">⏱️ Standard (~24s)</option>
+                    <option value="extended">📚 Extended (~32s)</option>
+                  </select>
+                </div>
+
+                {/* Render Quality */}
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+                    Video Resolution
+                  </label>
+                  <select
+                    value={renderQuality}
+                    onChange={e => setRenderQuality(e.target.value as any)}
+                    className="w-full bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-xl p-2.5 outline-none focus:border-emerald-500 cursor-pointer"
+                  >
+                    <option value="720p">⚡ Fast 720p (720x1280)</option>
+                    <option value="1080p">💎 Full HD 1080p (1080x1920)</option>
+                  </select>
+                </div>
+
+                {/* Audio Option */}
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+                    Synthesized Audio
+                  </label>
+                  <button
+                    onClick={() => setIncludeAudio(!includeAudio)}
+                    className={`w-full py-2.5 px-3 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
+                      includeAudio
+                        ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400'
+                        : 'bg-slate-950 border-slate-800 text-slate-400'
+                    }`}
+                  >
+                    {includeAudio ? '🔊 SFX & Ticks ON' : '🔇 Audio Muted'}
+                  </button>
                 </div>
               </div>
+            </div>
 
-              <div className="flex items-center gap-3">
-                <span className="text-xs font-bold text-slate-300">Number of videos:</span>
-                {[1, 5, 10, 20, 50].map(cnt => (
+            {/* 5. Bulk Generation Panel */}
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div>
+                <h4 className="text-white font-bold text-sm flex items-center gap-2">
+                  <ListPlus className="w-4 h-4 text-sky-400" />
+                  <span>Batch Queue Creator</span>
+                </h4>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Generate multiple shorts at once with randomized hooks & themes
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                {[3, 5, 10, 20].map(cnt => (
                   <button
                     key={cnt}
                     onClick={() => setBulkCount(cnt)}
@@ -585,7 +862,7 @@ export const ShortsStudio: React.FC<ShortsStudioProps> = ({ onBack, preselectedQ
                   className="ml-auto flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-400 hover:to-indigo-400 text-slate-950 font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer"
                 >
                   <ListPlus className="w-4 h-4" />
-                  <span>GENERATE QUEUE</span>
+                  <span>ADD TO QUEUE</span>
                 </button>
               </div>
             </div>
@@ -599,20 +876,43 @@ export const ShortsStudio: React.FC<ShortsStudioProps> = ({ onBack, preselectedQ
             <ShortsPreview
               config={currentConfig}
               onRenderVideo={handleRenderSingleVideo}
+              onCancelRender={handleCancelRender}
               isRendering={isRendering}
               renderingProgress={renderingProgress}
               renderingStage={renderingStage}
             />
 
+            {/* Quick Actions Panel */}
+            <div className="space-y-2">
+              {isRendering && (
+                <button
+                  onClick={handleCancelRender}
+                  className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-rose-600 hover:bg-rose-500 text-white font-black rounded-xl text-xs shadow-lg shadow-rose-600/30 transition-all cursor-pointer"
+                >
+                  <XCircle className="w-4 h-4" />
+                  <span>CANCEL RENDER & FREE MEMORY</span>
+                </button>
+              )}
+
+              {/* Quick Instant Poster Snap Action */}
+              <button
+                onClick={handleQuickPosterDownload}
+                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-sky-500/40 text-slate-300 hover:text-white rounded-xl text-xs font-bold transition-all cursor-pointer"
+              >
+                <Camera className="w-4 h-4 text-sky-400" />
+                <span>⚡ Download Instant MCQ Poster (.PNG) in 0.1s</span>
+              </button>
+            </div>
+
             {renderedVideoUrl && (
-              <div className="bg-slate-900 border border-emerald-500/30 rounded-2xl p-4 flex flex-col items-center gap-3">
+              <div className="bg-slate-900 border border-emerald-500/30 rounded-2xl p-4 flex flex-col items-center gap-3 animate-fadeIn">
                 <div className="flex items-center gap-2 text-emerald-400 font-bold text-sm">
                   <CheckCircle2 className="w-5 h-5" />
                   <span>Video Ready for Download!</span>
                 </div>
                 <button
                   onClick={handleDownloadVideo}
-                  className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm rounded-xl transition-all shadow-lg cursor-pointer"
+                  className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm rounded-xl transition-all shadow-lg shadow-emerald-500/20 cursor-pointer"
                 >
                   <Download className="w-4 h-4" />
                   <span>DOWNLOAD VIDEO (.WEBM)</span>

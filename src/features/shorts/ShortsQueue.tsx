@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { QueueItem, ShortConfig } from '../../types';
-import { exportShortVideo } from './videoRenderer';
+import { exportShortVideo, RenderControl } from './videoRenderer';
 import { StorageService } from '../../services/storageService';
+import JSZip from 'jszip';
 import {
   Play,
   Download,
@@ -14,6 +15,9 @@ import {
   X,
   Copy,
   Check,
+  StopCircle,
+  Archive,
+  Zap,
 } from 'lucide-react';
 import { generateViralContent } from './captionGenerator';
 
@@ -26,12 +30,19 @@ export const ShortsQueue: React.FC<ShortsQueueProps> = ({ queue, setQueue }) => 
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [previewVideoUrl, setPreviewVideoUrl] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [isZipping, setIsZipping] = useState<boolean>(false);
+
+  const activeControlRef = useRef<RenderControl | null>(null);
+  const shouldStopRef = useRef<boolean>(false);
 
   const processQueue = async () => {
     if (isProcessing) return;
     setIsProcessing(true);
+    shouldStopRef.current = false;
 
     for (let i = 0; i < queue.length; i++) {
+      if (shouldStopRef.current) break;
+
       const item = queue[i];
       if (item.status === 'completed') continue;
 
@@ -42,13 +53,14 @@ export const ShortsQueue: React.FC<ShortsQueueProps> = ({ queue, setQueue }) => 
 
       try {
         await new Promise<void>((resolve) => {
-          exportShortVideo(item.config, {
+          const control = exportShortVideo(item.config, {
             onProgress: (progress) => {
               setQueue(prev =>
                 prev.map((q, idx) => (idx === i ? { ...q, progress } : q))
               );
             },
             onComplete: (blob, videoUrl) => {
+              activeControlRef.current = null;
               setQueue(prev =>
                 prev.map((q, idx) =>
                   idx === i ? { ...q, status: 'completed', progress: 100, blob, videoUrl } : q
@@ -61,7 +73,8 @@ export const ShortsQueue: React.FC<ShortsQueueProps> = ({ queue, setQueue }) => 
               );
               resolve();
             },
-            onError: err => {
+            onError: (err) => {
+              activeControlRef.current = null;
               setQueue(prev =>
                 prev.map((q, idx) =>
                   idx === i ? { ...q, status: 'failed', error: err } : q
@@ -70,12 +83,24 @@ export const ShortsQueue: React.FC<ShortsQueueProps> = ({ queue, setQueue }) => 
               resolve(); // Continue queue on error
             },
           });
+
+          activeControlRef.current = control;
         });
       } catch (e) {
         console.error('Queue processing error', e);
       }
     }
 
+    setIsProcessing(false);
+    activeControlRef.current = null;
+  };
+
+  const handleStopQueue = () => {
+    shouldStopRef.current = true;
+    if (activeControlRef.current) {
+      activeControlRef.current.cancel();
+      activeControlRef.current = null;
+    }
     setIsProcessing(false);
   };
 
@@ -88,6 +113,40 @@ export const ShortsQueue: React.FC<ShortsQueueProps> = ({ queue, setQueue }) => 
     link.download = `BytePrep_CS_${sanitizedSubject}_${item.question.id}.webm`;
     link.click();
     StorageService.recordShortDownloaded(item.question.id);
+  };
+
+  const handleDownloadAllZip = async () => {
+    const completed = queue.filter(q => q.status === 'completed' && q.blob);
+    if (completed.length === 0) return;
+
+    try {
+      setIsZipping(true);
+      const zip = new JSZip();
+      const folder = zip.folder('BytePrep_Shorts_Batch');
+
+      completed.forEach((item, idx) => {
+        const sanitizedSubject = item.question.subject.replace(/[^a-zA-Z0-9]/g, '_');
+        const filename = `${String(idx + 1).padStart(2, '0')}_${sanitizedSubject}_${item.question.id}.webm`;
+        if (folder && item.blob) {
+          folder.file(filename, item.blob);
+          const viral = generateViralContent(item.question, item.config.hookText);
+          folder.file(
+            `${String(idx + 1).padStart(2, '0')}_${sanitizedSubject}_caption.txt`,
+            viral.youtubeCaption
+          );
+        }
+      });
+
+      const content = await zip.generateAsync({ type: 'blob' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(content);
+      link.download = `BytePrep_Shorts_Batch_${Date.now()}.zip`;
+      link.click();
+    } catch (e) {
+      console.error('Failed to create ZIP', e);
+    } finally {
+      setIsZipping(false);
+    }
   };
 
   const handleCopyCaption = (item: QueueItem) => {
@@ -120,11 +179,11 @@ export const ShortsQueue: React.FC<ShortsQueueProps> = ({ queue, setQueue }) => 
             <span>Generated Videos & Render Queue ({queue.length})</span>
           </h3>
           <p className="text-slate-400 text-xs mt-0.5">
-            Download individual videos separately or render all pending items. ({completedCount}/{queue.length} completed)
+            Render all pending items with anti-hang protection. ({completedCount}/{queue.length} completed)
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           {!isProcessing ? (
             <button
               onClick={processQueue}
@@ -134,10 +193,25 @@ export const ShortsQueue: React.FC<ShortsQueueProps> = ({ queue, setQueue }) => 
               <span>RENDER ALL ({queue.filter(q => q.status !== 'completed').length})</span>
             </button>
           ) : (
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-sky-500/10 border border-sky-500/30 text-sky-300 font-bold text-xs rounded-xl">
-              <Loader2 className="w-4 h-4 animate-spin text-sky-400" />
-              <span>Processing Queue...</span>
-            </div>
+            <button
+              onClick={handleStopQueue}
+              className="flex items-center gap-1.5 px-4 py-2 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 font-bold text-xs rounded-xl transition-all cursor-pointer"
+            >
+              <StopCircle className="w-4 h-4" />
+              <span>STOP QUEUE</span>
+            </button>
+          )}
+
+          {completedCount > 0 && (
+            <button
+              onClick={handleDownloadAllZip}
+              disabled={isZipping}
+              className="flex items-center gap-1.5 px-3.5 py-2 bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-500/30 rounded-xl text-xs font-bold transition-all cursor-pointer disabled:opacity-50"
+              title="Download all completed videos in a ZIP package"
+            >
+              {isZipping ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Archive className="w-3.5 h-3.5" />}
+              <span>ZIP BUNDLE ({completedCount})</span>
+            </button>
           )}
 
           <button
@@ -174,6 +248,8 @@ export const ShortsQueue: React.FC<ShortsQueueProps> = ({ queue, setQueue }) => 
                   <span className="text-slate-300 font-semibold">{item.config.hookText}</span>
                   <span>•</span>
                   <span className="text-slate-500">{item.config.themeId}</span>
+                  <span>•</span>
+                  <span className="text-amber-400">{item.config.durationMode || 'viral'}</span>
                 </div>
               </div>
             </div>

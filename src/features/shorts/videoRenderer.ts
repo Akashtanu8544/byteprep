@@ -6,9 +6,198 @@ export const CANVAS_WIDTH = 1080;
 export const CANVAS_HEIGHT = 1920;
 
 export interface RenderCallbacks {
-  onProgress: (progress: number, stage: string) => void;
+  onProgress: (progress: number, stage: string, currentFrame?: number, totalFrames?: number) => void;
   onComplete: (blob: Blob, videoUrl: string) => void;
   onError: (error: string) => void;
+}
+
+export interface RenderControl {
+  cancel: () => void;
+}
+
+export interface TimelineDurations {
+  intro: number;
+  hook: number;
+  question: number;
+  reveal: number;
+  explanation: number;
+  cta: number;
+  total: number;
+}
+
+/**
+ * Computes exact timeline phase durations based on ShortConfig and durationMode.
+ * Supports:
+ * - 'viral' / 'fast': ~18s (Ultra high retention, fast export)
+ * - 'standard': ~25s (Balanced default)
+ * - 'extended': ~34s (Deep dive with long explanation)
+ */
+export function getTimelineDurations(config: ShortConfig): TimelineDurations {
+  const mode = config.durationMode || 'standard';
+
+  if (config.phaseDurations) {
+    const intro = config.phaseDurations.intro ?? (mode === 'viral' ? 1.5 : mode === 'standard' ? 3.0 : 4.0);
+    const hook = config.phaseDurations.hook ?? (mode === 'viral' ? 2.0 : mode === 'standard' ? 2.5 : 3.0);
+    const question = config.phaseDurations.question ?? config.timerSeconds ?? (mode === 'viral' ? 7.0 : 10.0);
+    const reveal = config.phaseDurations.reveal ?? (mode === 'viral' ? 3.0 : mode === 'standard' ? 4.0 : 5.0);
+    const explanation = config.phaseDurations.explanation ?? (mode === 'viral' ? 4.5 : mode === 'standard' ? 6.0 : 8.0);
+    const cta = config.phaseDurations.cta ?? (mode === 'viral' ? 2.5 : mode === 'standard' ? 3.0 : 4.0);
+
+    return {
+      intro,
+      hook,
+      question,
+      reveal,
+      explanation,
+      cta,
+      total: intro + hook + question + reveal + explanation + cta,
+    };
+  }
+
+  if (mode === 'viral') {
+    // ⚡ Fast Viral Short (18-20s)
+    const intro = 1.5;
+    const hook = 2.0;
+    const question = Math.min(config.timerSeconds || 8, 8);
+    const reveal = 3.0;
+    const explanation = 4.5;
+    const cta = 2.5;
+    return {
+      intro,
+      hook,
+      question,
+      reveal,
+      explanation,
+      cta,
+      total: intro + hook + question + reveal + explanation + cta,
+    };
+  }
+
+  if (mode === 'extended') {
+    // 🎥 Extended Short (34-36s)
+    const intro = 4.0;
+    const hook = 3.0;
+    const question = config.timerSeconds || 10;
+    const reveal = 5.0;
+    const explanation = 8.0;
+    const cta = 4.0;
+    return {
+      intro,
+      hook,
+      question,
+      reveal,
+      explanation,
+      cta,
+      total: intro + hook + question + reveal + explanation + cta,
+    };
+  }
+
+  // 🎬 Standard Short (~26s)
+  const intro = 3.0;
+  const hook = 2.5;
+  const question = config.timerSeconds || 10;
+  const reveal = 4.0;
+  const explanation = 6.0;
+  const cta = 3.5;
+  return {
+    intro,
+    hook,
+    question,
+    reveal,
+    explanation,
+    cta,
+    total: intro + hook + question + reveal + explanation + cta,
+  };
+}
+
+/**
+ * Precomputes and caches text layout lines to avoid repeated measureText calls across 1000+ frames.
+ */
+export interface RenderLayoutCache {
+  badgeText: string;
+  badgeW: number;
+  questionLines: string[];
+  hookLines: string[];
+  explanationLines: string[];
+  optionWraps: { line1: string; line2?: string; isSingle: boolean }[];
+  statusLabelW: number;
+}
+
+export function buildLayoutCache(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  config: ShortConfig
+): RenderLayoutCache {
+  const { question, hookText } = config;
+  const boxW = width - 160;
+
+  // 1. Badge metrics
+  const badgeText = `${question.subject.toUpperCase()} • ${question.exam.toUpperCase()}`;
+  ctx.font = 'bold 20px sans-serif';
+  const badgeMetrics = ctx.measureText(badgeText);
+  const badgeW = Math.min(width - 160, badgeMetrics.width + 56);
+
+  // 2. Question lines
+  ctx.font = question.question.length > 120 ? '700 32px sans-serif' : '700 36px sans-serif';
+  const questionLines = computeWrappedLines(ctx, question.question, boxW - 60);
+
+  // 3. Hook lines
+  ctx.font = '900 46px sans-serif';
+  const hookLines = computeWrappedLines(ctx, hookText, boxW - 80);
+
+  // 4. Explanation lines
+  ctx.font = question.explanation.length > 350 ? '500 30px sans-serif' : '500 34px sans-serif';
+  const explanationLines = computeWrappedLines(ctx, question.explanation, boxW - 90);
+
+  // 5. Options wraps
+  const optionWraps = question.options.map((optText: string) => {
+    ctx.font = '600 32px sans-serif';
+    const maxW = boxW - 150;
+    if (ctx.measureText(optText).width <= maxW) {
+      return { line1: optText, isSingle: true };
+    }
+    const words = optText.split(' ');
+    const mid = Math.ceil(words.length / 2);
+    return {
+      line1: words.slice(0, mid).join(' '),
+      line2: words.slice(mid).join(' '),
+      isSingle: false,
+    };
+  });
+
+  ctx.font = 'bold 20px sans-serif';
+  const statusLabelW = ctx.measureText('🚨 TIME IS RUNNING OUT!').width + 36;
+
+  return {
+    badgeText,
+    badgeW,
+    questionLines,
+    hookLines,
+    explanationLines,
+    optionWraps,
+    statusLabelW,
+  };
+}
+
+function computeWrappedLines(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string[] {
+  const words = text.split(' ');
+  const lines: string[] = [];
+  let currentLine = '';
+
+  for (let n = 0; n < words.length; n++) {
+    const testLine = currentLine ? `${currentLine} ${words[n]}` : words[n];
+    const metrics = ctx.measureText(testLine);
+    if (metrics.width > maxWidth && currentLine) {
+      lines.push(currentLine);
+      currentLine = words[n];
+    } else {
+      currentLine = testLine;
+    }
+  }
+  if (currentLine) {
+    lines.push(currentLine);
+  }
+  return lines;
 }
 
 /**
@@ -20,18 +209,14 @@ export function drawShortFrame(
   width: number,
   height: number,
   currentTime: number,
-  config: ShortConfig
+  config: ShortConfig,
+  layoutCache?: RenderLayoutCache
 ) {
   const theme = SHORTS_THEMES[config.themeId] || SHORTS_THEMES['byteprep-dark'];
   const { question, timerSeconds, hookText, appUrl, backgroundStyle = 'auto' } = config;
+  const durations = getTimelineDurations(config);
 
-  // Timeline segment Durations (in seconds)
-  const introDuration = 5.0; // Phase 1: Intro Frame (0 - 5s)
-  const hookDuration = 3.0; // Phase 2: Hook (5 - 8s)
-  const questionDuration = timerSeconds; // Phase 3: Question + Live Timer (8 - 18s)
-  const answerRevealDuration = 5.0; // Phase 4: Time's Up + Reveal (18 - 23s)
-  const explanationDuration = 8.0; // Phase 5: Detailed Explanation (23 - 31s)
-  const ctaDuration = 4.0; // Phase 6: Outro CTA (31 - 35s)
+  const { intro, hook, question: qDuration, reveal, explanation } = durations;
 
   // 1. Live Animated Dynamic Background
   drawLiveBackground(ctx, width, height, currentTime, question, theme, backgroundStyle);
@@ -49,10 +234,8 @@ export function drawShortFrame(
   ctx.fillText('⚡ 10 SECONDS MCQ CHALLENGE', width / 2, 172);
 
   // Subject & Exam Badge Pill
-  const badgeText = `${question.subject.toUpperCase()} • ${question.exam.toUpperCase()}`;
-  ctx.font = 'bold 20px sans-serif';
-  const badgeMetrics = ctx.measureText(badgeText);
-  const badgeW = Math.min(width - 160, badgeMetrics.width + 56);
+  const badgeText = layoutCache?.badgeText ?? `${question.subject.toUpperCase()} • ${question.exam.toUpperCase()}`;
+  const badgeW = layoutCache?.badgeW ?? Math.min(width - 160, 480);
   const badgeX = (width - badgeW) / 2;
   const badgeY = 215;
   const badgeH = 42;
@@ -64,6 +247,7 @@ export function drawShortFrame(
   ctx.stroke();
 
   ctx.fillStyle = theme.textColor;
+  ctx.font = 'bold 20px sans-serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillText(badgeText, width / 2, badgeY + badgeH / 2);
@@ -72,34 +256,34 @@ export function drawShortFrame(
   // 3. Render Timeline Segment
   const t = currentTime;
 
-  if (t < introDuration) {
-    // PHASE 1: INTRO FRAME (0s - 5s)
-    drawIntroPhase(ctx, width, height, t, question, theme);
-  } else if (t < introDuration + hookDuration) {
-    // PHASE 2: HOOK (5s - 8s)
-    drawHookPhase(ctx, width, height, t - introDuration, hookText, theme);
-  } else if (t < introDuration + hookDuration + questionDuration) {
-    // PHASE 3: QUESTION + COUNTDOWN TIMER (8s - 18s)
-    const elapsedInQ = t - (introDuration + hookDuration);
-    const remainingTimer = Math.max(0, Math.ceil(timerSeconds - elapsedInQ));
-    drawQuestionPhase(ctx, width, height, question, remainingTimer, timerSeconds, theme);
-  } else if (t < introDuration + hookDuration + questionDuration + answerRevealDuration) {
-    // PHASE 4: TIME'S UP + ANSWER REVEAL (18s - 23s)
-    const elapsedInAns = t - (introDuration + hookDuration + questionDuration);
-    drawAnswerRevealPhase(ctx, width, height, question, elapsedInAns, theme);
-  } else if (t < introDuration + hookDuration + questionDuration + answerRevealDuration + explanationDuration) {
-    // PHASE 5: EXPLANATION (23s - 31s)
-    drawExplanationPhase(ctx, width, height, question, theme);
+  if (t < intro) {
+    // PHASE 1: INTRO FRAME
+    drawIntroPhase(ctx, width, height, t, intro, question, theme);
+  } else if (t < intro + hook) {
+    // PHASE 2: HOOK
+    drawHookPhase(ctx, width, height, t - intro, hookText, theme, layoutCache);
+  } else if (t < intro + hook + qDuration) {
+    // PHASE 3: QUESTION + COUNTDOWN TIMER
+    const elapsedInQ = t - (intro + hook);
+    const remainingTimer = Math.max(0, Math.ceil(timerSeconds * (1 - elapsedInQ / qDuration)));
+    drawQuestionPhase(ctx, width, height, question, remainingTimer, timerSeconds, theme, layoutCache);
+  } else if (t < intro + hook + qDuration + reveal) {
+    // PHASE 4: TIME'S UP + ANSWER REVEAL
+    const elapsedInAns = t - (intro + hook + qDuration);
+    drawAnswerRevealPhase(ctx, width, height, question, elapsedInAns, theme, layoutCache);
+  } else if (t < intro + hook + qDuration + reveal + explanation) {
+    // PHASE 5: EXPLANATION
+    drawExplanationPhase(ctx, width, height, question, theme, layoutCache);
   } else {
-    // PHASE 6: OUTRO CTA (31s - 35s)
+    // PHASE 6: OUTRO CTA
     drawCtaPhase(ctx, width, height, appUrl || 'dsssbpyq.online', theme);
   }
 
-  // 4. Footer Safe Banner on EVERY Frame (Perfect 2-Line Alignment + Start/End Logos)
+  // 4. Footer Safe Banner on EVERY Frame
   ctx.save();
   const footerW = width - 160; // 920px width
   const footerX = 80;
-  const footerY = height - 185; // Sits comfortably above bottom social media overlay
+  const footerY = height - 185;
   const footerH = 96;
 
   // Background Container
@@ -109,39 +293,31 @@ export function drawShortFrame(
   ctx.lineWidth = 2.5;
   ctx.stroke();
 
-  // Logo in STARTING (Left)
+  // Logo Left
   drawCanvasBytePrepLogo(ctx, footerX + 56, footerY + footerH / 2, 64);
 
-  // Center Text Line 1: Search BytePrep TGT PGT CS on Play Store
+  // Center Text Line 1
   ctx.fillStyle = '#ffffff';
   ctx.font = '900 22px sans-serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText(
-    'Search BytePrep TGT PGT CS on Play Store',
-    width / 2,
-    footerY + 32
-  );
+  ctx.fillText('Search BytePrep TGT PGT CS on Play Store', width / 2, footerY + 32);
 
-  // Center Text Line 2: Visit Website : dsssbpyq.online
+  // Center Text Line 2
   ctx.fillStyle = '#38bdf8';
   ctx.font = '800 20px sans-serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText(
-    'Visit Website : dsssbpyq.online',
-    width / 2,
-    footerY + 65
-  );
+  ctx.fillText('Visit Website : dsssbpyq.online', width / 2, footerY + 65);
 
-  // Logo in ENDING (Right)
+  // Logo Right
   drawCanvasBytePrepLogo(ctx, footerX + footerW - 56, footerY + footerH / 2, 64);
 
   ctx.restore();
 }
 
 /**
- * Renders dynamic animated backgrounds (Falling Stars, Matrix Code, SQL, OS, Network)
+ * Renders dynamic animated backgrounds
  */
 function drawLiveBackground(
   ctx: CanvasRenderingContext2D,
@@ -152,7 +328,6 @@ function drawLiveBackground(
   theme: any,
   style: 'auto' | 'stars' | 'matrix' | 'sql' | 'network' | 'os' | 'grid' | 'terminal' | 'cyber'
 ) {
-  // Base background gradient
   const grad = ctx.createLinearGradient(0, 0, 0, height);
   grad.addColorStop(0, theme.bgGradient[0]);
   grad.addColorStop(0.5, theme.bgGradient[1] || theme.bgGradient[0]);
@@ -162,7 +337,6 @@ function drawLiveBackground(
 
   ctx.save();
 
-  // Determine effective style
   let effectiveStyle = style;
   if (style === 'auto') {
     const subj = (question?.subject || '').toLowerCase();
@@ -174,11 +348,10 @@ function drawLiveBackground(
   }
 
   if (effectiveStyle === 'stars') {
-    // 🌟 FALLING STARS & GLOWING METEORS ANIMATION
-    const starCount = 65;
+    const starCount = 45; // Optimized count for speed
     for (let i = 0; i < starCount; i++) {
       const speed = 60 + (i % 5) * 45;
-      const x = ((i * 137.5 + i * 29) % width);
+      const x = (i * 137.5 + i * 29) % width;
       const y = ((time * speed + i * 190) % (height + 100)) - 50;
       const size = 1.5 + (i % 4) * 1.2;
       const alpha = 0.3 + 0.6 * Math.abs(Math.sin(time * 2 + i));
@@ -187,39 +360,10 @@ function drawLiveBackground(
       ctx.beginPath();
       ctx.arc(x, y, size, 0, Math.PI * 2);
       ctx.fill();
-
-      if (i % 4 === 0) {
-        const tailGrad = ctx.createLinearGradient(x, y, x - 10, y - 35);
-        tailGrad.addColorStop(0, `rgba(56, 189, 248, ${alpha * 0.8})`);
-        tailGrad.addColorStop(1, 'rgba(56, 189, 248, 0)');
-        ctx.strokeStyle = tailGrad;
-        ctx.lineWidth = 1.5;
-        ctx.beginPath();
-        ctx.moveTo(x, y);
-        ctx.lineTo(x - 8, y - 30);
-        ctx.stroke();
-      }
-    }
-
-    const meteorProgress = (time * 0.4) % 1;
-    const meteorX = (meteorProgress * (width + 400)) - 200;
-    const meteorY = meteorProgress * (height * 0.6) + 100;
-    if (meteorX > 0 && meteorX < width && meteorY < height) {
-      const meteorGrad = ctx.createLinearGradient(meteorX, meteorY, meteorX - 120, meteorY - 80);
-      meteorGrad.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
-      meteorGrad.addColorStop(0.3, 'rgba(56, 189, 248, 0.6)');
-      meteorGrad.addColorStop(1, 'rgba(56, 189, 248, 0)');
-      ctx.strokeStyle = meteorGrad;
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.moveTo(meteorX, meteorY);
-      ctx.lineTo(meteorX - 120, meteorY - 80);
-      ctx.stroke();
     }
   } else if (effectiveStyle === 'matrix') {
-    // 💻 LIVE MATRIX DIGITAL CODE RAIN
     ctx.font = 'bold 20px monospace';
-    const cols = 14;
+    const cols = 12;
     const colSpacing = width / cols;
     const characters = '010101XYZ{}[]<>=/+#$%&~*';
 
@@ -228,18 +372,13 @@ function drawLiveBackground(
       const speed = 80 + (c % 4) * 35;
       const yHead = ((time * speed + c * 210) % (height + 300)) - 100;
 
-      for (let row = 0; row < 12; row++) {
+      for (let row = 0; row < 10; row++) {
         const charY = yHead - row * 26;
         if (charY > 0 && charY < height) {
           const charIndex = (Math.floor(time * 10) + c * 3 + row) % characters.length;
           const char = characters[charIndex];
-          const opacity = Math.max(0, 1 - row / 12);
-
-          if (row === 0) {
-            ctx.fillStyle = '#ffffff';
-          } else {
-            ctx.fillStyle = `rgba(34, 197, 94, ${opacity * 0.4})`;
-          }
+          const opacity = Math.max(0, 1 - row / 10);
+          ctx.fillStyle = row === 0 ? '#ffffff' : `rgba(34, 197, 94, ${opacity * 0.4})`;
           ctx.fillText(char, x, charY);
         }
       }
@@ -256,49 +395,26 @@ function drawLiveBackground(
       'COMMIT; -- BytePrep 10s MCQ Speed Engine',
     ];
     queries.forEach((q, idx) => {
-      const y = ((time * 45 + idx * 280) % height);
+      const y = (time * 45 + idx * 280) % height;
       ctx.fillText(q, 50, y);
     });
-  } else if (effectiveStyle === 'os') {
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
-    ctx.font = '18px monospace';
-    const procs = [
-      '[CPU CORE 0: 94% UTILIZED]',
-      '[SCHEDULER: ROUND ROBIN Q=10ms]',
-      '[PROCESS P1: RUNNING (PID 4096)]',
-      '[MEMORY: 16GB / CACHE L1 HIT 98%]',
-      '[THREAD T2: READY IN QUEUE]',
-      '[BYTEPREP ENGINE: ACTIVE]',
-    ];
-    procs.forEach((p, idx) => {
-      const x = (time * 40 + idx * 160) % (width - 150);
-      const y = 280 + idx * 240;
-      ctx.fillText(p, x, y);
-    });
-  } else if (effectiveStyle === 'network') {
-    ctx.strokeStyle = 'rgba(56, 189, 248, 0.15)';
-    ctx.lineWidth = 2;
-    const offset = (time * 50) % 140;
-    for (let y = 0; y < height; y += 140) {
+  } else {
+    // Default network grid
+    ctx.strokeStyle = 'rgba(56, 189, 248, 0.12)';
+    ctx.lineWidth = 1.5;
+    const offset = (time * 40) % 140;
+    for (let y = 0; y < height; y += 160) {
       ctx.beginPath();
       ctx.moveTo(0, y + offset);
       ctx.lineTo(width, y + offset);
       ctx.stroke();
     }
-    for (let i = 0; i < 10; i++) {
-      const px = (time * 110 + i * 150) % width;
-      const py = (i * 200 + Math.sin(time * 1.5 + i) * 60) % height;
-      ctx.fillStyle = theme.accentColor;
-      ctx.beginPath();
-      ctx.arc(px, py, 6, 0, Math.PI * 2);
-      ctx.fill();
-    }
   }
 
-  // Soft atmospheric vignette
-  const vignette = ctx.createRadialGradient(width / 2, height / 2, height * 0.3, width / 2, height / 2, height * 0.75);
+  // Atmospheric soft gradient
+  const vignette = ctx.createRadialGradient(width / 2, height / 2, height * 0.35, width / 2, height / 2, height * 0.8);
   vignette.addColorStop(0, 'rgba(0, 0, 0, 0)');
-  vignette.addColorStop(1, 'rgba(0, 0, 0, 0.5)');
+  vignette.addColorStop(1, 'rgba(0, 0, 0, 0.45)');
   ctx.fillStyle = vignette;
   ctx.fillRect(0, 0, width, height);
 
@@ -306,20 +422,21 @@ function drawLiveBackground(
 }
 
 /**
- * Phase 1: Intro Frame (0s - 5s)
+ * Phase 1: Intro Frame
  */
 function drawIntroPhase(
   ctx: CanvasRenderingContext2D,
   width: number,
   height: number,
   time: number,
+  introDuration: number,
   question: any,
   theme: any
 ) {
   ctx.save();
-  const remainingIntro = Math.max(1, Math.ceil(5 - time));
+  const remainingIntro = Math.max(1, Math.ceil(introDuration - time));
 
-  const boxW = width - 160; // 920px
+  const boxW = width - 160;
   const boxH = 680;
   const boxX = (width - boxW) / 2;
   const boxY = 460;
@@ -368,7 +485,7 @@ function drawIntroPhase(
 }
 
 /**
- * Phase 2: Hook Phase (5s - 8s)
+ * Phase 2: Hook Phase
  */
 function drawHookPhase(
   ctx: CanvasRenderingContext2D,
@@ -376,11 +493,12 @@ function drawHookPhase(
   height: number,
   time: number,
   hookText: string,
-  theme: any
+  theme: any,
+  layoutCache?: RenderLayoutCache
 ) {
   ctx.save();
-  const progress = Math.min(1, time / 0.35);
-  const scale = 0.92 + 0.08 * Math.sin((progress * Math.PI) / 2);
+  const progress = Math.min(1, time / 0.3);
+  const scale = 0.94 + 0.06 * Math.sin((progress * Math.PI) / 2);
 
   const boxW = width - 160;
   const boxH = 580;
@@ -406,7 +524,17 @@ function drawHookPhase(
   ctx.font = '900 46px sans-serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  wrapText(ctx, hookText, 0, -20, boxW - 80, 62, true);
+
+  if (layoutCache?.hookLines) {
+    const lines = layoutCache.hookLines;
+    const lineHeight = 62;
+    const startY = -20 - ((lines.length - 1) * lineHeight) / 2;
+    lines.forEach((line, idx) => {
+      ctx.fillText(line, 0, startY + idx * lineHeight);
+    });
+  } else {
+    wrapTextDirect(ctx, hookText, 0, -20, boxW - 80, 62, true);
+  }
 
   // Callout Pill
   const pillW = 540;
@@ -425,7 +553,7 @@ function drawHookPhase(
 }
 
 /**
- * Phase 3: Question + Live Countdown Timer (8s - 18s)
+ * Phase 3: Question + Live Countdown Timer
  */
 function drawQuestionPhase(
   ctx: CanvasRenderingContext2D,
@@ -434,7 +562,8 @@ function drawQuestionPhase(
   question: any,
   timerVal: number,
   timerMax: number,
-  theme: any
+  theme: any,
+  layoutCache?: RenderLayoutCache
 ) {
   ctx.save();
 
@@ -448,29 +577,22 @@ function drawQuestionPhase(
   ctx.arc(width / 2, timerY, timerRadius, 0, Math.PI * 2);
   ctx.stroke();
 
-  const pct = timerVal / timerMax;
-  let timerColorHex = '#10b981'; // Green (>50%)
+  const pct = Math.max(0, Math.min(1, timerVal / timerMax));
+  let timerColorHex = '#10b981';
   let statusLabel = '⚡ SPEED BONUS ACTIVE';
 
   if (pct <= 0.25) {
-    timerColorHex = '#f43f5e'; // Red (<25%)
+    timerColorHex = '#f43f5e';
     statusLabel = '🚨 TIME IS RUNNING OUT!';
   } else if (pct <= 0.5) {
-    timerColorHex = '#fbbf24'; // Yellow (25-50%)
+    timerColorHex = '#fbbf24';
     statusLabel = '⚠️ HURRY UP!';
   }
 
   // Active Progress Ring
   ctx.strokeStyle = timerColorHex;
   ctx.beginPath();
-  ctx.arc(
-    width / 2,
-    timerY,
-    timerRadius,
-    -Math.PI / 2,
-    -Math.PI / 2 + Math.PI * 2 * pct,
-    false
-  );
+  ctx.arc(width / 2, timerY, timerRadius, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * pct, false);
   ctx.stroke();
 
   // Timer Digits Centered
@@ -480,9 +602,9 @@ function drawQuestionPhase(
   ctx.textBaseline = 'middle';
   ctx.fillText(String(timerVal).padStart(2, '0'), width / 2, timerY + 3);
 
-  // Status Label Pill under ring
+  // Status Label Pill
   ctx.font = 'bold 20px sans-serif';
-  const pillW = ctx.measureText(statusLabel).width + 36;
+  const pillW = layoutCache?.statusLabelW ?? 320;
   ctx.fillStyle = 'rgba(15, 23, 42, 0.8)';
   fillRoundedRect(ctx, (width - pillW) / 2, timerY + 80, pillW, 36, 18);
   ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
@@ -493,7 +615,7 @@ function drawQuestionPhase(
 
   // 2. Question Card
   const qCardY = 485;
-  const qCardW = width - 160; // 920px
+  const qCardW = width - 160;
   const qCardH = question.question.length > 120 ? 270 : 230;
   const qCardX = (width - qCardW) / 2;
 
@@ -507,7 +629,16 @@ function drawQuestionPhase(
   ctx.font = question.question.length > 120 ? '700 32px sans-serif' : '700 36px sans-serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'top';
-  wrapText(ctx, question.question, width / 2, qCardY + 28, qCardW - 60, 44, true);
+
+  if (layoutCache?.questionLines) {
+    const lines = layoutCache.questionLines;
+    const lineHeight = 44;
+    lines.forEach((line, idx) => {
+      ctx.fillText(line, width / 2, qCardY + 28 + idx * lineHeight);
+    });
+  } else {
+    wrapTextDirect(ctx, question.question, width / 2, qCardY + 28, qCardW - 60, 44, true);
+  }
 
   // 3. Options Cards (A, B, C, D)
   const optionLetters = ['A', 'B', 'C', 'D'];
@@ -526,7 +657,6 @@ function drawQuestionPhase(
     fillRoundedRect(ctx, optX, optY, optW, optionH, 22);
     ctx.stroke();
 
-    // Letter badge circle
     const circleX = optX + 65;
     const circleY = optY + optionH / 2;
     ctx.fillStyle = 'rgba(255, 255, 255, 0.12)';
@@ -540,19 +670,33 @@ function drawQuestionPhase(
     ctx.textBaseline = 'middle';
     ctx.fillText(optionLetters[idx], circleX, circleY + 2);
 
-    // Option text (Vertically auto-aligned so it never overlaps or touches border)
     ctx.fillStyle = theme.textColor;
     ctx.textAlign = 'left';
     ctx.textBaseline = 'middle';
-    renderOptionTextWithAutoWrap(ctx, optionText, optX + 125, circleY, optW - 150);
+
+    const wrap = layoutCache?.optionWraps[idx];
+    if (wrap) {
+      if (wrap.isSingle) {
+        ctx.font = '600 32px sans-serif';
+        ctx.fillText(wrap.line1, optX + 125, circleY);
+      } else {
+        ctx.font = optionText.length > 50 ? '600 25px sans-serif' : '600 28px sans-serif';
+        const lineHeight = optionText.length > 50 ? 32 : 36;
+        ctx.fillText(wrap.line1, optX + 125, circleY - lineHeight / 2 + 2);
+        if (wrap.line2) {
+          ctx.fillText(wrap.line2, optX + 125, circleY + lineHeight / 2 - 2);
+        }
+      }
+    } else {
+      renderOptionTextWithAutoWrap(ctx, optionText, optX + 125, circleY, optW - 150);
+    }
   });
 
   ctx.restore();
 }
 
 /**
- * Phase 4: Time's Up + Answer Reveal (18s - 23s)
- * Exactly mirrors Phase 3 geometry so option boxes do not jump!
+ * Phase 4: Time's Up + Answer Reveal
  */
 function drawAnswerRevealPhase(
   ctx: CanvasRenderingContext2D,
@@ -560,11 +704,11 @@ function drawAnswerRevealPhase(
   height: number,
   question: any,
   elapsedInAns: number,
-  theme: any
+  theme: any,
+  layoutCache?: RenderLayoutCache
 ) {
   ctx.save();
 
-  // Top Title
   ctx.fillStyle = theme.timerColor;
   ctx.font = '900 58px sans-serif';
   ctx.textAlign = 'center';
@@ -575,7 +719,7 @@ function drawAnswerRevealPhase(
   ctx.font = '900 28px sans-serif';
   ctx.fillText('CORRECT ANSWER REVEAL', width / 2, 400);
 
-  // Question Card (Exact same dimensions as Phase 3)
+  // Question Card
   const qCardY = 485;
   const qCardW = width - 160;
   const qCardH = question.question.length > 120 ? 270 : 230;
@@ -591,9 +735,18 @@ function drawAnswerRevealPhase(
   ctx.font = question.question.length > 120 ? '700 32px sans-serif' : '700 36px sans-serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'top';
-  wrapText(ctx, question.question, width / 2, qCardY + 28, qCardW - 60, 44, true);
 
-  // 4 Option Cards (Exact same startY and heights as Phase 3)
+  if (layoutCache?.questionLines) {
+    const lines = layoutCache.questionLines;
+    const lineHeight = 44;
+    lines.forEach((line, idx) => {
+      ctx.fillText(line, width / 2, qCardY + 28 + idx * lineHeight);
+    });
+  } else {
+    wrapTextDirect(ctx, question.question, width / 2, qCardY + 28, qCardW - 60, 44, true);
+  }
+
+  // 4 Option Cards
   const optionLetters = ['A', 'B', 'C', 'D'];
   const startY = qCardY + qCardH + 25;
   const optionH = 120;
@@ -635,9 +788,24 @@ function drawAnswerRevealPhase(
     ctx.fillStyle = isCorrect ? '#ffffff' : 'rgba(255, 255, 255, 0.5)';
     ctx.textAlign = 'left';
     ctx.textBaseline = 'middle';
-    renderOptionTextWithAutoWrap(ctx, optionText, optX + 125, circleY, optW - 150);
 
-    // If correct, draw glowing check badge tag on right side
+    const wrap = layoutCache?.optionWraps[idx];
+    if (wrap) {
+      if (wrap.isSingle) {
+        ctx.font = '600 32px sans-serif';
+        ctx.fillText(wrap.line1, optX + 125, circleY);
+      } else {
+        ctx.font = optionText.length > 50 ? '600 25px sans-serif' : '600 28px sans-serif';
+        const lineHeight = optionText.length > 50 ? 32 : 36;
+        ctx.fillText(wrap.line1, optX + 125, circleY - lineHeight / 2 + 2);
+        if (wrap.line2) {
+          ctx.fillText(wrap.line2, optX + 125, circleY + lineHeight / 2 - 2);
+        }
+      }
+    } else {
+      renderOptionTextWithAutoWrap(ctx, optionText, optX + 125, circleY, optW - 150);
+    }
+
     if (isCorrect) {
       const correctBadgeW = 150;
       const correctBadgeH = 34;
@@ -658,14 +826,15 @@ function drawAnswerRevealPhase(
 }
 
 /**
- * Phase 5: Explanation Phase (23s - 31s)
+ * Phase 5: Explanation Phase
  */
 function drawExplanationPhase(
   ctx: CanvasRenderingContext2D,
   width: number,
   height: number,
   question: any,
-  theme: any
+  theme: any,
+  layoutCache?: RenderLayoutCache
 ) {
   ctx.save();
 
@@ -711,13 +880,22 @@ function drawExplanationPhase(
   ctx.font = question.explanation.length > 350 ? '500 30px sans-serif' : '500 34px sans-serif';
   ctx.textAlign = 'left';
   ctx.textBaseline = 'top';
-  wrapText(ctx, question.explanation, boxX + 45, boxY + 45, boxW - 90, 50, false);
+
+  if (layoutCache?.explanationLines) {
+    const lines = layoutCache.explanationLines;
+    const lineHeight = 50;
+    lines.forEach((line, idx) => {
+      ctx.fillText(line, boxX + 45, boxY + 45 + idx * lineHeight);
+    });
+  } else {
+    wrapTextDirect(ctx, question.explanation, boxX + 45, boxY + 45, boxW - 90, 50, false);
+  }
 
   ctx.restore();
 }
 
 /**
- * Phase 6: CTA Outro Phase (31s - 35s)
+ * Phase 6: CTA Outro Phase
  */
 function drawCtaPhase(
   ctx: CanvasRenderingContext2D,
@@ -773,89 +951,665 @@ function drawCtaPhase(
 }
 
 /**
- * Render and record a short video to WebM blob using HTML5 Canvas + MediaRecorder
+ * Synthesizes audio sounds (Timer Beeps, Reveal Chime) into a Web Audio Destination Stream.
  */
-export async function exportShortVideo(
-  config: ShortConfig,
-  callbacks: RenderCallbacks
-) {
+function createAudioTrack(durations: TimelineDurations, includeAudio: boolean): { stream: MediaStream | null; cleanup: () => void } {
+  if (!includeAudio) return { stream: null, cleanup: () => {} };
+
   try {
-    callbacks.onProgress(5, 'Preparing Canvas & Audio Pipeline...');
+    const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+    if (!AudioContextClass) return { stream: null, cleanup: () => {} };
 
-    const canvas = document.createElement('canvas');
-    canvas.width = CANVAS_WIDTH;
-    canvas.height = CANVAS_HEIGHT;
-    const ctx = canvas.getContext('2d');
+    const audioCtx = new AudioContextClass();
+    const dest = audioCtx.createMediaStreamDestination();
 
-    if (!ctx) {
-      throw new Error('Canvas 2D Context not available');
+    const { intro, hook, question, reveal } = durations;
+    const startTime = audioCtx.currentTime + 0.05;
+
+    // 1. Question Countdown Beeps (Every second of question phase)
+    const qStartTime = startTime + intro + hook;
+    for (let sec = 0; sec < question; sec++) {
+      const beepTime = qStartTime + sec;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+
+      const isLast3 = sec >= question - 3;
+      osc.type = isLast3 ? 'square' : 'sine';
+      osc.frequency.setValueAtTime(isLast3 ? 1200 : 800, beepTime);
+
+      gain.gain.setValueAtTime(0, beepTime);
+      gain.gain.linearRampToValueAtTime(0.12, beepTime + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, beepTime + 0.12);
+
+      osc.connect(gain);
+      gain.connect(dest);
+
+      osc.start(beepTime);
+      osc.stop(beepTime + 0.15);
     }
 
-    const fps = 30;
-    const timerSeconds = config.timerSeconds;
-    const totalDuration = 5.0 + 3.0 + timerSeconds + 5.0 + 8.0 + 4.0; // ~35s
-    const totalFrames = Math.floor(totalDuration * fps);
+    // 2. Victory Chime Chord on Reveal
+    const revealTime = startTime + intro + hook + question;
+    const chordFreqs = [523.25, 659.25, 783.99]; // C5, E5, G5
+    chordFreqs.forEach((freq, idx) => {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(freq, revealTime + idx * 0.06);
 
-    const stream = canvas.captureStream(fps);
+      gain.gain.setValueAtTime(0, revealTime + idx * 0.06);
+      gain.gain.linearRampToValueAtTime(0.18, revealTime + idx * 0.06 + 0.04);
+      gain.gain.exponentialRampToValueAtTime(0.001, revealTime + idx * 0.06 + 1.2);
 
-    let mimeType = 'video/webm;codecs=vp9';
-    if (!MediaRecorder.isTypeSupported(mimeType)) {
-      mimeType = 'video/webm;codecs=vp8';
-      if (!MediaRecorder.isTypeSupported(mimeType)) {
-        mimeType = 'video/webm';
-      }
-    }
+      osc.connect(gain);
+      gain.connect(dest);
 
-    const mediaRecorder = new MediaRecorder(stream, {
-      mimeType,
-      videoBitsPerSecond: 8000000,
+      osc.start(revealTime + idx * 0.06);
+      osc.stop(revealTime + idx * 0.06 + 1.3);
     });
 
-    const chunks: Blob[] = [];
-    mediaRecorder.ondataavailable = e => {
-      if (e.data && e.data.size > 0) {
-        chunks.push(e.data);
-      }
+    return {
+      stream: dest.stream,
+      cleanup: () => {
+        try {
+          audioCtx.close();
+        } catch {
+          // ignore
+        }
+      },
     };
-
-    mediaRecorder.onerror = (err: any) => {
-      callbacks.onError(err.message || 'MediaRecorder error occurred');
-    };
-
-    mediaRecorder.onstop = () => {
-      callbacks.onProgress(98, 'Finalizing video file...');
-      const blob = new Blob(chunks, { type: mimeType });
-      const videoUrl = URL.createObjectURL(blob);
-      callbacks.onProgress(100, 'Video Ready!');
-      callbacks.onComplete(blob, videoUrl);
-    };
-
-    mediaRecorder.start();
-
-    let currentFrame = 0;
-
-    const renderLoop = () => {
-      if (currentFrame > totalFrames) {
-        mediaRecorder.stop();
-        return;
-      }
-
-      const currentTime = currentFrame / fps;
-      drawShortFrame(ctx, CANVAS_WIDTH, CANVAS_HEIGHT, currentTime, config);
-
-      if (currentFrame % 15 === 0) {
-        const pct = Math.min(95, Math.floor((currentFrame / totalFrames) * 90) + 5);
-        callbacks.onProgress(pct, `Rendering frame ${currentFrame}/${totalFrames}...`);
-      }
-
-      currentFrame++;
-      setTimeout(renderLoop, 1000 / fps);
-    };
-
-    renderLoop();
-  } catch (err: any) {
-    callbacks.onError(err.message || 'Failed to render short video');
+  } catch {
+    return { stream: null, cleanup: () => {} };
   }
+}
+
+/**
+ * Render and record a short video to WebM blob using high-speed non-blocking HTML5 Canvas + MediaRecorder.
+ * Supports:
+ * - Anti-hang watchdog protection
+ * - Fast timeline duration modes
+ * - 720p / 1080p quality scaling
+ * - Audio track synthesis (countdown ticks & victory chime)
+ * - Immediate abort / cancel support
+ */
+export function exportShortVideo(
+  config: ShortConfig,
+  callbacks: RenderCallbacks
+): RenderControl {
+  let isCancelled = false;
+  let mediaRecorder: MediaRecorder | null = null;
+  let audioCleanup: (() => void) | null = null;
+  let streamTracks: MediaStreamTrack[] = [];
+  let watchdogTimeout: any = null;
+
+  const cancel = () => {
+    isCancelled = true;
+    if (watchdogTimeout) clearTimeout(watchdogTimeout);
+    try {
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+      }
+    } catch {
+      // ignore
+    }
+    streamTracks.forEach(t => t.stop());
+    if (audioCleanup) audioCleanup();
+    callbacks.onError('Rendering was cancelled by user');
+  };
+
+  (async () => {
+    try {
+      callbacks.onProgress(3, 'Initializing High-Speed Video Engine...');
+
+      const quality = config.renderQuality || '1080p';
+      const is720p = quality === '720p' || quality === 'fast';
+      const targetW = is720p ? 720 : CANVAS_WIDTH;
+      const targetH = is720p ? 1280 : CANVAS_HEIGHT;
+      const scaleFactor = targetW / CANVAS_WIDTH;
+
+      const canvas = document.createElement('canvas');
+      canvas.width = targetW;
+      canvas.height = targetH;
+      const ctx = canvas.getContext('2d', { alpha: false });
+
+      if (!ctx) {
+        throw new Error('Canvas 2D Context not available');
+      }
+
+      const durations = getTimelineDurations(config);
+      const totalDuration = durations.total;
+      const fps = config.fps || (is720p ? 24 : 30);
+      const totalFrames = Math.max(1, Math.floor(totalDuration * fps));
+
+      // Build Layout Cache ONCE for maximum performance
+      callbacks.onProgress(8, 'Precomputing typography layout cache...');
+      ctx.save();
+      if (scaleFactor !== 1.0) {
+        ctx.scale(scaleFactor, scaleFactor);
+      }
+      const layoutCache = buildLayoutCache(ctx, CANVAS_WIDTH, config);
+      ctx.restore();
+
+      // Audio setup
+      const audio = createAudioTrack(durations, config.includeAudio);
+      audioCleanup = audio.cleanup;
+
+      const canvasStream = canvas.captureStream(fps);
+      const combinedTracks: MediaStreamTrack[] = [...canvasStream.getVideoTracks()];
+
+      if (audio.stream && audio.stream.getAudioTracks().length > 0) {
+        combinedTracks.push(...audio.stream.getAudioTracks());
+      }
+
+      streamTracks = combinedTracks;
+      const stream = new MediaStream(combinedTracks);
+
+      let mimeType = 'video/webm;codecs=vp9';
+      if (!MediaRecorder.isTypeSupported(mimeType)) {
+        mimeType = 'video/webm;codecs=vp8';
+        if (!MediaRecorder.isTypeSupported(mimeType)) {
+          mimeType = 'video/webm';
+        }
+      }
+
+      const bitrate = is720p ? 3500000 : 7000000;
+      mediaRecorder = new MediaRecorder(stream, {
+        mimeType,
+        videoBitsPerSecond: bitrate,
+      });
+
+      const chunks: Blob[] = [];
+      mediaRecorder.ondataavailable = e => {
+        if (e.data && e.data.size > 0) {
+          chunks.push(e.data);
+        }
+      };
+
+      mediaRecorder.onerror = (err: any) => {
+        if (isCancelled) return;
+        callbacks.onError(err.message || 'MediaRecorder encountered an error');
+      };
+
+      const finalizeExport = () => {
+        if (isCancelled) return;
+        if (watchdogTimeout) clearTimeout(watchdogTimeout);
+
+        callbacks.onProgress(98, 'Finalizing video file...');
+        const blob = new Blob(chunks, { type: mimeType });
+        const videoUrl = URL.createObjectURL(blob);
+
+        streamTracks.forEach(t => t.stop());
+        if (audioCleanup) audioCleanup();
+
+        callbacks.onProgress(100, 'Video Ready!');
+        callbacks.onComplete(blob, videoUrl);
+      };
+
+      mediaRecorder.onstop = () => {
+        finalizeExport();
+      };
+
+      mediaRecorder.start(100); // chunk every 100ms
+      callbacks.onProgress(15, `Processing frames: 0/${totalFrames} (0%)`, 0, totalFrames);
+
+      let currentFrame = 0;
+
+      // High-speed non-blocking chunked frame loop
+      const processFrameBatch = async () => {
+        if (isCancelled) return;
+
+        const batchSize = is720p ? 3 : 2; // Process multiple frames per event tick
+        for (let b = 0; b < batchSize && currentFrame <= totalFrames; b++) {
+          const currentTime = (currentFrame / totalFrames) * totalDuration;
+
+          ctx.save();
+          if (scaleFactor !== 1.0) {
+            ctx.scale(scaleFactor, scaleFactor);
+          }
+          drawShortFrame(ctx, CANVAS_WIDTH, CANVAS_HEIGHT, currentTime, config, layoutCache);
+          ctx.restore();
+
+          currentFrame++;
+        }
+
+        if (currentFrame <= totalFrames) {
+          const pct = Math.min(95, Math.floor(15 + (currentFrame / totalFrames) * 80));
+          if (currentFrame % 6 === 0 || currentFrame >= totalFrames) {
+            callbacks.onProgress(
+              pct,
+              `Processing frames: ${Math.min(currentFrame, totalFrames)}/${totalFrames} (${pct}%)`,
+              Math.min(currentFrame, totalFrames),
+              totalFrames
+            );
+          }
+
+          // Micro-yielding to prevent UI freezing & keep browser responsive
+          await new Promise(resolve => setTimeout(resolve, 0));
+          processFrameBatch();
+        } else {
+          // Complete rendering with watchdog protection
+          callbacks.onProgress(96, `Encoding video stream: ${totalFrames}/${totalFrames} frames...`, totalFrames, totalFrames);
+          
+          if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+            try {
+              mediaRecorder.requestData();
+            } catch {
+              // ignore
+            }
+            mediaRecorder.stop();
+
+            // Anti-hang Watchdog: If onstop doesn't fire within 2500ms, force finalization
+            watchdogTimeout = setTimeout(() => {
+              if (chunks.length > 0) {
+                finalizeExport();
+              } else {
+                callbacks.onError('Video encoding timed out. Please try Fast 720p mode.');
+              }
+            }, 2500);
+          } else {
+            finalizeExport();
+          }
+        }
+      };
+
+      processFrameBatch();
+    } catch (err: any) {
+      if (!isCancelled) {
+        callbacks.onError(err.message || 'Failed to render short video');
+      }
+    }
+  })();
+
+  return { cancel };
+}
+
+export type SocialCardAspectRatio = '9:16' | '1:1' | '16:9';
+export type SocialCardVariant = 'question' | 'reveal' | 'explanation' | 'hook';
+
+export interface SocialCardExportOptions {
+  aspectRatio?: SocialCardAspectRatio;
+  variant?: SocialCardVariant;
+  format?: 'image/png' | 'image/jpeg';
+  quality?: number;
+}
+
+/**
+ * High-Quality Static Background Image Exporter:
+ * Generates ready-to-share social media cards with question text overlaid across 9:16, 1:1, and 16:9 ratios.
+ */
+export async function exportStaticSocialCard(
+  config: ShortConfig,
+  options: SocialCardExportOptions = {}
+): Promise<string> {
+  const {
+    aspectRatio = '9:16',
+    variant = 'question',
+    format = 'image/png',
+    quality = 0.95,
+  } = options;
+
+  let width = 1080;
+  let height = 1920;
+
+  if (aspectRatio === '1:1') {
+    width = 1080;
+    height = 1080;
+  } else if (aspectRatio === '16:9') {
+    width = 1200;
+    height = 675;
+  }
+
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) throw new Error('Canvas 2D context unavailable');
+
+  const theme = SHORTS_THEMES[config.themeId] || SHORTS_THEMES['byteprep-dark'];
+  const { question, hookText } = config;
+
+  // Background
+  const grad = ctx.createLinearGradient(0, 0, 0, height);
+  grad.addColorStop(0, theme.bgGradient[0]);
+  grad.addColorStop(0.5, theme.bgGradient[1] || theme.bgGradient[0]);
+  grad.addColorStop(1, theme.bgGradient[2] || theme.bgGradient[0]);
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, width, height);
+
+  // Subtle live background styling
+  drawLiveBackground(ctx, width, height, 1.5, question, theme, config.backgroundStyle || 'auto');
+
+  if (aspectRatio === '9:16') {
+    // Render 9:16 using standard pipeline
+    const layoutCache = buildLayoutCache(ctx, CANVAS_WIDTH, config);
+    let targetTime = 8.5;
+    if (variant === 'hook') targetTime = 2.5;
+    else if (variant === 'reveal') targetTime = 16.0;
+    else if (variant === 'explanation') targetTime = 22.0;
+
+    drawShortFrame(ctx, width, height, targetTime, config, layoutCache);
+  } else if (aspectRatio === '1:1') {
+    // Custom 1:1 Layout for Instagram / Facebook Feed
+    renderSquareSocialCard(ctx, width, height, config, variant, theme);
+  } else {
+    // Custom 16:9 Layout for Twitter / LinkedIn / YouTube Community
+    renderLandscapeSocialCard(ctx, width, height, config, variant, theme);
+  }
+
+  return canvas.toDataURL(format, quality);
+}
+
+function renderSquareSocialCard(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  config: ShortConfig,
+  variant: SocialCardVariant,
+  theme: any
+) {
+  const { question, hookText } = config;
+  const pad = 60;
+  const cardW = width - pad * 2;
+
+  // Top Header Banner
+  drawCanvasBytePrepLogo(ctx, pad + 36, 75, 48);
+
+  ctx.fillStyle = '#ffffff';
+  ctx.font = '900 24px sans-serif';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('BYTEPREP CS MCQ CHALLENGE', pad + 72, 75);
+
+  // Subject Badge
+  const badgeText = `${question.subject.toUpperCase()} • ${question.exam.toUpperCase()}`;
+  ctx.font = 'bold 16px sans-serif';
+  const badgeW = ctx.measureText(badgeText).width + 32;
+  const badgeX = width - pad - badgeW;
+  ctx.fillStyle = 'rgba(56, 189, 248, 0.15)';
+  fillRoundedRect(ctx, badgeX, 55, badgeW, 38, 19);
+  ctx.strokeStyle = '#38bdf8';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  ctx.fillStyle = '#38bdf8';
+  ctx.textAlign = 'center';
+  ctx.fillText(badgeText, badgeX + badgeW / 2, 74);
+
+  if (variant === 'explanation') {
+    // Explanation Card Layout
+    const qBoxH = 140;
+    ctx.fillStyle = theme.cardBg;
+    fillRoundedRect(ctx, pad, 130, cardW, qBoxH, 20);
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '700 24px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    wrapTextDirect(ctx, question.question, width / 2, 130 + qBoxH / 2, cardW - 60, 32, true);
+
+    // Explanation Box
+    const expY = 290;
+    const expH = height - expY - 140;
+    ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+    fillRoundedRect(ctx, pad, expY, cardW, expH, 24);
+    ctx.strokeStyle = '#38bdf8';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+
+    ctx.fillStyle = '#38bdf8';
+    ctx.font = '900 22px sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('💡 DETAILED SOLUTION & CONCEPT:', pad + 30, expY + 36);
+
+    ctx.fillStyle = '#f8fafc';
+    ctx.font = '500 22px sans-serif';
+    wrapTextDirect(ctx, question.explanation, pad + 30, expY + 80, cardW - 60, 34, false);
+  } else {
+    // Question or Reveal Card Layout
+    const qBoxH = 170;
+    ctx.fillStyle = theme.cardBg;
+    fillRoundedRect(ctx, pad, 130, cardW, qBoxH, 20);
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '700 26px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    wrapTextDirect(ctx, question.question, width / 2, 130 + qBoxH / 2, cardW - 60, 36, true);
+
+    // Options A, B, C, D
+    const optStartY = 325;
+    const optH = 96;
+    const optSpacing = 16;
+    const letters = ['A', 'B', 'C', 'D'];
+
+    question.options.forEach((opt: string, idx: number) => {
+      const optY = optStartY + idx * (optH + optSpacing);
+      const isCorrect = idx === question.correctAnswer;
+      const showReveal = variant === 'reveal';
+
+      ctx.fillStyle = showReveal && isCorrect ? 'rgba(16, 185, 129, 0.25)' : theme.optionBg;
+      fillRoundedRect(ctx, pad, optY, cardW, optH, 18);
+      ctx.strokeStyle = showReveal && isCorrect ? '#10b981' : theme.optionBorder;
+      ctx.lineWidth = showReveal && isCorrect ? 3 : 1.5;
+      ctx.stroke();
+
+      // Letter circle
+      ctx.fillStyle = showReveal && isCorrect ? '#10b981' : 'rgba(255, 255, 255, 0.15)';
+      ctx.beginPath();
+      ctx.arc(pad + 48, optY + optH / 2, 24, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = showReveal && isCorrect ? '#0f172a' : '#ffffff';
+      ctx.font = '900 22px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(letters[idx], pad + 48, optY + optH / 2 + 1);
+
+      // Option text
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '600 22px sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText(opt, pad + 92, optY + optH / 2);
+
+      if (showReveal && isCorrect) {
+        ctx.fillStyle = '#10b981';
+        ctx.font = '900 18px sans-serif';
+        ctx.textAlign = 'right';
+        ctx.fillText('✓ CORRECT ANSWER', width - pad - 24, optY + optH / 2);
+      }
+    });
+  }
+
+  // Footer Banner
+  const footerY = height - 90;
+  ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+  fillRoundedRect(ctx, pad, footerY, cardW, 60, 16);
+  ctx.strokeStyle = 'rgba(56, 189, 248, 0.3)';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  ctx.fillStyle = '#38bdf8';
+  ctx.font = 'bold 18px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('🚀 Prepare with BytePrep App & Web: dsssbpyq.online', width / 2, footerY + 30);
+}
+
+function renderLandscapeSocialCard(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  config: ShortConfig,
+  variant: SocialCardVariant,
+  theme: any
+) {
+  const { question } = config;
+  const pad = 50;
+
+  // Header
+  drawCanvasBytePrepLogo(ctx, pad + 30, 55, 44);
+
+  ctx.fillStyle = '#ffffff';
+  ctx.font = '900 22px sans-serif';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('BYTEPREP CS MOCK CHALLENGE', pad + 65, 55);
+
+  const badgeText = `${question.subject.toUpperCase()} • ${question.exam.toUpperCase()}`;
+  ctx.font = 'bold 15px sans-serif';
+  const badgeW = ctx.measureText(badgeText).width + 28;
+  const badgeX = width - pad - badgeW;
+  ctx.fillStyle = 'rgba(56, 189, 248, 0.15)';
+  fillRoundedRect(ctx, badgeX, 40, badgeW, 34, 17);
+  ctx.strokeStyle = '#38bdf8';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  ctx.fillStyle = '#38bdf8';
+  ctx.textAlign = 'center';
+  ctx.fillText(badgeText, badgeX + badgeW / 2, 57);
+
+  // Left Column: Question Card (Width: 500px)
+  const leftW = 490;
+  const contentY = 105;
+  const contentH = height - contentY - 80;
+
+  ctx.fillStyle = theme.cardBg;
+  fillRoundedRect(ctx, pad, contentY, leftW, contentH, 20);
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  ctx.fillStyle = '#38bdf8';
+  ctx.font = 'bold 16px sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('QUESTION', pad + 25, contentY + 35);
+
+  ctx.fillStyle = '#ffffff';
+  ctx.font = '700 23px sans-serif';
+  wrapTextDirect(ctx, question.question, pad + 25, contentY + 75, leftW - 50, 32, false);
+
+  // Right Column: Options or Explanation (Width: 570px)
+  const rightX = pad + leftW + 30;
+  const rightW = width - rightX - pad;
+
+  if (variant === 'explanation') {
+    ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+    fillRoundedRect(ctx, rightX, contentY, rightW, contentH, 20);
+    ctx.strokeStyle = '#38bdf8';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.fillStyle = '#38bdf8';
+    ctx.font = '900 18px sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('💡 DETAILED SOLUTION:', rightX + 25, contentY + 35);
+
+    ctx.fillStyle = '#f8fafc';
+    ctx.font = '500 19px sans-serif';
+    wrapTextDirect(ctx, question.explanation, rightX + 25, contentY + 75, rightW - 50, 28, false);
+  } else {
+    const optH = 92;
+    const optGap = 14;
+    const letters = ['A', 'B', 'C', 'D'];
+
+    question.options.forEach((opt: string, idx: number) => {
+      const optY = contentY + idx * (optH + optGap);
+      const isCorrect = idx === question.correctAnswer;
+      const showReveal = variant === 'reveal';
+
+      ctx.fillStyle = showReveal && isCorrect ? 'rgba(16, 185, 129, 0.25)' : theme.optionBg;
+      fillRoundedRect(ctx, rightX, optY, rightW, optH, 16);
+      ctx.strokeStyle = showReveal && isCorrect ? '#10b981' : theme.optionBorder;
+      ctx.lineWidth = showReveal && isCorrect ? 2.5 : 1.5;
+      ctx.stroke();
+
+      ctx.fillStyle = showReveal && isCorrect ? '#10b981' : 'rgba(255, 255, 255, 0.15)';
+      ctx.beginPath();
+      ctx.arc(rightX + 38, optY + optH / 2, 20, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = showReveal && isCorrect ? '#0f172a' : '#ffffff';
+      ctx.font = '900 18px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(letters[idx], rightX + 38, optY + optH / 2 + 1);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '600 19px sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText(opt, rightX + 75, optY + optH / 2);
+
+      if (showReveal && isCorrect) {
+        ctx.fillStyle = '#10b981';
+        ctx.font = '900 15px sans-serif';
+        ctx.textAlign = 'right';
+        ctx.fillText('✓ CORRECT', rightX + rightW - 20, optY + optH / 2);
+      }
+    });
+  }
+
+  // Footer
+  const footerY = height - 55;
+  ctx.fillStyle = '#38bdf8';
+  ctx.font = 'bold 15px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('🚀 Search BytePrep TGT PGT CS on Google Play Store • dsssbpyq.online', width / 2, footerY);
+}
+
+/**
+ * Instant Frame Snapshot Export:
+ * Exports a crisp PNG image poster in <50ms without waiting for video recording.
+ */
+export async function exportFrameSnapshot(
+  config: ShortConfig,
+  frameType: 'question' | 'reveal' | 'explanation' | 'thumbnail' | 'hook',
+  width = CANVAS_WIDTH,
+  height = CANVAS_HEIGHT
+): Promise<string> {
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) throw new Error('Canvas context not available');
+
+  const scale = width / CANVAS_WIDTH;
+  if (scale !== 1.0) {
+    ctx.scale(scale, scale);
+  }
+
+  const durations = getTimelineDurations(config);
+  let targetTime = 0;
+
+  switch (frameType) {
+    case 'hook':
+      targetTime = durations.intro + durations.hook * 0.5;
+      break;
+    case 'question':
+      targetTime = durations.intro + durations.hook + durations.question * 0.5;
+      break;
+    case 'reveal':
+      targetTime = durations.intro + durations.hook + durations.question + durations.reveal * 0.5;
+      break;
+    case 'explanation':
+      targetTime = durations.intro + durations.hook + durations.question + durations.reveal + durations.explanation * 0.5;
+      break;
+    case 'thumbnail':
+    default:
+      targetTime = durations.intro + durations.hook + durations.question * 0.2;
+      break;
+  }
+
+  const layoutCache = buildLayoutCache(ctx, CANVAS_WIDTH, config);
+  drawShortFrame(ctx, CANVAS_WIDTH, CANVAS_HEIGHT, targetTime, config, layoutCache);
+
+  return canvas.toDataURL('image/png', 0.95);
 }
 
 // Helpers
@@ -877,7 +1631,7 @@ function fillRoundedRect(
   ctx.fill();
 }
 
-function wrapText(
+function wrapTextDirect(
   ctx: CanvasRenderingContext2D,
   text: string,
   x: number,
@@ -886,29 +1640,13 @@ function wrapText(
   lineHeight: number,
   centered: boolean
 ) {
-  const words = text.split(' ');
-  let line = '';
-  let curY = y;
+  const lines = computeWrappedLines(ctx, text, maxWidth);
+  let curY = centered ? y - ((lines.length - 1) * lineHeight) / 2 : y;
 
-  for (let n = 0; n < words.length; n++) {
-    const testLine = line + words[n] + ' ';
-    const metrics = ctx.measureText(testLine);
-    const testWidth = metrics.width;
-
-    if (testWidth > maxWidth && n > 0) {
-      if (centered) {
-        ctx.fillText(line.trim(), x, curY);
-      } else {
-        ctx.fillText(line.trim(), x, curY);
-      }
-      line = words[n] + ' ';
-      curY += lineHeight;
-    } else {
-      line = testLine;
-    }
+  for (const line of lines) {
+    ctx.fillText(line, x, curY);
+    curY += lineHeight;
   }
-
-  ctx.fillText(line.trim(), x, curY);
 }
 
 function renderOptionTextWithAutoWrap(
@@ -923,7 +1661,6 @@ function renderOptionTextWithAutoWrap(
     ctx.font = '600 32px sans-serif';
     ctx.fillText(text, x, centerY);
   } else {
-    // 2-line wrapped text
     const words = text.split(' ');
     const mid = Math.ceil(words.length / 2);
     const line1 = words.slice(0, mid).join(' ');

@@ -251,6 +251,9 @@ export interface ShortConfig {
   customCta?: string;
   language?: ContentLanguage;
   voiceStyle?: VoiceStyle;
+  durationMode?: 'viral' | 'standard' | 'extended';
+  renderQuality?: '1080p' | '720p' | 'fast';
+  fps?: number;
   phaseDurations?: {
     intro?: number;
     hook?: number;
