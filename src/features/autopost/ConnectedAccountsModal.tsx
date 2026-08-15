@@ -55,7 +55,7 @@ export const ConnectedAccountsModal: React.FC<ConnectedAccountsModalProps> = ({
   useEffect(() => {
     const handleMetaMessage = async (event: MessageEvent) => {
       const origin = event.origin;
-      if (!origin.endsWith('.run.app') && !origin.includes('localhost')) {
+      if (!origin.endsWith('.run.app') && !origin.includes('localhost') && !origin.includes('vercel.app')) {
         return;
       }
       if (event.data?.type === 'META_AUTH_SUCCESS') {
@@ -373,6 +373,8 @@ export const ConnectedAccountsModal: React.FC<ConnectedAccountsModalProps> = ({
   };
 
   const isYouTubeConnected = accounts.find(a => a.id === 'youtube')?.connected && (!!googleUser || !!getCachedAccessToken());
+  const vercelDomain = 'https://byteprep-gamma.vercel.app';
+  const vercelCallbackUrl = `${vercelDomain}/auth/meta/callback`;
   const devCallbackUrl = 'https://ais-dev-fxndqayfds2wozonoqozug-68499964584.asia-southeast1.run.app/auth/meta/callback';
   const sharedCallbackUrl = 'https://ais-pre-fxndqayfds2wozonoqozug-68499964584.asia-southeast1.run.app/auth/meta/callback';
 
@@ -921,6 +923,10 @@ export const ConnectedAccountsModal: React.FC<ConnectedAccountsModalProps> = ({
                   To link your own Meta App at <a href="https://developers.facebook.com/apps" target="_blank" rel="noreferrer" className="text-sky-400 hover:underline">developers.facebook.com</a>:
                 </p>
                 <div className="p-2.5 bg-slate-900 rounded-xl space-y-1.5 font-mono text-[11px]">
+                  <div>
+                    <span className="text-slate-500">Vercel Production Callback: </span>
+                    <span className="text-emerald-300 font-bold select-all">{vercelCallbackUrl}</span>
+                  </div>
                   <div>
                     <span className="text-slate-500">Dev Callback: </span>
                     <span className="text-sky-300 select-all">{devCallbackUrl}</span>

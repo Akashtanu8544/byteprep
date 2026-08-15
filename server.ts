@@ -69,7 +69,18 @@ app.post('/api/ai/generate-post-metadata', async (req, res) => {
 
 // API route to get Meta (Facebook / Instagram) OAuth authorization URL
 app.get('/api/auth/meta/url', (req, res) => {
-  const origin = req.headers.origin || (process.env.APP_URL || 'https://ais-dev-fxndqayfds2wozonoqozug-68499964584.asia-southeast1.run.app');
+  let origin = req.headers.origin;
+  if (!origin && req.headers.referer) {
+    try {
+      const parsed = new URL(req.headers.referer as string);
+      origin = parsed.origin;
+    } catch {
+      // fallback
+    }
+  }
+  if (!origin) {
+    origin = process.env.APP_URL || 'https://byteprep-gamma.vercel.app';
+  }
   const redirectUri = `${origin}/auth/meta/callback`;
   const appId = (req.query.app_id as string) || process.env.META_APP_ID || process.env.FACEBOOK_APP_ID || '1088492026162391';
   
