@@ -894,10 +894,27 @@ export const ShortsStudio: React.FC<ShortsStudioProps> = ({ onBack, preselectedQ
 
                 <button
                   onClick={handleGenerateQueue}
-                  className="ml-auto flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-400 hover:to-indigo-400 text-slate-950 font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer"
+                  className="flex items-center gap-1.5 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-xl border border-slate-700 transition-all cursor-pointer"
+                  title="Add selected count of questions to queue"
                 >
                   <ListPlus className="w-4 h-4" />
-                  <span>ADD TO QUEUE</span>
+                  <span>+ ADD TO QUEUE</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    handleGenerateQueue();
+                    // Auto-trigger render immediately
+                    setTimeout(() => {
+                      const renderAllBtn = document.getElementById('queue-render-all-btn');
+                      if (renderAllBtn) renderAllBtn.click();
+                    }, 100);
+                  }}
+                  className="flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-emerald-500 via-teal-500 to-sky-500 hover:from-emerald-400 hover:to-sky-400 text-slate-950 font-black text-xs rounded-xl shadow-lg shadow-emerald-500/20 transition-all cursor-pointer"
+                  title="Queue and immediately generate all videos"
+                >
+                  <Zap className="w-4 h-4 fill-current" />
+                  <span>⚡ 1-CLICK GENERATE ALL</span>
                 </button>
               </div>
             </div>

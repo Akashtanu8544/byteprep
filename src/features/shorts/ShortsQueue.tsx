@@ -186,6 +186,7 @@ export const ShortsQueue: React.FC<ShortsQueueProps> = ({ queue, setQueue }) => 
         <div className="flex items-center gap-2 flex-wrap">
           {!isProcessing ? (
             <button
+              id="queue-render-all-btn"
               onClick={processQueue}
               className="flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-xs rounded-xl shadow-lg transition-all cursor-pointer"
             >
@@ -206,11 +207,20 @@ export const ShortsQueue: React.FC<ShortsQueueProps> = ({ queue, setQueue }) => 
             <button
               onClick={handleDownloadAllZip}
               disabled={isZipping}
-              className="flex items-center gap-1.5 px-3.5 py-2 bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-500/30 rounded-xl text-xs font-bold transition-all cursor-pointer disabled:opacity-50"
-              title="Download all completed videos in a ZIP package"
+              className="flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-400 hover:to-indigo-400 text-slate-950 font-black text-xs rounded-xl shadow-lg shadow-sky-500/25 transition-all cursor-pointer disabled:opacity-50"
+              title="One-Click Download: Save all completed videos and viral captions in a single ZIP file"
             >
-              {isZipping ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Archive className="w-3.5 h-3.5" />}
-              <span>ZIP BUNDLE ({completedCount})</span>
+              {isZipping ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>PACKING ZIP...</span>
+                </>
+              ) : (
+                <>
+                  <Download className="w-4 h-4" />
+                  <span>ONE-CLICK DOWNLOAD ALL ({completedCount})</span>
+                </>
+              )}
             </button>
           )}
 
