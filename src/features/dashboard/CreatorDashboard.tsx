@@ -1,342 +1,327 @@
 import React, { useState, useEffect } from 'react';
-import {
-  NormalizedQuestion,
-  GeneratedContentPack,
-  BrandKitConfig,
-} from '../../types';
+import { NormalizedQuestion } from '../../types';
 import { QuestionLoader } from '../../services/questionLoader';
-import { ContentSelectionEngine } from '../../services/contentSelectionEngine';
-import { IndexedDbService } from '../../services/indexedDbService';
+import { StorageService, ShortRecord } from '../../services/storageService';
 import { BrandKitService } from '../../services/brandKitService';
 import {
-  Sparkles,
-  Layers,
   Video,
-  Plus,
-  Send,
-  BarChart2,
-  Calendar,
-  Database,
-  Palette,
-  ChevronRight,
-  Eye,
-  CheckCircle2,
-  TrendingUp,
-  Archive,
-  BookOpen,
+  Sparkles,
   Zap,
-  Smartphone,
-  Code2,
-  Megaphone,
-  PieChart,
+  BookOpen,
+  Play,
+  Download,
+  Copy,
+  Check,
+  Plus,
+  Layers,
+  ChevronRight,
+  ShieldCheck,
+  Clock,
+  Shuffle,
+  Trash2,
 } from 'lucide-react';
 import { BytePrepLogo } from '../../components/BytePrepLogo';
 
 interface CreatorDashboardProps {
   onNavigate: (tab: any) => void;
-  onOpenContentPack: (question: NormalizedQuestion) => void;
   onOpenShortsStudio: (questionId?: string) => void;
   onOpenBrandKit: () => void;
 }
 
 export const CreatorDashboard: React.FC<CreatorDashboardProps> = ({
   onNavigate,
-  onOpenContentPack,
   onOpenShortsStudio,
   onOpenBrandKit,
 }) => {
   const brandKit = BrandKitService.getBrandKit();
   const allQuestions = QuestionLoader.getAllQuestions();
   const datasetStats = QuestionLoader.getDatasetStats();
+  const allSubjects = QuestionLoader.getAllSubjects();
 
-  const [recentPacks, setRecentPacks] = useState<GeneratedContentPack[]>([]);
   const [dailyQuestion, setDailyQuestion] = useState<NormalizedQuestion | null>(null);
+  const [historyRecords, setHistoryRecords] = useState<ShortRecord[]>([]);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   useEffect(() => {
-    IndexedDbService.getAllContentPacks().then(packs => {
-      packs.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-      setRecentPacks(packs.slice(0, 5));
-
-      // Calculate recommended question
-      const rec = ContentSelectionEngine.getRecommendedDailyCreatorQuestion(allQuestions, packs);
-      setDailyQuestion(rec);
-    });
+    const todayStr = new Date().toISOString().split('T')[0];
+    const { question } = QuestionLoader.getDailyQuestion(todayStr);
+    setDailyQuestion(question);
+    setHistoryRecords(StorageService.getShortsRecords());
   }, []);
 
+  const handleCopyCaption = (record: ShortRecord) => {
+    const text = `${record.title}\n\nCan you solve this question? Comment your answer below! 👇\n\n#BytePrep #ComputerScience #DSSSB #TGTCS #PGTCS #PYQ #CodingQuiz #TechShorts`;
+    navigator.clipboard.writeText(text);
+    setCopiedId(record.id);
+    setTimeout(() => setCopiedId(null), 2000);
+  };
+
+  const handleDeleteRecord = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    StorageService.deleteShortRecord(id);
+    setHistoryRecords(StorageService.getShortsRecords());
+  };
+
+  const handleQuickSubjectShort = (subject: string) => {
+    const q = QuestionLoader.getRandomQuestion({ subject });
+    if (q) {
+      onOpenShortsStudio(q.id);
+    }
+  };
+
+  const handleQuickRandomShort = () => {
+    const q = QuestionLoader.getRandomQuestion();
+    if (q) {
+      onOpenShortsStudio(q.id);
+    }
+  };
+
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8 space-y-8">
-      {/* Hero Welcome Banner */}
-      <div className="bg-gradient-to-br from-indigo-950 via-slate-900 to-sky-950 border border-indigo-500/30 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+    <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
+      {/* Clean Hero Header */}
+      <div className="bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950/60 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
-          <div className="space-y-3 max-w-2xl">
-            <div className="flex items-center gap-2">
-              <span className="px-3 py-1 bg-sky-500/20 text-sky-400 border border-sky-500/30 rounded-full text-xs font-black tracking-wide flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                <span>BYTEPREP CONTENT FACTORY PRO</span>
+          <div className="space-y-3 max-w-xl">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="px-3 py-1 bg-rose-500/15 text-rose-400 border border-rose-500/30 rounded-full text-xs font-black tracking-wide flex items-center gap-1.5">
+                <Video className="w-3.5 h-3.5 fill-current" />
+                <span>BYTEPREP SHORTS VIDEO STUDIO</span>
               </span>
               <button
                 onClick={onOpenBrandKit}
-                className="px-3 py-1 bg-slate-800/80 hover:bg-slate-700 text-slate-300 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5"
+                className="px-3 py-1 bg-slate-800/90 hover:bg-slate-700 text-slate-300 rounded-full text-xs font-bold transition-all cursor-pointer"
               >
-                <Palette className="w-3 h-3 text-sky-400" />
-                <span>{brandKit.brandName}</span>
+                Brand: <strong className="text-white">{brandKit.brandName}</strong>
               </button>
             </div>
 
-            <h1 className="text-2xl sm:text-4xl font-black text-white leading-tight">
-              Personal Content & Growth Engine
+            <h1 className="text-2xl sm:text-4xl font-black text-white tracking-tight leading-tight">
+              Create Viral 9:16 Video Shorts in Seconds
             </h1>
             <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
-              Automate high-converting Instagram Reels, 9:16 Stories, 4:5 Carousels, YouTube Shorts, Code Challenges, and Telegram Quizzes to promote <strong className="text-sky-400 font-black">{brandKit.brandName}</strong>.
+              Transform {datasetStats.totalQuestions} Computer Science PYQ exam questions into high-retention vertical videos with animated timers, sound effects, custom themes & brand watermarks.
             </p>
           </div>
 
           {/* Quick Stats Pill */}
           <div className="flex items-center gap-3 shrink-0">
-            <div className="bg-slate-900/90 border border-indigo-500/30 rounded-2xl p-4 text-center">
-              <div className="text-2xl font-black text-sky-400">{datasetStats.totalQuestions}</div>
-              <div className="text-[11px] text-slate-400 font-semibold">Total CS Questions</div>
+            <div className="bg-slate-950/80 border border-slate-800 rounded-2xl p-4 text-center min-w-[110px]">
+              <div className="text-2xl font-black text-rose-400">{datasetStats.totalQuestions}</div>
+              <div className="text-[11px] text-slate-400 font-bold">CS Questions</div>
             </div>
-            <div className="bg-slate-900/90 border border-indigo-500/30 rounded-2xl p-4 text-center">
-              <div className="text-2xl font-black text-emerald-400">{datasetStats.unusedCount}</div>
-              <div className="text-[11px] text-slate-400 font-semibold">Unused Fresh</div>
+            <div className="bg-slate-950/80 border border-slate-800 rounded-2xl p-4 text-center min-w-[110px]">
+              <div className="text-2xl font-black text-emerald-400">{historyRecords.length}</div>
+              <div className="text-[11px] text-slate-400 font-bold">Videos Created</div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Recommended Question of the Day Banner */}
+      {/* Featured Video of the Day Banner */}
       {dailyQuestion && (
-        <div className="bg-gradient-to-r from-amber-500/10 via-slate-900 to-sky-500/10 border-2 border-amber-500/30 rounded-3xl p-6 shadow-xl space-y-4">
+        <div className="bg-gradient-to-r from-rose-500/10 via-slate-900 to-sky-500/10 border-2 border-rose-500/30 rounded-3xl p-6 shadow-xl space-y-3">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                <span className="px-2.5 py-0.5 bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded-md text-[10px] font-black uppercase">
-                  ⭐ RECOMMENDED FOR TODAY'S POST
+            <div className="space-y-1.5 max-w-2xl">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="px-2.5 py-0.5 bg-rose-500/20 text-rose-300 border border-rose-500/30 rounded-md text-[10px] font-black uppercase tracking-wider">
+                  🔥 RECOMMENDED VIDEO FOR TODAY
                 </span>
                 <span className="px-2 py-0.5 bg-slate-800 text-slate-300 rounded-md text-[10px] font-bold">
                   {dailyQuestion.subject} • {dailyQuestion.topic}
                 </span>
               </div>
-              <h3 className="text-base font-bold text-white leading-snug pt-1">
+              <h3 className="text-sm sm:text-base font-bold text-white leading-snug line-clamp-2">
                 {dailyQuestion.question}
               </h3>
             </div>
 
-            <div className="flex items-center gap-2.5 shrink-0">
-              <button
-                onClick={() => onOpenContentPack(dailyQuestion)}
-                className="flex items-center gap-2 px-5 py-2.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs rounded-xl shadow-lg transition-all cursor-pointer"
-              >
-                <Sparkles className="w-4 h-4" />
-                <span>Generate Content Pack</span>
-              </button>
-            </div>
+            <button
+              onClick={() => onOpenShortsStudio(dailyQuestion.id)}
+              className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-400 hover:to-pink-400 text-white font-black text-xs rounded-2xl shadow-lg shadow-rose-500/25 transition-all cursor-pointer shrink-0"
+            >
+              <Video className="w-4 h-4 fill-current" />
+              <span>Create Video Short</span>
+            </button>
           </div>
         </div>
       )}
 
-      {/* Primary Creator Pro Studio Tools Grid */}
-      <div className="space-y-3">
-        <h2 className="text-xs font-black text-slate-400 uppercase tracking-wider px-1">
-          Creator Studio Pro Engines
-        </h2>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* 1. 1-Click Content Factory */}
-          <div
-            onClick={() => onNavigate('factory')}
-            className="p-5 bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-3xl transition-all cursor-pointer space-y-3 group shadow-lg"
-          >
-            <div className="flex items-center justify-between">
-              <div className="p-3 bg-amber-500/20 text-amber-400 rounded-2xl">
-                <Zap className="w-6 h-6 fill-current" />
-              </div>
-              <ChevronRight className="w-4 h-4 text-slate-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all" />
+      {/* Core Action Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {/* 1. Shorts Studio (Main Editor) */}
+        <div
+          onClick={() => onOpenShortsStudio()}
+          className="p-6 bg-slate-900 border border-slate-800 hover:border-rose-500/50 rounded-3xl transition-all cursor-pointer space-y-4 group shadow-xl hover:shadow-rose-500/10"
+        >
+          <div className="flex items-center justify-between">
+            <div className="p-3.5 bg-rose-500/20 text-rose-400 rounded-2xl">
+              <Video className="w-6 h-6 fill-current" />
             </div>
-            <div>
-              <h3 className="text-sm font-black text-white">Content Factory (1-Click Batch)</h3>
-              <p className="text-xs text-slate-400 mt-1">
-                Automated 5-20 question production with Content IDs and AI Fact-Checking.
-              </p>
-            </div>
+            <ChevronRight className="w-5 h-5 text-slate-500 group-hover:text-rose-400 group-hover:translate-x-1 transition-all" />
           </div>
-
-          {/* 2. 9:16 Vertical Stories */}
-          <div
-            onClick={() => onNavigate('story')}
-            className="p-5 bg-slate-900 border border-slate-800 hover:border-sky-500/50 rounded-3xl transition-all cursor-pointer space-y-3 group shadow-lg"
-          >
-            <div className="flex items-center justify-between">
-              <div className="p-3 bg-sky-500/20 text-sky-400 rounded-2xl">
-                <Smartphone className="w-6 h-6" />
-              </div>
-              <ChevronRight className="w-4 h-4 text-slate-500 group-hover:text-sky-400 group-hover:translate-x-1 transition-all" />
-            </div>
-            <div>
-              <h3 className="text-sm font-black text-white">9:16 Story Sequence Studio</h3>
-              <p className="text-xs text-slate-400 mt-1">
-                Generate 1080x1920 5-frame vertical stories (Hook → Question → Timer → Answer → CTA).
-              </p>
-            </div>
+          <div>
+            <h3 className="text-base font-black text-white">Shorts Studio Editor</h3>
+            <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+              Customize themes, hooks, countdown timers, sound effects, and watermarks with live 9:16 preview.
+            </p>
           </div>
+        </div>
 
-          {/* 3. 4:5 Instagram Carousels */}
-          <div
-            onClick={() => onNavigate('carousel')}
-            className="p-5 bg-slate-900 border border-slate-800 hover:border-purple-500/50 rounded-3xl transition-all cursor-pointer space-y-3 group shadow-lg"
-          >
-            <div className="flex items-center justify-between">
-              <div className="p-3 bg-purple-500/20 text-purple-400 rounded-2xl">
-                <Layers className="w-6 h-6" />
-              </div>
-              <ChevronRight className="w-4 h-4 text-slate-500 group-hover:text-purple-400 group-hover:translate-x-1 transition-all" />
+        {/* 2. 1-Click Instant Random Video */}
+        <div
+          onClick={handleQuickRandomShort}
+          className="p-6 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-3xl transition-all cursor-pointer space-y-4 group shadow-xl hover:shadow-emerald-500/10"
+        >
+          <div className="flex items-center justify-between">
+            <div className="p-3.5 bg-emerald-500/20 text-emerald-400 rounded-2xl">
+              <Zap className="w-6 h-6 fill-current" />
             </div>
-            <div>
-              <h3 className="text-sm font-black text-white">4:5 Instagram Carousel Studio</h3>
-              <p className="text-xs text-slate-400 mt-1">
-                Multi-slide swipeable carousels with retention traps and branded solution slides.
-              </p>
-            </div>
+            <ChevronRight className="w-5 h-5 text-slate-500 group-hover:text-emerald-400 group-hover:translate-x-1 transition-all" />
           </div>
-
-          {/* 4. Code & Bug Hunting Challenges */}
-          <div
-            onClick={() => onNavigate('code-challenge')}
-            className="p-5 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-3xl transition-all cursor-pointer space-y-3 group shadow-lg"
-          >
-            <div className="flex items-center justify-between">
-              <div className="p-3 bg-emerald-500/20 text-emerald-400 rounded-2xl">
-                <Code2 className="w-6 h-6" />
-              </div>
-              <ChevronRight className="w-4 h-4 text-slate-500 group-hover:text-emerald-400 group-hover:translate-x-1 transition-all" />
-            </div>
-            <div>
-              <h3 className="text-sm font-black text-white">Code & Bug Hunt Studio</h3>
-              <p className="text-xs text-slate-400 mt-1">
-                Syntax-highlighted code output & debug challenges with 10s countdown timer.
-              </p>
-            </div>
+          <div>
+            <h3 className="text-base font-black text-white">1-Click Instant Short</h3>
+            <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+              Picks a random high-impact PYQ and launches the video generator with optimal presets.
+            </p>
           </div>
+        </div>
 
-          {/* 5. Campaign Manager */}
-          <div
-            onClick={() => onNavigate('campaigns')}
-            className="p-5 bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-3xl transition-all cursor-pointer space-y-3 group shadow-lg"
-          >
-            <div className="flex items-center justify-between">
-              <div className="p-3 bg-amber-500/20 text-amber-400 rounded-2xl">
-                <Megaphone className="w-6 h-6" />
-              </div>
-              <ChevronRight className="w-4 h-4 text-slate-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all" />
+        {/* 3. Question Bank */}
+        <div
+          onClick={() => onNavigate('questions')}
+          className="p-6 bg-slate-900 border border-slate-800 hover:border-sky-500/50 rounded-3xl transition-all cursor-pointer space-y-4 group shadow-xl hover:shadow-sky-500/10"
+        >
+          <div className="flex items-center justify-between">
+            <div className="p-3.5 bg-sky-500/20 text-sky-400 rounded-2xl">
+              <BookOpen className="w-6 h-6" />
             </div>
-            <div>
-              <h3 className="text-sm font-black text-white">Campaign Manager</h3>
-              <p className="text-xs text-slate-400 mt-1">
-                Launch 30-Day DSSSB / KVS revision sprints with goals & progress trackers.
-              </p>
-            </div>
+            <ChevronRight className="w-5 h-5 text-slate-500 group-hover:text-sky-400 group-hover:translate-x-1 transition-all" />
           </div>
-
-          {/* 6. Content Gap Finder */}
-          <div
-            onClick={() => onNavigate('gap-finder')}
-            className="p-5 bg-slate-900 border border-slate-800 hover:border-rose-500/50 rounded-3xl transition-all cursor-pointer space-y-3 group shadow-lg"
-          >
-            <div className="flex items-center justify-between">
-              <div className="p-3 bg-rose-500/20 text-rose-400 rounded-2xl">
-                <PieChart className="w-6 h-6" />
-              </div>
-              <ChevronRight className="w-4 h-4 text-slate-500 group-hover:text-rose-400 group-hover:translate-x-1 transition-all" />
-            </div>
-            <div>
-              <h3 className="text-sm font-black text-white">Content Gap & Audience Intel</h3>
-              <p className="text-xs text-slate-400 mt-1">
-                Discover underrepresented CS topics and generate content to fill coverage gaps.
-              </p>
-            </div>
-          </div>
-
-          {/* 7. Social Conversion & UTM Tracking */}
-          <div
-            onClick={() => onNavigate('conversion')}
-            className="p-5 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-3xl transition-all cursor-pointer space-y-3 group shadow-lg"
-          >
-            <div className="flex items-center justify-between">
-              <div className="p-3 bg-emerald-500/20 text-emerald-400 rounded-2xl">
-                <TrendingUp className="w-6 h-6" />
-              </div>
-              <ChevronRight className="w-4 h-4 text-slate-500 group-hover:text-emerald-400 group-hover:translate-x-1 transition-all" />
-            </div>
-            <div>
-              <h3 className="text-sm font-black text-white">Conversion & UTM Tracker</h3>
-              <p className="text-xs text-slate-400 mt-1">
-                Build tagged links, track clicks, and attribute Play Store app downloads.
-              </p>
-            </div>
-          </div>
-
-          {/* 8. Shorts Video Studio */}
-          <div
-            onClick={() => onOpenShortsStudio()}
-            className="p-5 bg-slate-900 border border-slate-800 hover:border-rose-500/50 rounded-3xl transition-all cursor-pointer space-y-3 group shadow-lg"
-          >
-            <div className="flex items-center justify-between">
-              <div className="p-3 bg-rose-500/20 text-rose-400 rounded-2xl">
-                <Video className="w-6 h-6" />
-              </div>
-              <ChevronRight className="w-4 h-4 text-slate-500 group-hover:text-rose-400 group-hover:translate-x-1 transition-all" />
-            </div>
-            <div>
-              <h3 className="text-sm font-black text-white">Shorts Studio (9:16 Video)</h3>
-              <p className="text-xs text-slate-400 mt-1">
-                Record animated vertical video with 12 dynamic themes, timers, and SFX.
-              </p>
-            </div>
+          <div>
+            <h3 className="text-base font-black text-white">Browse Question Bank</h3>
+            <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+              Filter through {datasetStats.totalQuestions} questions by subject or search keyword to create videos.
+            </p>
           </div>
         </div>
       </div>
 
-      {/* Recent Generated Packages Table */}
-      {recentPacks.length > 0 && (
+      {/* Subject Quick Video Generators */}
+      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-black text-white uppercase tracking-wider flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-amber-400" />
+            <span>Generate by Subject</span>
+          </h3>
+          <span className="text-xs text-slate-400">1-click to create video</span>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2">
+          {allSubjects.slice(0, 6).map(sub => {
+            const count = allQuestions.filter(q => q.subject === sub).length;
+            return (
+              <button
+                key={sub}
+                type="button"
+                onClick={() => handleQuickSubjectShort(sub)}
+                className="p-3 bg-slate-950 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 rounded-2xl text-left transition-all cursor-pointer group"
+              >
+                <div className="text-xs font-bold text-slate-200 group-hover:text-rose-400 truncate">
+                  {sub}
+                </div>
+                <div className="text-[10px] text-slate-500 mt-0.5">
+                  {count} questions
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Generated Videos History */}
+      {historyRecords.length > 0 && (
         <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-base font-black text-white">Recent Content Packages</h3>
+            <div className="flex items-center gap-2">
+              <h3 className="text-base font-black text-white">Generated Video Library</h3>
+              <span className="px-2 py-0.5 bg-slate-800 text-slate-300 text-xs font-bold rounded-md">
+                {historyRecords.length}
+              </span>
+            </div>
             <button
-              onClick={() => onNavigate('queue')}
-              className="text-xs font-bold text-sky-400 hover:text-sky-300 cursor-pointer"
+              onClick={() => onOpenShortsStudio()}
+              className="text-xs font-bold text-rose-400 hover:text-rose-300 cursor-pointer"
             >
-              View All in Queue →
+              + Create New Video
             </button>
           </div>
 
-          <div className="space-y-2.5">
-            {recentPacks.map(pack => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {historyRecords.slice(0, 6).map(record => (
               <div
-                key={pack.id}
-                className="p-3.5 bg-slate-950 border border-slate-800 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"
+                key={record.id}
+                onClick={() => onOpenShortsStudio(record.questionId)}
+                className="p-4 bg-slate-950 border border-slate-800 hover:border-slate-700 rounded-2xl flex items-center justify-between gap-3 transition-all cursor-pointer group"
               >
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 bg-slate-800 text-sky-400 rounded">
-                      {pack.contentId || pack.question.id}
-                    </span>
-                    <span className="text-[10px] font-bold text-slate-400">
-                      {pack.question.subject}
-                    </span>
+                <div className="flex items-center gap-3 min-w-0">
+                  {record.thumbnailUrl ? (
+                    <img
+                      src={record.thumbnailUrl}
+                      alt="Thumbnail"
+                      className="w-12 h-16 rounded-lg object-cover bg-slate-900 border border-slate-800 shrink-0"
+                    />
+                  ) : (
+                    <div className="w-12 h-16 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center text-rose-400 shrink-0">
+                      <Video className="w-5 h-5" />
+                    </div>
+                  )}
+
+                  <div className="min-w-0 space-y-1">
+                    <div className="flex items-center gap-1.5 text-[10px] text-slate-400 font-bold">
+                      <span className="text-rose-400">{record.subject}</span>
+                      <span>•</span>
+                      <span>{record.duration.toFixed(1)}s</span>
+                      <span>•</span>
+                      <span>{record.quality}</span>
+                    </div>
+                    <h4 className="text-xs font-bold text-white truncate group-hover:text-rose-300">
+                      {record.title}
+                    </h4>
+                    <p className="text-[10px] text-slate-500">
+                      {new Date(record.timestamp).toLocaleDateString(undefined, {
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}
+                    </p>
                   </div>
-                  <p className="text-xs font-bold text-white line-clamp-1">
-                    {pack.hook || pack.question.question}
-                  </p>
                 </div>
 
-                <div className="flex items-center gap-2 shrink-0">
+                <div className="flex items-center gap-1 shrink-0">
                   <button
-                    onClick={() => onOpenContentPack(pack.question)}
-                    className="flex items-center gap-1 px-3 py-1.5 bg-sky-500/15 hover:bg-sky-500/25 border border-sky-500/30 text-sky-300 text-xs font-bold rounded-xl cursor-pointer"
+                    type="button"
+                    onClick={e => {
+                      e.stopPropagation();
+                      handleCopyCaption(record);
+                    }}
+                    className="p-2 bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white rounded-xl transition-colors cursor-pointer"
+                    title="Copy Caption & Hashtags"
                   >
-                    <Eye className="w-3.5 h-3.5" />
-                    <span>Inspect</span>
+                    {copiedId === record.id ? (
+                      <Check className="w-4 h-4 text-emerald-400" />
+                    ) : (
+                      <Copy className="w-4 h-4" />
+                    )}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={e => handleDeleteRecord(record.id, e)}
+                    className="p-2 bg-slate-900 hover:bg-rose-500/20 text-slate-500 hover:text-rose-400 rounded-xl transition-colors cursor-pointer"
+                    title="Delete record"
+                  >
+                    <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
               </div>

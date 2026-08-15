@@ -26,7 +26,7 @@ export interface TimelineDurations {
 }
 
 /**
- * Image Cache for Custom Watermark Logo overlay to prevent async stuttering during 30fps canvas rendering
+ * Safe Image Loader with crossOrigin handling to prevent canvas tainting
  */
 const watermarkImageCache = new Map<string, HTMLImageElement>();
 
@@ -35,11 +35,15 @@ export function getWatermarkImage(url: string): HTMLImageElement | null {
   if (watermarkImageCache.has(url)) {
     return watermarkImageCache.get(url)!;
   }
-  const img = new Image();
-  img.crossOrigin = 'anonymous';
-  img.src = url;
-  watermarkImageCache.set(url, img);
-  return img;
+  try {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.src = url;
+    watermarkImageCache.set(url, img);
+    return img;
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -1098,6 +1102,43 @@ function drawCtaPhase(
 }
 
 /**
+ * Determine best supported mime type for current browser
+ */
+function getPreferredMimeType(hasAudio: boolean): string {
+  if (typeof MediaRecorder === 'undefined') return '';
+
+  const mimePreferences = hasAudio
+    ? [
+        'video/webm;codecs=vp9,opus',
+        'video/webm;codecs=vp8,opus',
+        'video/webm;codecs=h264,opus',
+        'video/webm;codecs=vp9',
+        'video/webm;codecs=vp8',
+        'video/webm',
+        'video/mp4',
+      ]
+    : [
+        'video/webm;codecs=vp9',
+        'video/webm;codecs=vp8',
+        'video/webm;codecs=h264',
+        'video/webm',
+        'video/mp4',
+      ];
+
+  for (const mime of mimePreferences) {
+    try {
+      if (MediaRecorder.isTypeSupported(mime)) {
+        return mime;
+      }
+    } catch {
+      // Continue searching
+    }
+  }
+
+  return '';
+}
+
+/**
  * Synthesizes audio sounds (Timer Beeps, Reveal Chime, Background Music Beats) into a Web Audio Destination Stream.
  */
 function createAudioTrack(
@@ -1112,9 +1153,13 @@ function createAudioTrack(
     if (!AudioContextClass) return { stream: null, cleanup: () => {} };
 
     const audioCtx = new AudioContextClass();
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume().catch(() => {});
+    }
+
     const dest = audioCtx.createMediaStreamDestination();
 
-    const { intro, hook, question, reveal, total } = durations;
+    const { intro, hook, question, total } = durations;
     const startTime = audioCtx.currentTime + 0.05;
 
     // 1. Procedural Background Music / Rhythm Synthesizer (if audio track is chosen or custom audio)
@@ -1155,26 +1200,30 @@ function createAudioTrack(
         const noteTime = startTime + b * beatInterval;
         const note = chordNotes[b % chordNotes.length];
 
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        const filter = audioCtx.createBiquadFilter();
+        try {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          const filter = audioCtx.createBiquadFilter();
 
-        filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(500, noteTime);
+          filter.type = 'lowpass';
+          filter.frequency.setValueAtTime(500, noteTime);
 
-        osc.type = b % 2 === 0 ? 'triangle' : 'sine';
-        osc.frequency.setValueAtTime(note, noteTime);
+          osc.type = b % 2 === 0 ? 'triangle' : 'sine';
+          osc.frequency.setValueAtTime(note, noteTime);
 
-        gain.gain.setValueAtTime(0, noteTime);
-        gain.gain.linearRampToValueAtTime(0.035, noteTime + 0.02);
-        gain.gain.exponentialRampToValueAtTime(0.001, noteTime + beatInterval * 0.85);
+          gain.gain.setValueAtTime(0, noteTime);
+          gain.gain.linearRampToValueAtTime(0.035, noteTime + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, noteTime + beatInterval * 0.85);
 
-        osc.connect(filter);
-        filter.connect(gain);
-        gain.connect(dest);
+          osc.connect(filter);
+          filter.connect(gain);
+          gain.connect(dest);
 
-        osc.start(noteTime);
-        osc.stop(noteTime + beatInterval);
+          osc.start(noteTime);
+          osc.stop(noteTime + beatInterval);
+        } catch {
+          // ignore single beat note error
+        }
       }
     }
 
@@ -1182,42 +1231,50 @@ function createAudioTrack(
     const qStartTime = startTime + intro + hook;
     for (let sec = 0; sec < question; sec++) {
       const beepTime = qStartTime + sec;
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
 
-      const isLast3 = sec >= question - 3;
-      osc.type = isLast3 ? 'square' : 'sine';
-      osc.frequency.setValueAtTime(isLast3 ? 1200 : 800, beepTime);
+        const isLast3 = sec >= question - 3;
+        osc.type = isLast3 ? 'square' : 'sine';
+        osc.frequency.setValueAtTime(isLast3 ? 1200 : 800, beepTime);
 
-      gain.gain.setValueAtTime(0, beepTime);
-      gain.gain.linearRampToValueAtTime(0.12, beepTime + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.001, beepTime + 0.12);
+        gain.gain.setValueAtTime(0, beepTime);
+        gain.gain.linearRampToValueAtTime(0.12, beepTime + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, beepTime + 0.12);
 
-      osc.connect(gain);
-      gain.connect(dest);
+        osc.connect(gain);
+        gain.connect(dest);
 
-      osc.start(beepTime);
-      osc.stop(beepTime + 0.15);
+        osc.start(beepTime);
+        osc.stop(beepTime + 0.15);
+      } catch {
+        // ignore
+      }
     }
 
     // 3. Victory Chime Chord on Reveal
     const revealTime = startTime + intro + hook + question;
     const chordFreqs = [523.25, 659.25, 783.99]; // C5, E5, G5
     chordFreqs.forEach((freq, idx) => {
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(freq, revealTime + idx * 0.06);
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(freq, revealTime + idx * 0.06);
 
-      gain.gain.setValueAtTime(0, revealTime + idx * 0.06);
-      gain.gain.linearRampToValueAtTime(0.18, revealTime + idx * 0.06 + 0.04);
-      gain.gain.exponentialRampToValueAtTime(0.001, revealTime + idx * 0.06 + 1.2);
+        gain.gain.setValueAtTime(0, revealTime + idx * 0.06);
+        gain.gain.linearRampToValueAtTime(0.18, revealTime + idx * 0.06 + 0.04);
+        gain.gain.exponentialRampToValueAtTime(0.001, revealTime + idx * 0.06 + 1.2);
 
-      osc.connect(gain);
-      gain.connect(dest);
+        osc.connect(gain);
+        gain.connect(dest);
 
-      osc.start(revealTime + idx * 0.06);
-      osc.stop(revealTime + idx * 0.06 + 1.3);
+        osc.start(revealTime + idx * 0.06);
+        osc.stop(revealTime + idx * 0.06 + 1.3);
+      } catch {
+        // ignore
+      }
     });
 
     return {
@@ -1268,7 +1325,9 @@ export function exportShortVideo(
     } catch {
       // ignore
     }
-    streamTracks.forEach(t => t.stop());
+    streamTracks.forEach(t => {
+      try { t.stop(); } catch { /* ignore */ }
+    });
     if (audioCleanup) audioCleanup();
     callbacks.onError('Rendering was cancelled by user');
   };
@@ -1326,21 +1385,27 @@ export function exportShortVideo(
       }
 
       streamTracks = combinedTracks;
-      const stream = new MediaStream(combinedTracks);
-
-      let mimeType = 'video/webm;codecs=vp9';
-      if (!MediaRecorder.isTypeSupported(mimeType)) {
-        mimeType = 'video/webm;codecs=vp8';
-        if (!MediaRecorder.isTypeSupported(mimeType)) {
-          mimeType = 'video/webm';
-        }
-      }
+      let stream = new MediaStream(combinedTracks);
 
       const bitrate = is720p ? 3000000 : 6000000;
-      mediaRecorder = new MediaRecorder(stream, {
-        mimeType,
-        videoBitsPerSecond: bitrate,
-      });
+      let mimeType = getPreferredMimeType(combinedTracks.length > 1);
+
+      try {
+        mediaRecorder = new MediaRecorder(stream, {
+          ...(mimeType ? { mimeType } : {}),
+          videoBitsPerSecond: bitrate,
+        });
+      } catch (initErr) {
+        console.warn('Initial MediaRecorder failed with audio, falling back to video-only stream:', initErr);
+        // Fallback to video-only track
+        stream = new MediaStream(canvasStream.getVideoTracks());
+        streamTracks = [...canvasStream.getVideoTracks()];
+        mimeType = getPreferredMimeType(false);
+        mediaRecorder = new MediaRecorder(stream, {
+          ...(mimeType ? { mimeType } : {}),
+          videoBitsPerSecond: bitrate,
+        });
+      }
 
       const chunks: Blob[] = [];
       mediaRecorder.ondataavailable = e => {
@@ -1351,7 +1416,13 @@ export function exportShortVideo(
 
       mediaRecorder.onerror = (err: any) => {
         if (isCancelled) return;
-        callbacks.onError(err.message || 'MediaRecorder encountered an error');
+        console.warn('MediaRecorder warning/error:', err);
+        // If we have some chunks recorded, we still try to finalize
+        if (chunks.length > 0) {
+          finalizeExport();
+        } else {
+          callbacks.onError(err.message || 'MediaRecorder error during video generation');
+        }
       };
 
       const finalizeExport = () => {
@@ -1359,10 +1430,18 @@ export function exportShortVideo(
         if (watchdogTimeout) clearTimeout(watchdogTimeout);
 
         callbacks.onProgress(98, 'Finalizing video file...');
-        const blob = new Blob(chunks, { type: mimeType });
+
+        if (chunks.length === 0) {
+          callbacks.onError('Video encoding produced no frames. Please retry with standard settings.');
+          return;
+        }
+
+        const blob = new Blob(chunks, { type: mimeType || 'video/webm' });
         const videoUrl = URL.createObjectURL(blob);
 
-        streamTracks.forEach(t => t.stop());
+        streamTracks.forEach(t => {
+          try { t.stop(); } catch { /* ignore */ }
+        });
         if (audioCleanup) audioCleanup();
 
         callbacks.onProgress(100, `Video Ready (${totalDuration.toFixed(1)}s)!`);
@@ -1395,16 +1474,20 @@ export function exportShortVideo(
           } catch {
             // ignore
           }
-          mediaRecorder.stop();
+          try {
+            mediaRecorder.stop();
+          } catch {
+            finalizeExport();
+          }
 
-          // Anti-hang Watchdog: If onstop doesn't fire within 3000ms, force finalization
+          // Anti-hang Watchdog: If onstop doesn't fire within 3500ms, force finalization
           watchdogTimeout = setTimeout(() => {
             if (chunks.length > 0) {
               finalizeExport();
             } else {
-              callbacks.onError('Video encoding timed out. Please try Fast 720p mode.');
+              callbacks.onError('Video encoding timed out. Please retry rendering.');
             }
-          }, 3000);
+          }, 3500);
         } else {
           finalizeExport();
         }
@@ -1460,7 +1543,7 @@ export function exportShortVideo(
           return;
         }
         tick();
-      }, 40);
+      }, 30);
     } catch (err: any) {
       if (!isCancelled) {
         callbacks.onError(err.message || 'Failed to render short video');

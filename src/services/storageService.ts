@@ -1,5 +1,14 @@
 import { ChallengeSettings, UserStats, DailyChallengeState, GeneratedShortRecord } from '../types';
 
+export type ShortRecord = GeneratedShortRecord & {
+  title?: string;
+  subject?: string;
+  duration?: number;
+  quality?: string;
+  timestamp?: number;
+  thumbnailUrl?: string;
+};
+
 const SETTINGS_KEY = 'BYTEPREP_CHALLENGE_SETTINGS';
 const STATS_KEY = 'BYTEPREP_CHALLENGE_STATS';
 const DAILY_KEY_PREFIX = 'BYTEPREP_DAILY_STATE_';
@@ -150,17 +159,26 @@ export class StorageService {
 
   public static saveDailyState(state: DailyChallengeState) {
     try {
-      localStorage.setItem(`${DAILY_KEY_PREFIX}${state.date}`, JSON.stringify(state));
+      localStorage.setItem(`${DAILY_KEY_PREFIX}${state.date || state.dateStr}`, JSON.stringify(state));
     } catch (e) {
       console.warn('Failed to save daily state', e);
     }
   }
 
-  public static getShortsRecords(): GeneratedShortRecord[] {
+  public static getShortsRecords(): ShortRecord[] {
     try {
       const data = localStorage.getItem(SHORTS_KEY);
       if (data) {
-        return JSON.parse(data);
+        const parsed: any[] = JSON.parse(data);
+        return parsed.map(p => ({
+          ...p,
+          id: p.id || `short-${Date.now()}`,
+          title: p.title || p.hook || `Short for ${p.questionId}`,
+          subject: p.subject || 'Computer Science',
+          duration: p.duration || p.videoDuration || 15.0,
+          quality: p.quality || '720p',
+          timestamp: p.timestamp || (p.createdAt ? new Date(p.createdAt).getTime() : Date.now()),
+        }));
       }
     } catch (e) {
       console.warn('Failed to read shorts records', e);
@@ -168,20 +186,25 @@ export class StorageService {
     return [];
   }
 
-  public static recordShortGenerated(questionId: string, template: string, theme: string): GeneratedShortRecord[] {
+  public static recordShortGenerated(questionId: string, template: string, theme: string): ShortRecord[] {
     const records = this.getShortsRecords();
     const now = new Date().toISOString();
-    const newRecord: GeneratedShortRecord = {
+    const newRecord: ShortRecord = {
       id: `short-${Date.now()}`,
       questionId,
       template,
       templateId: template,
       theme,
       themeId: theme,
-      hook: '',
-      videoDuration: 30,
+      hook: template,
+      title: template,
+      subject: 'Computer Science',
+      videoDuration: 15.0,
+      duration: 15.0,
+      quality: '720p',
       createdAt: now,
       generatedAt: now,
+      timestamp: Date.now(),
       downloaded: false,
     };
     records.unshift(newRecord);
@@ -193,6 +216,16 @@ export class StorageService {
       localStorage.setItem(STATS_KEY, JSON.stringify(stats));
     } catch (e) {
       console.warn('Failed to record short generated', e);
+    }
+    return records;
+  }
+
+  public static deleteShortRecord(id: string): ShortRecord[] {
+    const records = this.getShortsRecords().filter(r => r.id !== id);
+    try {
+      localStorage.setItem(SHORTS_KEY, JSON.stringify(records));
+    } catch (e) {
+      console.warn('Failed to delete short record', e);
     }
     return records;
   }

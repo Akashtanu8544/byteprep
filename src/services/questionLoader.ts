@@ -265,6 +265,30 @@ export class QuestionLoader {
     return this.getAllQuestions().filter(q => q.sourceFile.toLowerCase().includes(mockId.toLowerCase()));
   }
 
+  public static filterQuestions(filters?: {
+    subject?: string;
+    topic?: string;
+    difficulty?: Difficulty | 'mixed';
+    mockId?: string;
+  }): NormalizedQuestion[] {
+    let pool = this.getAllQuestions();
+    if (!filters) return pool;
+
+    if (filters.subject && filters.subject !== 'All') {
+      pool = pool.filter(q => q.subject.toLowerCase() === filters.subject!.toLowerCase());
+    }
+    if (filters.topic && filters.topic !== 'All') {
+      pool = pool.filter(q => q.topic.toLowerCase() === filters.topic!.toLowerCase());
+    }
+    if (filters.difficulty && filters.difficulty !== 'mixed') {
+      pool = pool.filter(q => q.difficulty === filters.difficulty);
+    }
+    if (filters.mockId && filters.mockId !== 'All') {
+      pool = pool.filter(q => q.sourceFile.toLowerCase().includes(filters.mockId!.toLowerCase()));
+    }
+    return pool;
+  }
+
   public static getRandomQuestion(filters?: {
     subject?: string;
     topic?: string;
