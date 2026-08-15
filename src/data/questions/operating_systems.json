@@ -1,0 +1,114 @@
+[
+  {
+    "id": "os_q1",
+    "question": "Which CPU scheduling algorithm gives the lowest average waiting time for a given set of processes?",
+    "options": [
+      "First Come First Served (FCFS)",
+      "Shortest Job First (SJF)",
+      "Round Robin (RR)",
+      "Priority Scheduling"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Shortest Job First (SJF) scheduling is provably optimal because it gives the minimum average waiting time for a given set of processes.",
+    "subject": "Operating Systems",
+    "topic": "CPU Scheduling",
+    "difficulty": "medium",
+    "exam": "TGT CS / GATE"
+  },
+  {
+    "id": "os_q2",
+    "question": "Which condition is NOT one of Coffman's four necessary conditions for a Deadlock to occur?",
+    "options": [
+      "Mutual Exclusion",
+      "Hold and Wait",
+      "Preemption Allowed",
+      "Circular Wait"
+    ],
+    "correctAnswer": 2,
+    "explanation": "The four Coffman conditions are Mutual Exclusion, Hold and Wait, NO Preemption, and Circular Wait. Allowing preemption prevents deadlocks.",
+    "subject": "Operating Systems",
+    "topic": "Deadlocks",
+    "difficulty": "medium",
+    "exam": "TGT CS / B.Tech"
+  },
+  {
+    "id": "os_q3",
+    "question": "What occurs when the OS spends more time swapping pages in and out of memory than executing code?",
+    "options": [
+      "Segmentation Fault",
+      "Thrashing",
+      "Paging Fault",
+      "Deadlock"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Thrashing happens when page fault frequency is extremely high, causing the OS to spend more CPU time swapping pages than running application threads.",
+    "subject": "Operating Systems",
+    "topic": "Virtual Memory",
+    "difficulty": "easy",
+    "exam": "TGT CS / BCA"
+  },
+  {
+    "id": "os_q4",
+    "question": "Which Banker's algorithm mechanism is primarily used in Operating Systems?",
+    "options": [
+      "Deadlock Detection",
+      "Deadlock Prevention",
+      "Deadlock Avoidance",
+      "Deadlock Recovery"
+    ],
+    "correctAnswer": 2,
+    "explanation": "Banker's Algorithm is a famous deadlock avoidance algorithm that checks if allocating requested resources will keep the system in a safe state.",
+    "subject": "Operating Systems",
+    "topic": "Deadlocks",
+    "difficulty": "medium",
+    "exam": "TGT CS / GATE"
+  },
+  {
+    "id": "os_q5",
+    "question": "What system call is used in Unix/Linux to create a new child process?",
+    "options": [
+      "exec()",
+      "fork()",
+      "wait()",
+      "exit()"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The fork() system call creates an exact duplicate process (child process). Returns 0 to the child and child's PID to the parent process.",
+    "subject": "Operating Systems",
+    "topic": "Process Management",
+    "difficulty": "easy",
+    "exam": "TGT CS"
+  },
+  {
+    "id": "os_q6",
+    "question": "What is Belady's Anomaly in Virtual Memory management?",
+    "options": [
+      "Increasing page frames leads to more page faults in FIFO",
+      "Increasing page frames leads to fewer page faults in LRU",
+      "Accessing out-of-bounds memory triggers segmentation fault",
+      "Deadlock occurs when allocating pages sequentially"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Belady's Anomaly proves that for certain page replacement algorithms (specifically FIFO), increasing the number of allocated page frames can unexpectedly INCREASE page faults.",
+    "subject": "Operating Systems",
+    "topic": "Page Replacement",
+    "difficulty": "hard",
+    "exam": "GATE / UGC NET"
+  },
+  {
+    "id": "os_q7",
+    "question": "What synchronization variable consists of an integer value controlled via wait() and signal() operations?",
+    "options": [
+      "Mutex Lock",
+      "Semaphore",
+      "Monitor",
+      "Spinlock"
+    ],
+    "correctAnswer": 1,
+    "explanation": "A Semaphore is an integer variable accessed through atomic wait() [P] and signal() [V] operations to solve the critical section problem.",
+    "subject": "Operating Systems",
+    "topic": "Process Synchronization",
+    "difficulty": "medium",
+    "exam": "TGT CS"
+  }
+]

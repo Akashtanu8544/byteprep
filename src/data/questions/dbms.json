@@ -1,0 +1,130 @@
+[
+  {
+    "id": "dbms_q1",
+    "question": "Which SQL command is used to remove all records from a table without deleting the table structure?",
+    "options": [
+      "DROP",
+      "DELETE",
+      "TRUNCATE",
+      "REMOVE"
+    ],
+    "correctAnswer": 2,
+    "explanation": "TRUNCATE is a DDL command that quickly deletes all rows from a table and resets auto-increment counters while retaining the schema structure.",
+    "subject": "DBMS",
+    "topic": "SQL Commands",
+    "difficulty": "easy",
+    "exam": "TGT CS / BCA"
+  },
+  {
+    "id": "dbms_q2",
+    "question": "What does the 'A' stand for in the ACID properties of database transactions?",
+    "options": [
+      "Availability",
+      "Atomicity",
+      "Authenticity",
+      "Abstraction"
+    ],
+    "correctAnswer": 1,
+    "explanation": "ACID stands for Atomicity, Consistency, Isolation, and Durability. Atomicity ensures an 'all-or-nothing' execution of transaction steps.",
+    "subject": "DBMS",
+    "topic": "Transactions",
+    "difficulty": "easy",
+    "exam": "TGT CS / B.Tech"
+  },
+  {
+    "id": "dbms_q3",
+    "question": "In Relational Algebra, which operator is represented by the Greek symbol Sigma (σ)?",
+    "options": [
+      "Projection",
+      "Selection",
+      "Cartesian Product",
+      "Natural Join"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Sigma (σ) represents the Selection operator in relational algebra, which filters rows based on a given predicate. Projection uses Pi (π).",
+    "subject": "DBMS",
+    "topic": "Relational Algebra",
+    "difficulty": "medium",
+    "exam": "UGC NET / GATE"
+  },
+  {
+    "id": "dbms_q4",
+    "question": "Which Normal Form eliminates partial functional dependencies on a composite primary key?",
+    "options": [
+      "First Normal Form (1NF)",
+      "Second Normal Form (2NF)",
+      "Third Normal Form (3NF)",
+      "Boyce-Codd Normal Form (BCNF)"
+    ],
+    "correctAnswer": 1,
+    "explanation": "2NF requires a relation to be in 1NF and have no partial dependencies—every non-prime attribute must depend on the FULL primary key.",
+    "subject": "DBMS",
+    "topic": "Normalization",
+    "difficulty": "medium",
+    "exam": "TGT CS / GATE"
+  },
+  {
+    "id": "dbms_q5",
+    "question": "What key uniquely identifies a record in a relational database table?",
+    "options": [
+      "Foreign Key",
+      "Primary Key",
+      "Candidate Key",
+      "Super Key"
+    ],
+    "correctAnswer": 1,
+    "explanation": "A Primary Key uniquely identifies each row in a table. It cannot contain NULL values and must enforce unique records.",
+    "subject": "DBMS",
+    "topic": "Keys & Constraints",
+    "difficulty": "easy",
+    "exam": "TGT CS"
+  },
+  {
+    "id": "dbms_q6",
+    "question": "Which SQL clause is used to filter records aggregated by a GROUP BY clause?",
+    "options": [
+      "WHERE",
+      "HAVING",
+      "ORDER BY",
+      "FILTER"
+    ],
+    "correctAnswer": 1,
+    "explanation": "HAVING filters aggregated groups created by GROUP BY, whereas WHERE filters individual rows prior to grouping.",
+    "subject": "DBMS",
+    "topic": "SQL Queries",
+    "difficulty": "medium",
+    "exam": "TGT CS / BCA"
+  },
+  {
+    "id": "dbms_q7",
+    "question": "Which lock type allows multiple concurrent transactions to read a database item simultaneously?",
+    "options": [
+      "Exclusive Lock (X-lock)",
+      "Shared Lock (S-lock)",
+      "Intent Lock",
+      "Update Lock"
+    ],
+    "correctAnswer": 1,
+    "explanation": "A Shared Lock (S-lock) permits multiple transactions to read a record simultaneously without writing or altering data.",
+    "subject": "DBMS",
+    "topic": "Concurrency Control",
+    "difficulty": "medium",
+    "exam": "GATE / B.Tech"
+  },
+  {
+    "id": "dbms_q8",
+    "question": "In ER Diagrams, how is a Weak Entity set visually represented?",
+    "options": [
+      "Dashed Oval",
+      "Double Rectangle",
+      "Double Diamond",
+      "Single Rectangle"
+    ],
+    "correctAnswer": 1,
+    "explanation": "In ER modeling, a Weak Entity set (which lacks a primary key of its own) is drawn as a Double Rectangle. Identifying relationships use a Double Diamond.",
+    "subject": "DBMS",
+    "topic": "ER Modeling",
+    "difficulty": "easy",
+    "exam": "TGT CS"
+  }
+]

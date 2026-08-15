@@ -1,0 +1,82 @@
+[
+  {
+    "id": "dl_q1",
+    "question": "Which universal logic gate produces LOW (0) output only when ALL inputs are HIGH (1)?",
+    "options": [
+      "NOR Gate",
+      "NAND Gate",
+      "XOR Gate",
+      "AND Gate"
+    ],
+    "correctAnswer": 1,
+    "explanation": "A NAND gate outputs 0 only when all inputs are 1. It is a universal gate capable of implementing any Boolean function.",
+    "subject": "Digital Logic",
+    "topic": "Logic Gates",
+    "difficulty": "easy",
+    "exam": "TGT CS"
+  },
+  {
+    "id": "dl_q2",
+    "question": "What is the simplified Boolean expression for A + A'B according to Boolean laws?",
+    "options": [
+      "A",
+      "B",
+      "A + B",
+      "AB"
+    ],
+    "correctAnswer": 2,
+    "explanation": "By distributive law: A + A'B = (A + A')(A + B) = (1)(A + B) = A + B.",
+    "subject": "Digital Logic",
+    "topic": "Boolean Algebra",
+    "difficulty": "medium",
+    "exam": "TGT CS / BCA"
+  },
+  {
+    "id": "dl_q3",
+    "question": "In Cybersecurity, what type of attack involves an attacker placing themselves between two communicating parties to eavesdrop or modify traffic?",
+    "options": [
+      "Phishing",
+      "Man-in-the-Middle (MitM) Attack",
+      "SQL Injection",
+      "Denial of Service (DoS)"
+    ],
+    "correctAnswer": 1,
+    "explanation": "In a Man-in-the-Middle (MitM) attack, the attacker secretly relays and alters communications between two targets who believe they are directly chatting.",
+    "subject": "Cyber Security",
+    "topic": "Network Security",
+    "difficulty": "easy",
+    "exam": "TGT CS"
+  },
+  {
+    "id": "dl_q4",
+    "question": "Which symmetric encryption standard utilizes a 128-bit block size and key lengths of 128, 192, or 256 bits?",
+    "options": [
+      "DES",
+      "AES (Advanced Encryption Standard)",
+      "RSA",
+      "Blowfish"
+    ],
+    "correctAnswer": 1,
+    "explanation": "AES (Rijndael) is the international symmetric block cipher standard replacing DES, using 128-bit blocks and key sizes up to 256 bits.",
+    "subject": "Cyber Security",
+    "topic": "Cryptography",
+    "difficulty": "medium",
+    "exam": "TGT CS / GATE"
+  },
+  {
+    "id": "dl_q5",
+    "question": "How many select lines are required for an 8:1 Multiplexer (MUX)?",
+    "options": [
+      "2 select lines",
+      "3 select lines",
+      "4 select lines",
+      "8 select lines"
+    ],
+    "correctAnswer": 1,
+    "explanation": "An 2ⁿ-to-1 MUX requires n select lines. For 8 inputs (2³ = 8), exactly 3 select lines are required.",
+    "subject": "Digital Logic",
+    "topic": "Combinational Circuits",
+    "difficulty": "easy",
+    "exam": "TGT CS"
+  }
+]

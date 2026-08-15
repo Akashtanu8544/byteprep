@@ -1,0 +1,162 @@
+[
+  {
+    "id": "cn_q1",
+    "question": "Which layer in the OSI model is responsible for reliable end-to-end communication and flow control?",
+    "options": [
+      "Network Layer",
+      "Transport Layer",
+      "Data Link Layer",
+      "Session Layer"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The Transport Layer (Layer 4) provides transparent transfer of data between end users, providing reliable data transfer services including flow control and error control (e.g., TCP).",
+    "subject": "Computer Networks",
+    "topic": "OSI Model",
+    "difficulty": "easy",
+    "exam": "TGT CS / UGC NET / GATE"
+  },
+  {
+    "id": "cn_q2",
+    "question": "Which protocol is connection-oriented and guarantees reliable delivery of data packets?",
+    "options": [
+      "UDP",
+      "TCP",
+      "IP",
+      "ARP"
+    ],
+    "correctAnswer": 1,
+    "explanation": "TCP (Transmission Control Protocol) is a connection-oriented transport layer protocol that establishes a 3-way handshake and ensures ordered, reliable packet delivery.",
+    "subject": "Computer Networks",
+    "topic": "Transport Protocols",
+    "difficulty": "easy",
+    "exam": "TGT CS / B.Tech"
+  },
+  {
+    "id": "cn_q3",
+    "question": "What is the standard port number used for secure HTTPS web traffic?",
+    "options": [
+      "80",
+      "21",
+      "443",
+      "8080"
+    ],
+    "correctAnswer": 2,
+    "explanation": "Port 443 is the standard port for HTTPS (HTTP Secure). Port 80 is used for unencrypted HTTP, port 21 for FTP, and 8080 is common for web proxies.",
+    "subject": "Computer Networks",
+    "topic": "Application Ports",
+    "difficulty": "easy",
+    "exam": "TGT CS"
+  },
+  {
+    "id": "cn_q4",
+    "question": "Which address resolution protocol resolves an IP address to a physical MAC address?",
+    "options": [
+      "RARP",
+      "ARP",
+      "DHCP",
+      "DNS"
+    ],
+    "correctAnswer": 1,
+    "explanation": "ARP (Address Resolution Protocol) maps a known 32-bit IPv4 address to its corresponding 48-bit physical MAC address on a local network segment.",
+    "subject": "Computer Networks",
+    "topic": "Network Layer",
+    "difficulty": "medium",
+    "exam": "TGT CS / BCA"
+  },
+  {
+    "id": "cn_q5",
+    "question": "In IPv4 addressing, how many bits are allocated for a standard IP address?",
+    "options": [
+      "16 bits",
+      "32 bits",
+      "64 bits",
+      "128 bits"
+    ],
+    "correctAnswer": 1,
+    "explanation": "IPv4 uses 32-bit addresses formatted as 4 octets separated by dots (e.g., 192.168.1.1). IPv6 uses 128-bit addresses.",
+    "subject": "Computer Networks",
+    "topic": "IP Addressing",
+    "difficulty": "easy",
+    "exam": "TGT CS"
+  },
+  {
+    "id": "cn_q6",
+    "question": "What is the primary function of the Domain Name System (DNS)?",
+    "options": [
+      "Assign dynamic IP addresses to hosts",
+      "Translate domain names into IP addresses",
+      "Route data packets across subnets",
+      "Encrypt internet web browser traffic"
+    ],
+    "correctAnswer": 1,
+    "explanation": "DNS acts as the phonebook of the Internet, translating human-friendly domain names (like byteprep.com) into machine-readable IP addresses.",
+    "subject": "Computer Networks",
+    "topic": "Application Layer",
+    "difficulty": "easy",
+    "exam": "TGT CS / B.Tech"
+  },
+  {
+    "id": "cn_q7",
+    "question": "Which topology requires a central hub/switch and connects all devices individually to it?",
+    "options": [
+      "Bus Topology",
+      "Ring Topology",
+      "Star Topology",
+      "Mesh Topology"
+    ],
+    "correctAnswer": 2,
+    "explanation": "In a Star Topology, all nodes are individually connected to a central device such as a switch or hub. If one cable fails, only that node is disconnected.",
+    "subject": "Computer Networks",
+    "topic": "Network Topologies",
+    "difficulty": "easy",
+    "exam": "TGT CS"
+  },
+  {
+    "id": "cn_q8",
+    "question": "Which error detection mechanism uses polynomial division to detect transmission errors?",
+    "options": [
+      "Parity Check",
+      "Checksum",
+      "CRC (Cyclic Redundancy Check)",
+      "Hamming Code"
+    ],
+    "correctAnswer": 2,
+    "explanation": "Cyclic Redundancy Check (CRC) is a powerful error-detecting code based on binary polynomial division used at the Data Link Layer.",
+    "subject": "Computer Networks",
+    "topic": "Data Link Layer",
+    "difficulty": "medium",
+    "exam": "GATE / UGC NET"
+  },
+  {
+    "id": "cn_q9",
+    "question": "What is the subnet mask for a default Class C IPv4 network?",
+    "options": [
+      "255.0.0.0",
+      "255.255.0.0",
+      "255.255.255.0",
+      "255.255.255.255"
+    ],
+    "correctAnswer": 2,
+    "explanation": "Class C networks use a 24-bit network mask (255.255.255.0 /24), allowing up to 254 usable host IP addresses.",
+    "subject": "Computer Networks",
+    "topic": "IP Subnetting",
+    "difficulty": "medium",
+    "exam": "TGT CS / BCA"
+  },
+  {
+    "id": "cn_q10",
+    "question": "Which collision handling protocol is used in legacy CSMA Ethernet networks?",
+    "options": [
+      "CSMA/CA",
+      "CSMA/CD",
+      "Token Passing",
+      "ALOHA"
+    ],
+    "correctAnswer": 1,
+    "explanation": "CSMA/CD (Carrier Sense Multiple Access with Collision Detection) is used in wired Ethernet to sense collisions and initiate a random exponential backoff.",
+    "subject": "Computer Networks",
+    "topic": "Data Link Layer",
+    "difficulty": "medium",
+    "exam": "TGT CS / B.Tech"
+  }
+]

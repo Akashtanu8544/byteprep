@@ -1,0 +1,6 @@
+{
+  "name": "BytePrep CS",
+  "description": "Interactive 10 Second CS MCQ Challenge, Daily Streaks, and Shorts Studio 9:16 Video Generator for Computer Science exams.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

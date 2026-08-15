@@ -1,0 +1,98 @@
+[
+  {
+    "id": "ds_q1",
+    "question": "What is the worst-case time complexity of Quick Sort when picking the last element as the pivot?",
+    "options": [
+      "O(n log n)",
+      "O(n²)",
+      "O(n)",
+      "O(log n)"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Quick Sort degrades to O(n²) worst-case when the input array is already sorted or reverse-sorted and the pivot choice creates unbalanced partitions.",
+    "subject": "Data Structures",
+    "topic": "Sorting Algorithms",
+    "difficulty": "easy",
+    "exam": "TGT CS / GATE"
+  },
+  {
+    "id": "ds_q2",
+    "question": "Which data structure operates strictly on a Last-In, First-Out (LIFO) order?",
+    "options": [
+      "Queue",
+      "Stack",
+      "Linked List",
+      "Binary Heap"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Stack is a linear data structure following the LIFO principle where operations (push/pop) occur exclusively at the top of the stack.",
+    "subject": "Data Structures",
+    "topic": "Stacks & Queues",
+    "difficulty": "easy",
+    "exam": "TGT CS"
+  },
+  {
+    "id": "ds_q3",
+    "question": "In a self-balancing AVL Tree, what is the maximum permissible balance factor for any node?",
+    "options": [
+      "0",
+      "1 (Values: -1, 0, +1)",
+      "2",
+      "3"
+    ],
+    "correctAnswer": 1,
+    "explanation": "An AVL Tree maintains a balance factor (Height_Left - Height_Right) of -1, 0, or +1 for every node. Rotations rebalance any node exceeding this.",
+    "subject": "Data Structures",
+    "topic": "Trees & Balance",
+    "difficulty": "medium",
+    "exam": "GATE / B.Tech"
+  },
+  {
+    "id": "ds_q4",
+    "question": "Which tree traversal technique visits nodes in non-decreasing order for a Binary Search Tree (BST)?",
+    "options": [
+      "Pre-order Traversal",
+      "In-order Traversal",
+      "Post-order Traversal",
+      "Level-order Traversal"
+    ],
+    "correctAnswer": 1,
+    "explanation": "In-order traversal (Left -> Root -> Right) visits BST nodes in sorted ascending numerical/alphabetical sequence.",
+    "subject": "Data Structures",
+    "topic": "Binary Search Trees",
+    "difficulty": "easy",
+    "exam": "TGT CS / BCA"
+  },
+  {
+    "id": "ds_q5",
+    "question": "Which data structure is used by the Breadth-First Search (BFS) graph traversal algorithm?",
+    "options": [
+      "Stack",
+      "Queue",
+      "Priority Queue",
+      "Hash Table"
+    ],
+    "correctAnswer": 1,
+    "explanation": "BFS uses a Queue (FIFO) to explore neighbor vertices level by level, whereas Depth-First Search (DFS) uses a Stack (LIFO/recursion).",
+    "subject": "Data Structures",
+    "topic": "Graph Algorithms",
+    "difficulty": "easy",
+    "exam": "TGT CS"
+  },
+  {
+    "id": "ds_q6",
+    "question": "What technique resolves hash table collisions by placing colliding elements in a linked list at the same index?",
+    "options": [
+      "Linear Probing",
+      "Quadratic Probing",
+      "Separate Chaining",
+      "Double Hashing"
+    ],
+    "correctAnswer": 2,
+    "explanation": "Separate Chaining stores colliding key-value pairs in a linked list (or dynamic array) at the corresponding hash bucket index.",
+    "subject": "Data Structures",
+    "topic": "Hashing",
+    "difficulty": "medium",
+    "exam": "TGT CS / GATE"
+  }
+]

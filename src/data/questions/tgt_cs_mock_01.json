@@ -1,0 +1,82 @@
+[
+  {
+    "id": "tgt_mock_q1",
+    "q": "Which data model represents data as a collection of tables consisting of rows and columns?",
+    "choices": [
+      "Hierarchical Model",
+      "Relational Model",
+      "Network Model",
+      "Object-Oriented Model"
+    ],
+    "answer": 1,
+    "exp": "The Relational Data Model (E.F. Codd) organizes data into relations (tables) composed of tuples (rows) and attributes (columns).",
+    "subject": "TGT CS Exam",
+    "topic": "DBMS Concepts",
+    "difficulty": "easy",
+    "exam": "TGT CS Mock 01"
+  },
+  {
+    "id": "tgt_mock_q2",
+    "q": "In Python, which built-in data type is immutable?",
+    "choices": [
+      "List",
+      "Dictionary",
+      "Tuple",
+      "Set"
+    ],
+    "answer": 2,
+    "exp": "Tuples in Python are immutable sequences; once created, their elements cannot be changed, added, or removed.",
+    "subject": "Programming",
+    "topic": "Python Basics",
+    "difficulty": "easy",
+    "exam": "TGT CS Mock 01"
+  },
+  {
+    "id": "tgt_mock_q3",
+    "q": "What is the primary function of a Compiler in software execution?",
+    "choices": [
+      "Executes code line-by-line interactively",
+      "Translates entire high-level source code into machine code prior to execution",
+      "Links compiled object files to dynamic link libraries",
+      "Allocates virtual memory blocks dynamically"
+    ],
+    "answer": 1,
+    "exp": "A Compiler translates the entire high-level program into binary machine code before execution, creating an executable file.",
+    "subject": "Programming",
+    "topic": "Language Translators",
+    "difficulty": "easy",
+    "exam": "TGT CS Mock 01"
+  },
+  {
+    "id": "tgt_mock_q4",
+    "q": "Which HTML5 element is specifically used to draw 2D graphics dynamically via JavaScript?",
+    "choices": [
+      "<svg>",
+      "<canvas>",
+      "<graphic>",
+      "<draw>"
+    ],
+    "answer": 1,
+    "exp": "The <canvas> element provides a resolution-dependent bitmap canvas used for scriptable 2D/3D rendering.",
+    "subject": "Web Development",
+    "topic": "HTML5 & JS",
+    "difficulty": "easy",
+    "exam": "TGT CS Mock 01"
+  },
+  {
+    "id": "tgt_mock_q5",
+    "q": "What is the 2's complement representation of -5 in an 8-bit binary system?",
+    "options": [
+      "11111011",
+      "11111010",
+      "00000101",
+      "10000101"
+    ],
+    "correctAnswer": 0,
+    "explanation": "+5 in 8-bit is 00000101. 1's complement = 11111010. Adding 1 gives 11111011 (2's complement of -5).",
+    "subject": "Computer Architecture",
+    "topic": "Number Systems",
+    "difficulty": "medium",
+    "exam": "TGT CS Mock 01"
+  }
+]
