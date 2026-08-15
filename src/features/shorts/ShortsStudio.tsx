@@ -10,7 +10,7 @@ import { ViralCaptionsCard } from './ViralCaptionsCard';
 import { ThumbnailGenerator } from './ThumbnailGenerator';
 import { ShortsQueue } from './ShortsQueue';
 import { SocialPosterStudio } from './SocialPosterStudio';
-import { exportShortVideo, exportFrameSnapshot, getTimelineDurations, RenderControl } from './videoRenderer';
+import { exportShortVideo, exportFrameSnapshot, getTimelineDurations, calculateAutoSyncedPhases, RenderControl } from './videoRenderer';
 import { PollPostMaker } from '../polls/PollPostMaker';
 import { FlashCardMaker } from '../flashcards/FlashCardMaker';
 import {
@@ -37,6 +37,14 @@ import {
   XCircle,
   RotateCcw,
   Image as ImageIcon,
+  Music,
+  Upload,
+  Trash2,
+  Type,
+  Stamp,
+  Play,
+  Volume2,
+  VolumeX,
 } from 'lucide-react';
 
 interface ShortsStudioProps {
@@ -45,6 +53,12 @@ interface ShortsStudioProps {
 }
 
 const AUTOSAVE_KEY = 'byteprep_shorts_studio_autosave_state';
+const WATERMARK_LOGO_KEY = 'byteprep_watermark_logo_storage';
+const WATERMARK_TEXT_KEY = 'byteprep_watermark_text_storage';
+const WATERMARK_TYPE_KEY = 'byteprep_watermark_type_storage';
+const WATERMARK_POS_KEY = 'byteprep_watermark_pos_storage';
+const WATERMARK_OPACITY_KEY = 'byteprep_watermark_opacity_storage';
+const WATERMARK_SCALE_KEY = 'byteprep_watermark_scale_storage';
 
 export const ShortsStudio: React.FC<ShortsStudioProps> = ({ onBack, preselectedQuestionId }) => {
   const allSubjects = ['All', ...QuestionLoader.getAllSubjects()];
@@ -68,6 +82,35 @@ export const ShortsStudio: React.FC<ShortsStudioProps> = ({ onBack, preselectedQ
   const [durationMode, setDurationMode] = useState<'viral' | 'standard' | 'extended'>('viral');
   const [renderQuality, setRenderQuality] = useState<'720p' | '1080p'>('720p');
   const [includeAudio, setIncludeAudio] = useState<boolean>(true);
+
+  // Auto-Sync & Background Audio
+  const [autoSyncAudio, setAutoSyncAudio] = useState<boolean>(true);
+  const [audioTrackId, setAudioTrackId] = useState<string>('cyber-pulse');
+  const [customAudioUrl, setCustomAudioUrl] = useState<string | null>(null);
+  const [customAudioName, setCustomAudioName] = useState<string>('');
+  const [customAudioDuration, setCustomAudioDuration] = useState<number | null>(null);
+
+  // Permanent Watermark & Logo Overlay
+  const [watermarkType, setWatermarkType] = useState<'none' | 'logo' | 'text'>(() => {
+    return (localStorage.getItem(WATERMARK_TYPE_KEY) as any) || 'logo';
+  });
+  const [watermarkLogoUrl, setWatermarkLogoUrl] = useState<string | null>(() => {
+    return localStorage.getItem(WATERMARK_LOGO_KEY) || null;
+  });
+  const [watermarkText, setWatermarkText] = useState<string>(() => {
+    return localStorage.getItem(WATERMARK_TEXT_KEY) || '@BytePrepCS';
+  });
+  const [watermarkPosition, setWatermarkPosition] = useState<'bottom-right' | 'bottom-left' | 'top-right' | 'top-left'>(() => {
+    return (localStorage.getItem(WATERMARK_POS_KEY) as any) || 'bottom-right';
+  });
+  const [watermarkOpacity, setWatermarkOpacity] = useState<number>(() => {
+    const val = localStorage.getItem(WATERMARK_OPACITY_KEY);
+    return val ? parseFloat(val) : 0.85;
+  });
+  const [watermarkScale, setWatermarkScale] = useState<number>(() => {
+    const val = localStorage.getItem(WATERMARK_SCALE_KEY);
+    return val ? parseFloat(val) : 1.0;
+  });
 
   // Auto-Save Tracking
   const [lastAutoSaved, setLastAutoSaved] = useState<Date | null>(null);
@@ -241,6 +284,65 @@ export const ShortsStudio: React.FC<ShortsStudioProps> = ({ onBack, preselectedQ
     setCurrentQuestion(q);
   };
 
+  const getAudioTrackDuration = (): number => {
+    if (audioTrackId === 'custom' && customAudioDuration) return customAudioDuration;
+    if (audioTrackId === 'synth-rush') return 12.0;
+    if (audioTrackId === 'cyber-pulse') return 15.0;
+    if (audioTrackId === 'epic-countdown') return 18.0;
+    if (audioTrackId === 'quiz-intense') return 20.0;
+    if (audioTrackId === 'lofi-focus') return 24.0;
+    if (audioTrackId === 'extended-mastery') return 30.0;
+    return 15.0;
+  };
+
+  const handleAudioUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result as string;
+      setCustomAudioUrl(dataUrl);
+      setCustomAudioName(file.name);
+      setAudioTrackId('custom');
+
+      // Detect exact duration
+      const tempAudio = new Audio(dataUrl);
+      tempAudio.onloadedmetadata = () => {
+        if (tempAudio.duration && isFinite(tempAudio.duration)) {
+          setCustomAudioDuration(+tempAudio.duration.toFixed(1));
+        } else {
+          setCustomAudioDuration(15.0);
+        }
+      };
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result as string;
+      setWatermarkLogoUrl(dataUrl);
+      setWatermarkType('logo');
+      try {
+        localStorage.setItem(WATERMARK_LOGO_KEY, dataUrl);
+        localStorage.setItem(WATERMARK_TYPE_KEY, 'logo');
+      } catch (err) {
+        console.warn('Storage quota limit for logo', err);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleClearLogo = () => {
+    setWatermarkLogoUrl(null);
+    localStorage.removeItem(WATERMARK_LOGO_KEY);
+  };
+
   const currentConfig: ShortConfig = {
     question: currentQuestion || {
       id: 'placeholder',
@@ -263,6 +365,19 @@ export const ShortsStudio: React.FC<ShortsStudioProps> = ({ onBack, preselectedQ
     durationMode,
     renderQuality,
     appUrl: StorageService.getSettings().appUrl,
+    // Auto-Sync Audio
+    autoSyncAudio,
+    audioTrackId,
+    audioTrackName: audioTrackId,
+    audioTrackDuration: getAudioTrackDuration(),
+    customAudioDataUrl: customAudioUrl || undefined,
+    // Permanent Watermark & Logo Overlay
+    watermarkType,
+    watermarkLogoUrl: watermarkLogoUrl || undefined,
+    watermarkText,
+    watermarkPosition,
+    watermarkOpacity,
+    watermarkScale,
   };
 
   const handleRenderSingleVideo = () => {
@@ -347,6 +462,17 @@ export const ShortsStudio: React.FC<ShortsStudioProps> = ({ onBack, preselectedQ
         durationMode,
         renderQuality,
         appUrl: StorageService.getSettings().appUrl,
+        autoSyncAudio,
+        audioTrackId,
+        audioTrackName: audioTrackId,
+        audioTrackDuration: getAudioTrackDuration(),
+        customAudioDataUrl: customAudioUrl || undefined,
+        watermarkType,
+        watermarkLogoUrl: watermarkLogoUrl || undefined,
+        watermarkText,
+        watermarkPosition,
+        watermarkOpacity,
+        watermarkScale,
       },
       status: 'pending',
       progress: 0,
@@ -772,100 +898,473 @@ export const ShortsStudio: React.FC<ShortsStudioProps> = ({ onBack, preselectedQ
               </div>
             </div>
 
-            {/* 4. Speed, Duration & Quality Engine Controls */}
+            {/* 4. Speed, Duration & Auto-Sync Audio Engine Controls */}
             <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-xl">
               <div className="flex items-center justify-between flex-wrap gap-2">
                 <h3 className="text-white font-bold text-sm flex items-center gap-2">
                   <Sliders className="w-4 h-4 text-emerald-400" />
-                  <span>Duration, Quality & Audio Synthesis</span>
+                  <span>Duration, Quality & Auto-Sync Audio Engine</span>
                 </h3>
-                <span className="px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-mono text-xs font-bold rounded-lg flex items-center gap-1.5">
-                  <Clock className="w-3.5 h-3.5" />
-                  <span>Total Video: {getTimelineDurations(currentConfig).total.toFixed(1)}s</span>
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-mono text-xs font-bold rounded-lg flex items-center gap-1.5">
+                    <Clock className="w-3.5 h-3.5" />
+                    <span>Total Video: {getTimelineDurations(currentConfig).total.toFixed(1)}s</span>
+                  </span>
+                </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {/* Duration Mode */}
-                <div>
-                  <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
-                    Timeline Pacing
-                  </label>
-                  <select
-                    value={durationMode}
-                    onChange={e => {
-                      const newMode = e.target.value as any;
-                      setDurationMode(newMode);
-                      if (newMode === 'viral' && timerSeconds > 5) {
-                        setTimerSeconds(5);
-                      } else if (newMode === 'standard' && timerSeconds < 8) {
-                        setTimerSeconds(10);
-                      }
-                    }}
-                    className="w-full bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-xl p-2.5 outline-none focus:border-emerald-500 cursor-pointer font-medium"
-                  >
-                    <option value="viral">⚡ Viral Fast (14.0s Total)</option>
-                    <option value="standard">⏱️ Standard (24.0s Total)</option>
-                    <option value="extended">📚 Extended (32.0s Total)</option>
-                  </select>
-                </div>
-
-                {/* Question Countdown Timer */}
-                <div>
-                  <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
-                    MCQ Timer Countdown
-                  </label>
-                  <div className="grid grid-cols-4 gap-1">
-                    {[5, 8, 10, 15].map(sec => (
-                      <button
-                        key={sec}
-                        type="button"
-                        onClick={() => setTimerSeconds(sec)}
-                        className={`py-2 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer ${
-                          timerSeconds === sec
-                            ? 'bg-emerald-500 text-slate-950 shadow-sm'
-                            : 'bg-slate-950 border border-slate-800 text-slate-400 hover:border-slate-700 hover:text-white'
-                        }`}
-                      >
-                        {sec}s
-                      </button>
-                    ))}
+              {/* AUTO-SYNC TOGGLE BAR */}
+              <div className="p-3.5 bg-gradient-to-r from-emerald-950/40 via-slate-950 to-sky-950/40 border border-emerald-500/30 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 bg-emerald-500/20 text-emerald-400 rounded-lg">
+                    <Zap className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-black text-white tracking-wide">AUTO-SYNC SLIDE TIMING</span>
+                      <span className={`px-2 py-0.5 text-[10px] font-black rounded-full uppercase tracking-wider ${
+                        autoSyncAudio ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'bg-slate-800 text-slate-400'
+                      }`}>
+                        {autoSyncAudio ? 'ACTIVE' : 'OFF'}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-400 mt-0.5">
+                      Automatically adjusts Intro, Hook, MCQ Timer, Reveal & Explanation transitions to match audio track length.
+                    </p>
                   </div>
                 </div>
 
-                {/* Render Quality */}
-                <div>
-                  <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
-                    Video Resolution
+                <button
+                  type="button"
+                  onClick={() => setAutoSyncAudio(!autoSyncAudio)}
+                  className={`px-4 py-2 rounded-xl text-xs font-black transition-all cursor-pointer shadow-md shrink-0 flex items-center gap-1.5 ${
+                    autoSyncAudio
+                      ? 'bg-emerald-500 text-slate-950 hover:bg-emerald-400 shadow-emerald-500/25'
+                      : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700'
+                  }`}
+                >
+                  <Zap className={`w-3.5 h-3.5 ${autoSyncAudio ? 'fill-current' : ''}`} />
+                  <span>{autoSyncAudio ? '⚡ AUTO-SYNC ON' : 'ENABLE AUTO-SYNC'}</span>
+                </button>
+              </div>
+
+              {/* BACKGROUND AUDIO TRACK PICKER */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="text-[11px] font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                    <Music className="w-3.5 h-3.5 text-sky-400" />
+                    <span>Background Audio Track & Soundtracks</span>
                   </label>
+                  {autoSyncAudio && (
+                    <span className="text-[10px] text-emerald-400 font-semibold">
+                      ⚡ Slide transitions will sync to this track ({getAudioTrackDuration().toFixed(1)}s)
+                    </span>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  {[
+                    { id: 'cyber-pulse', label: '⚡ Cyber Pulse', duration: 15.0 },
+                    { id: 'quiz-intense', label: '🔥 Intense Quiz', duration: 20.0 },
+                    { id: 'lofi-focus', label: '🎧 Lo-Fi Focus', duration: 24.0 },
+                    { id: 'synth-rush', label: '🚀 Sprint Beat', duration: 12.0 },
+                    { id: 'epic-countdown', label: '⏱️ Exam Clock', duration: 18.0 },
+                    { id: 'extended-mastery', label: '📚 In-Depth Beat', duration: 30.0 },
+                    { id: 'custom', label: '🎵 Custom Audio', duration: customAudioDuration || 15.0 },
+                  ].map(track => (
+                    <button
+                      key={track.id}
+                      type="button"
+                      onClick={() => setAudioTrackId(track.id)}
+                      className={`p-2 rounded-xl text-left border transition-all cursor-pointer flex flex-col justify-between ${
+                        audioTrackId === track.id
+                          ? 'bg-sky-500/15 border-sky-500 text-sky-300 shadow-sm'
+                          : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-200'
+                      }`}
+                    >
+                      <span className="text-xs font-bold truncate">{track.label}</span>
+                      <span className="text-[10px] font-mono text-slate-500 mt-1">
+                        {track.duration.toFixed(1)}s duration
+                      </span>
+                    </button>
+                  ))}
+                </div>
+
+                {/* Custom Audio Upload input when 'custom' selected */}
+                {audioTrackId === 'custom' && (
+                  <div className="mt-2 p-3 bg-slate-950 border border-slate-800 rounded-xl flex items-center justify-between gap-3 flex-wrap">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <Music className="w-4 h-4 text-sky-400 shrink-0" />
+                      <div className="min-w-0">
+                        <p className="text-xs font-bold text-slate-200 truncate">
+                          {customAudioName || 'Upload custom .mp3 or .wav track'}
+                        </p>
+                        <p className="text-[10px] text-slate-400">
+                          {customAudioDuration ? `Detected Length: ${customAudioDuration}s` : 'Audio length will be auto-detected'}
+                        </p>
+                      </div>
+                    </div>
+
+                    <label className="px-3 py-1.5 bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-500/40 rounded-lg text-xs font-bold transition-all cursor-pointer shrink-0 flex items-center gap-1.5">
+                      <Upload className="w-3.5 h-3.5" />
+                      <span>{customAudioUrl ? 'Change Audio File' : 'Upload MP3/WAV'}</span>
+                      <input
+                        type="file"
+                        accept="audio/*"
+                        onChange={handleAudioUpload}
+                        className="hidden"
+                      />
+                    </label>
+                  </div>
+                )}
+              </div>
+
+              {/* TIMELINE VISUAL BREAKDOWN (Dynamic Sync) */}
+              {autoSyncAudio && (
+                <div className="p-3 bg-slate-950 border border-slate-800/80 rounded-xl space-y-1.5">
+                  <div className="flex items-center justify-between text-[11px] font-bold text-slate-400">
+                    <span className="flex items-center gap-1 text-slate-300">
+                      <Zap className="w-3 h-3 text-emerald-400" />
+                      <span>Auto-Synchronized Slide Phases:</span>
+                    </span>
+                    <span className="font-mono text-emerald-400">
+                      Total: {getTimelineDurations(currentConfig).total.toFixed(1)}s
+                    </span>
+                  </div>
+
+                  {(() => {
+                    const dur = getTimelineDurations(currentConfig);
+                    return (
+                      <div className="grid grid-cols-6 gap-1 text-center">
+                        <div className="p-1 bg-slate-900 border border-slate-800 rounded">
+                          <p className="text-[9px] text-slate-400">Intro</p>
+                          <p className="text-xs font-mono font-bold text-slate-200">{dur.intro}s</p>
+                        </div>
+                        <div className="p-1 bg-slate-900 border border-slate-800 rounded">
+                          <p className="text-[9px] text-slate-400">Hook</p>
+                          <p className="text-xs font-mono font-bold text-slate-200">{dur.hook}s</p>
+                        </div>
+                        <div className="p-1 bg-emerald-950/40 border border-emerald-500/30 rounded">
+                          <p className="text-[9px] text-emerald-400">MCQ Timer</p>
+                          <p className="text-xs font-mono font-bold text-emerald-300">{dur.question}s</p>
+                        </div>
+                        <div className="p-1 bg-slate-900 border border-slate-800 rounded">
+                          <p className="text-[9px] text-slate-400">Reveal</p>
+                          <p className="text-xs font-mono font-bold text-slate-200">{dur.reveal}s</p>
+                        </div>
+                        <div className="p-1 bg-slate-900 border border-slate-800 rounded">
+                          <p className="text-[9px] text-slate-400">Explain</p>
+                          <p className="text-xs font-mono font-bold text-slate-200">{dur.explanation}s</p>
+                        </div>
+                        <div className="p-1 bg-slate-900 border border-slate-800 rounded">
+                          <p className="text-[9px] text-slate-400">CTA Outro</p>
+                          <p className="text-xs font-mono font-bold text-slate-200">{dur.cta}s</p>
+                        </div>
+                      </div>
+                    );
+                  })()}
+                </div>
+              )}
+
+              {/* Standard Pacing Controls when Auto-Sync is OFF */}
+              {!autoSyncAudio && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+                      Manual Timeline Pacing
+                    </label>
+                    <select
+                      value={durationMode}
+                      onChange={e => {
+                        const newMode = e.target.value as any;
+                        setDurationMode(newMode);
+                        if (newMode === 'viral' && timerSeconds > 5) {
+                          setTimerSeconds(5);
+                        } else if (newMode === 'standard' && timerSeconds < 8) {
+                          setTimerSeconds(10);
+                        }
+                      }}
+                      className="w-full bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-xl p-2.5 outline-none focus:border-emerald-500 cursor-pointer font-medium"
+                    >
+                      <option value="viral">⚡ Viral Fast (14.0s Total)</option>
+                      <option value="standard">⏱️ Standard (24.0s Total)</option>
+                      <option value="extended">📚 Extended (32.0s Total)</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+                      MCQ Timer Countdown
+                    </label>
+                    <div className="grid grid-cols-4 gap-1">
+                      {[5, 8, 10, 15].map(sec => (
+                        <button
+                          key={sec}
+                          type="button"
+                          onClick={() => setTimerSeconds(sec)}
+                          className={`py-2 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer ${
+                            timerSeconds === sec
+                              ? 'bg-emerald-500 text-slate-950 shadow-sm'
+                              : 'bg-slate-950 border border-slate-800 text-slate-400 hover:border-slate-700 hover:text-white'
+                          }`}
+                        >
+                          {sec}s
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Quality & Audio Ticks Row */}
+              <div className="pt-3 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div className="flex items-center gap-2 w-full sm:w-auto">
+                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Resolution:</label>
                   <select
                     value={renderQuality}
                     onChange={e => setRenderQuality(e.target.value as any)}
-                    className="w-full bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-xl p-2.5 outline-none focus:border-emerald-500 cursor-pointer"
+                    className="bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-xl px-3 py-1.5 outline-none focus:border-emerald-500 cursor-pointer"
                   >
                     <option value="720p">⚡ Fast 720p (720x1280)</option>
                     <option value="1080p">💎 Full HD 1080p (1080x1920)</option>
                   </select>
                 </div>
-              </div>
 
-              {/* Audio Option Row */}
-              <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between">
-                <span className="text-xs text-slate-400">Audio Sound Effects & Countdown Ticks:</span>
-                <button
-                  onClick={() => setIncludeAudio(!includeAudio)}
-                  className={`py-1.5 px-3.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
-                    includeAudio
-                      ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400'
-                      : 'bg-slate-950 border-slate-800 text-slate-400'
-                  }`}
-                >
-                  {includeAudio ? '🔊 SFX & Ticks ON' : '🔇 Audio Muted'}
-                </button>
+                <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+                  <span className="text-xs text-slate-400">Sound Effects:</span>
+                  <button
+                    type="button"
+                    onClick={() => setIncludeAudio(!includeAudio)}
+                    className={`py-1.5 px-3 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
+                      includeAudio
+                        ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400'
+                        : 'bg-slate-950 border-slate-800 text-slate-400'
+                    }`}
+                  >
+                    {includeAudio ? '🔊 Audio SFX ON' : '🔇 Audio Muted'}
+                  </button>
+                </div>
               </div>
             </div>
 
-            {/* 5. Bulk Generation Panel */}
+            {/* 5. Permanent Watermark & Logo Overlay Studio */}
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-xl">
+              <div className="flex items-center justify-between flex-wrap gap-2">
+                <div>
+                  <h3 className="text-white font-bold text-sm flex items-center gap-2">
+                    <Stamp className="w-4 h-4 text-rose-400" />
+                    <span>Permanent Watermark & Custom Logo Overlay</span>
+                  </h3>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    Embeds your brand PNG logo or handle watermark in the corner of all generated videos.
+                  </p>
+                </div>
+
+                <span className={`px-2.5 py-1 text-[11px] font-bold rounded-lg border ${
+                  watermarkType !== 'none'
+                    ? 'bg-rose-500/10 border-rose-500/30 text-rose-400'
+                    : 'bg-slate-950 border-slate-800 text-slate-500'
+                }`}>
+                  {watermarkType === 'logo' ? '🖼️ PNG Logo Active' : watermarkType === 'text' ? '🔤 Text Active' : 'Off'}
+                </span>
+              </div>
+
+              {/* Watermark Type Selector */}
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { id: 'none', label: 'No Watermark' },
+                  { id: 'logo', label: '🖼️ Custom PNG Logo' },
+                  { id: 'text', label: '🔤 Custom Text Handle' },
+                ].map(type => (
+                  <button
+                    key={type.id}
+                    type="button"
+                    onClick={() => {
+                      const t = type.id as any;
+                      setWatermarkType(t);
+                      localStorage.setItem(WATERMARK_TYPE_KEY, t);
+                    }}
+                    className={`py-2 rounded-xl text-xs font-bold border transition-all cursor-pointer text-center ${
+                      watermarkType === type.id
+                        ? 'bg-rose-500/15 border-rose-500 text-rose-300 shadow-sm'
+                        : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-200'
+                    }`}
+                  >
+                    {type.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* If PNG Logo is Selected */}
+              {watermarkType === 'logo' && (
+                <div className="p-4 bg-slate-950 border border-slate-800 rounded-xl space-y-3">
+                  <div className="flex items-center justify-between gap-3 flex-wrap">
+                    <div className="flex items-center gap-3">
+                      {watermarkLogoUrl ? (
+                        <div className="w-12 h-12 rounded-lg bg-slate-900 border border-slate-700 p-1 flex items-center justify-center relative overflow-hidden">
+                          <img
+                            src={watermarkLogoUrl}
+                            alt="Watermark Logo"
+                            className="max-h-full max-w-full object-contain"
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-12 h-12 rounded-lg bg-slate-900 border border-dashed border-slate-700 flex items-center justify-center text-slate-600">
+                          <ImageIcon className="w-6 h-6" />
+                        </div>
+                      )}
+
+                      <div>
+                        <p className="text-xs font-bold text-white">
+                          {watermarkLogoUrl ? 'Custom PNG Logo Loaded' : 'Upload Channel PNG Logo'}
+                        </p>
+                        <p className="text-[11px] text-slate-400">
+                          Transparent PNG recommended • Auto-persisted for all future shorts
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <label className="px-3.5 py-1.5 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5">
+                        <Upload className="w-3.5 h-3.5" />
+                        <span>{watermarkLogoUrl ? 'Replace Logo' : 'Upload PNG'}</span>
+                        <input
+                          type="file"
+                          accept="image/png, image/jpeg, image/webp"
+                          onChange={handleLogoUpload}
+                          className="hidden"
+                        />
+                      </label>
+
+                      {watermarkLogoUrl && (
+                        <button
+                          type="button"
+                          onClick={handleClearLogo}
+                          className="p-1.5 bg-slate-800 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 rounded-xl border border-slate-700 transition-colors cursor-pointer"
+                          title="Remove custom logo"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* If Text Watermark is Selected */}
+              {watermarkType === 'text' && (
+                <div className="p-4 bg-slate-950 border border-slate-800 rounded-xl space-y-2">
+                  <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                    Custom Text / Social Handle
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={watermarkText}
+                      onChange={e => {
+                        setWatermarkText(e.target.value);
+                        localStorage.setItem(WATERMARK_TEXT_KEY, e.target.value);
+                      }}
+                      placeholder="@BytePrepCS or DSSSB TGT CS"
+                      className="flex-1 bg-slate-900 border border-slate-700 text-slate-100 text-xs rounded-xl p-2.5 outline-none focus:border-rose-500"
+                    />
+                  </div>
+
+                  {/* Preset quick buttons */}
+                  <div className="flex items-center gap-1.5 pt-1">
+                    <span className="text-[10px] text-slate-500">Quick:</span>
+                    {['@BytePrepCS', 'DSSSB CS 2026', 'TGT PGT Master', '#BytePrep'].map(preset => (
+                      <button
+                        key={preset}
+                        type="button"
+                        onClick={() => {
+                          setWatermarkText(preset);
+                          localStorage.setItem(WATERMARK_TEXT_KEY, preset);
+                        }}
+                        className="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 text-[10px] rounded-lg transition-colors cursor-pointer"
+                      >
+                        {preset}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Watermark Position & Opacity (Visible when logo or text is selected) */}
+              {watermarkType !== 'none' && (
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+                      Corner Position
+                    </label>
+                    <select
+                      value={watermarkPosition}
+                      onChange={e => {
+                        const pos = e.target.value as any;
+                        setWatermarkPosition(pos);
+                        localStorage.setItem(WATERMARK_POS_KEY, pos);
+                      }}
+                      className="w-full bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-xl p-2.5 outline-none focus:border-rose-500 cursor-pointer"
+                    >
+                      <option value="bottom-right">↘ Bottom-Right (Recommended)</option>
+                      <option value="bottom-left">↙ Bottom-Left</option>
+                      <option value="top-right">↗ Top-Right</option>
+                      <option value="top-left">↖ Top-Left</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+                      Watermark Opacity: {Math.round(watermarkOpacity * 100)}%
+                    </label>
+                    <input
+                      type="range"
+                      min="0.2"
+                      max="1.0"
+                      step="0.05"
+                      value={watermarkOpacity}
+                      onChange={e => {
+                        const val = parseFloat(e.target.value);
+                        setWatermarkOpacity(val);
+                        localStorage.setItem(WATERMARK_OPACITY_KEY, val.toString());
+                      }}
+                      className="w-full accent-rose-500 cursor-pointer mt-2"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+                      Scale Size
+                    </label>
+                    <div className="grid grid-cols-3 gap-1">
+                      {[
+                        { scale: 0.75, label: 'Small' },
+                        { scale: 1.0, label: 'Med' },
+                        { scale: 1.25, label: 'Large' },
+                      ].map(sc => (
+                        <button
+                          key={sc.scale}
+                          type="button"
+                          onClick={() => {
+                            setWatermarkScale(sc.scale);
+                            localStorage.setItem(WATERMARK_SCALE_KEY, sc.scale.toString());
+                          }}
+                          className={`py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                            watermarkScale === sc.scale
+                              ? 'bg-rose-500 text-slate-950 font-black'
+                              : 'bg-slate-950 border border-slate-800 text-slate-400 hover:border-slate-700 hover:text-white'
+                          }`}
+                        >
+                          {sc.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* 6. Bulk Generation Panel */}
             <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
               <div>
                 <h4 className="text-white font-bold text-sm flex items-center gap-2">

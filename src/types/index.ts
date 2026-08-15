@@ -262,6 +262,19 @@ export interface ShortConfig {
     explanation?: number;
     cta?: number;
   };
+  // Auto-Sync & Audio Track
+  autoSyncAudio?: boolean;
+  audioTrackId?: string;
+  audioTrackName?: string;
+  audioTrackDuration?: number;
+  customAudioDataUrl?: string;
+  // Permanent Watermark & Logo Overlay
+  watermarkType?: 'none' | 'logo' | 'text';
+  watermarkLogoUrl?: string;
+  watermarkText?: string;
+  watermarkPosition?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
+  watermarkOpacity?: number;
+  watermarkScale?: number;
 }
 
 export interface GeneratedContentPack {

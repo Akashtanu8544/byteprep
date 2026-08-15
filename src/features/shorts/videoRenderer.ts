@@ -26,13 +26,61 @@ export interface TimelineDurations {
 }
 
 /**
- * Computes exact timeline phase durations based on ShortConfig and durationMode.
- * Supports:
- * - 'viral' / 'fast': ~18s (Ultra high retention, fast export)
- * - 'standard': ~25s (Balanced default)
- * - 'extended': ~34s (Deep dive with long explanation)
+ * Image Cache for Custom Watermark Logo overlay to prevent async stuttering during 30fps canvas rendering
+ */
+const watermarkImageCache = new Map<string, HTMLImageElement>();
+
+export function getWatermarkImage(url: string): HTMLImageElement | null {
+  if (!url) return null;
+  if (watermarkImageCache.has(url)) {
+    return watermarkImageCache.get(url)!;
+  }
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.src = url;
+  watermarkImageCache.set(url, img);
+  return img;
+}
+
+/**
+ * Automatically synchronizes and partitions slide transitions to match an audio track duration.
+ */
+export function calculateAutoSyncedPhases(totalAudioDuration: number): TimelineDurations {
+  const T = Math.max(6, +(totalAudioDuration || 15).toFixed(1));
+  
+  // Golden proportions: Intro (8%), Hook (12%), MCQ Timer (40%), Reveal (12%), Explanation (18%), CTA (10%)
+  let intro = Math.max(1.0, +(T * 0.08).toFixed(1));
+  let hook = Math.max(1.5, +(T * 0.12).toFixed(1));
+  let reveal = Math.max(1.5, +(T * 0.12).toFixed(1));
+  let explanation = Math.max(2.0, +(T * 0.18).toFixed(1));
+  let cta = Math.max(1.2, +(T * 0.10).toFixed(1));
+  let question = +(T - (intro + hook + reveal + explanation + cta)).toFixed(1);
+
+  if (question < 3.0) {
+    question = 3.0;
+  }
+
+  const total = +(intro + hook + question + reveal + explanation + cta).toFixed(1);
+  return {
+    intro,
+    hook,
+    question,
+    reveal,
+    explanation,
+    cta,
+    total,
+  };
+}
+
+/**
+ * Computes exact timeline phase durations based on ShortConfig, durationMode, or Auto-Sync Audio.
  */
 export function getTimelineDurations(config: ShortConfig): TimelineDurations {
+  // If Auto-Sync is enabled and an audio track duration is provided
+  if (config.autoSyncAudio && config.audioTrackDuration && config.audioTrackDuration > 0) {
+    return calculateAutoSyncedPhases(config.audioTrackDuration);
+  }
+
   const mode = config.durationMode || 'standard';
 
   if (config.phaseDurations) {
@@ -316,6 +364,101 @@ export function drawShortFrame(
 
   // Logo Right
   drawCanvasBytePrepLogo(ctx, footerX + footerW - 56, footerY + footerH / 2, 64);
+
+  ctx.restore();
+
+  // 5. Permanent Watermark & Logo Overlay (Custom PNG or Text)
+  drawWatermarkOverlay(ctx, width, height, config);
+}
+
+/**
+ * Draws a permanent watermark (custom PNG logo or custom text overlay) in the specified corner.
+ */
+export function drawWatermarkOverlay(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  config: ShortConfig
+) {
+  const {
+    watermarkType,
+    watermarkLogoUrl,
+    watermarkText,
+    watermarkPosition = 'bottom-right',
+    watermarkOpacity = 0.85,
+    watermarkScale = 1.0,
+  } = config;
+
+  if (!watermarkType || watermarkType === 'none') return;
+
+  ctx.save();
+  ctx.globalAlpha = Math.max(0.1, Math.min(1.0, watermarkOpacity));
+
+  const scale = Math.max(0.4, Math.min(2.0, watermarkScale || 1.0));
+
+  if (watermarkType === 'logo' && watermarkLogoUrl) {
+    const img = getWatermarkImage(watermarkLogoUrl);
+    if (img && (img.complete || img.naturalWidth > 0)) {
+      const baseW = 120 * scale;
+      const aspect = img.naturalHeight && img.naturalWidth ? img.naturalHeight / img.naturalWidth : 1;
+      const baseH = baseW * aspect;
+
+      let posX = width - 100 - baseW;
+      let posY = height - 215 - baseH;
+
+      if (watermarkPosition === 'bottom-left') {
+        posX = 100;
+        posY = height - 215 - baseH;
+      } else if (watermarkPosition === 'top-right') {
+        posX = width - 100 - baseW;
+        posY = 280;
+      } else if (watermarkPosition === 'top-left') {
+        posX = 100;
+        posY = 280;
+      }
+
+      // Drop shadow for crisp visibility on any background
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.75)';
+      ctx.shadowBlur = 12;
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 4;
+      ctx.drawImage(img, posX, posY, baseW, baseH);
+    }
+  } else if (watermarkType === 'text' && watermarkText && watermarkText.trim()) {
+    const textStr = watermarkText.trim();
+    const fontSize = Math.round(22 * scale);
+    ctx.font = `800 ${fontSize}px sans-serif`;
+    const textMetrics = ctx.measureText(textStr);
+    const pillW = textMetrics.width + 36 * scale;
+    const pillH = 44 * scale;
+
+    let posX = width - 100 - pillW;
+    let posY = height - 215 - pillH;
+
+    if (watermarkPosition === 'bottom-left') {
+      posX = 100;
+      posY = height - 215 - pillH;
+    } else if (watermarkPosition === 'top-right') {
+      posX = width - 100 - pillW;
+      posY = 280;
+    } else if (watermarkPosition === 'top-left') {
+      posX = 100;
+      posY = 280;
+    }
+
+    // Pill background
+    ctx.fillStyle = 'rgba(15, 23, 42, 0.88)';
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+    ctx.lineWidth = 1.5;
+    fillRoundedRect(ctx, posX, posY, pillW, pillH, pillH / 2);
+    ctx.stroke();
+
+    // Text
+    ctx.fillStyle = '#ffffff';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(textStr, posX + pillW / 2, posY + pillH / 2);
+  }
 
   ctx.restore();
 }
@@ -955,9 +1098,13 @@ function drawCtaPhase(
 }
 
 /**
- * Synthesizes audio sounds (Timer Beeps, Reveal Chime) into a Web Audio Destination Stream.
+ * Synthesizes audio sounds (Timer Beeps, Reveal Chime, Background Music Beats) into a Web Audio Destination Stream.
  */
-function createAudioTrack(durations: TimelineDurations, includeAudio: boolean): { stream: MediaStream | null; cleanup: () => void } {
+function createAudioTrack(
+  durations: TimelineDurations,
+  includeAudio: boolean,
+  config?: ShortConfig
+): { stream: MediaStream | null; cleanup: () => void } {
   if (!includeAudio) return { stream: null, cleanup: () => {} };
 
   try {
@@ -967,10 +1114,71 @@ function createAudioTrack(durations: TimelineDurations, includeAudio: boolean): 
     const audioCtx = new AudioContextClass();
     const dest = audioCtx.createMediaStreamDestination();
 
-    const { intro, hook, question, reveal } = durations;
+    const { intro, hook, question, reveal, total } = durations;
     const startTime = audioCtx.currentTime + 0.05;
 
-    // 1. Question Countdown Beeps (Every second of question phase)
+    // 1. Procedural Background Music / Rhythm Synthesizer (if audio track is chosen or custom audio)
+    const trackId = config?.audioTrackId || 'cyber-pulse';
+    
+    if (config?.customAudioDataUrl) {
+      try {
+        fetch(config.customAudioDataUrl)
+          .then(res => res.arrayBuffer())
+          .then(buf => audioCtx.decodeAudioData(buf))
+          .then(audioBuf => {
+            const src = audioCtx.createBufferSource();
+            src.buffer = audioBuf;
+            src.loop = true;
+            const bgGain = audioCtx.createGain();
+            bgGain.gain.setValueAtTime(0.35, startTime);
+            src.connect(bgGain);
+            bgGain.connect(dest);
+            src.start(startTime);
+          })
+          .catch(e => console.warn('Custom audio decode issue:', e));
+      } catch (err) {
+        console.warn('Audio fetch error:', err);
+      }
+    } else {
+      // Procedural Background Pulse to enhance video engagement
+      const tempo = trackId === 'synth-rush' ? 138 : trackId === 'quiz-intense' ? 126 : trackId === 'lofi-focus' ? 95 : 118;
+      const beatInterval = 60 / tempo;
+      const totalBeats = Math.floor(total / beatInterval);
+
+      const chordNotes = trackId === 'quiz-intense'
+        ? [110, 123.47, 130.81, 146.83]
+        : trackId === 'lofi-focus'
+        ? [130.81, 146.83, 164.81, 196.00]
+        : [130.81, 164.81, 196.00, 220.00];
+
+      for (let b = 0; b < totalBeats; b++) {
+        const noteTime = startTime + b * beatInterval;
+        const note = chordNotes[b % chordNotes.length];
+
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        const filter = audioCtx.createBiquadFilter();
+
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(500, noteTime);
+
+        osc.type = b % 2 === 0 ? 'triangle' : 'sine';
+        osc.frequency.setValueAtTime(note, noteTime);
+
+        gain.gain.setValueAtTime(0, noteTime);
+        gain.gain.linearRampToValueAtTime(0.035, noteTime + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, noteTime + beatInterval * 0.85);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(dest);
+
+        osc.start(noteTime);
+        osc.stop(noteTime + beatInterval);
+      }
+    }
+
+    // 2. Question Countdown Beeps (Every second of question phase)
     const qStartTime = startTime + intro + hook;
     for (let sec = 0; sec < question; sec++) {
       const beepTime = qStartTime + sec;
@@ -992,7 +1200,7 @@ function createAudioTrack(durations: TimelineDurations, includeAudio: boolean): 
       osc.stop(beepTime + 0.15);
     }
 
-    // 2. Victory Chime Chord on Reveal
+    // 3. Victory Chime Chord on Reveal
     const revealTime = startTime + intro + hook + question;
     const chordFreqs = [523.25, 659.25, 783.99]; // C5, E5, G5
     chordFreqs.forEach((freq, idx) => {
@@ -1098,8 +1306,8 @@ export function exportShortVideo(
       const layoutCache = buildLayoutCache(ctx, CANVAS_WIDTH, config);
       ctx.restore();
 
-      // Audio setup (ticks & chime synthesized via Web Audio)
-      const audio = createAudioTrack(durations, config.includeAudio);
+      // Audio setup (ticks, background music & chime synthesized via Web Audio)
+      const audio = createAudioTrack(durations, config.includeAudio, config);
       audioCleanup = audio.cleanup;
 
       // Draw initial frame at t = 0 to prime the canvas buffer
