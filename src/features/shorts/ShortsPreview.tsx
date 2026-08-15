@@ -140,13 +140,13 @@ export const ShortsPreview: React.FC<ShortsPreviewProps> = ({
       <div className="flex items-center justify-between w-full mb-3 px-1">
         <div className="flex items-center gap-2 text-sky-400 font-bold text-sm">
           <Film className="w-4 h-4" />
-          <span>9:16 Video Preview ({Math.round(totalDuration)}s)</span>
+          <span>9:16 Video Preview ({totalDuration.toFixed(1)}s)</span>
           <span className="text-[10px] font-mono uppercase bg-sky-500/10 text-sky-300 border border-sky-500/20 px-2 py-0.5 rounded-full">
             {config.durationMode || 'standard'}
           </span>
         </div>
         <span className="text-xs text-slate-400 font-mono">
-          {displayTime.toFixed(1)}s / {Math.round(totalDuration)}s
+          {displayTime.toFixed(1)}s / {totalDuration.toFixed(1)}s
         </span>
       </div>
 

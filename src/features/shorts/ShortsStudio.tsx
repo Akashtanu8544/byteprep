@@ -10,7 +10,7 @@ import { ViralCaptionsCard } from './ViralCaptionsCard';
 import { ThumbnailGenerator } from './ThumbnailGenerator';
 import { ShortsQueue } from './ShortsQueue';
 import { SocialPosterStudio } from './SocialPosterStudio';
-import { exportShortVideo, exportFrameSnapshot, RenderControl } from './videoRenderer';
+import { exportShortVideo, exportFrameSnapshot, getTimelineDurations, RenderControl } from './videoRenderer';
 import { PollPostMaker } from '../polls/PollPostMaker';
 import { FlashCardMaker } from '../flashcards/FlashCardMaker';
 import {
@@ -774,10 +774,16 @@ export const ShortsStudio: React.FC<ShortsStudioProps> = ({ onBack, preselectedQ
 
             {/* 4. Speed, Duration & Quality Engine Controls */}
             <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-xl">
-              <h3 className="text-white font-bold text-sm flex items-center gap-2">
-                <Sliders className="w-4 h-4 text-emerald-400" />
-                <span>Speed, Quality & Audio Synthesis</span>
-              </h3>
+              <div className="flex items-center justify-between flex-wrap gap-2">
+                <h3 className="text-white font-bold text-sm flex items-center gap-2">
+                  <Sliders className="w-4 h-4 text-emerald-400" />
+                  <span>Duration, Quality & Audio Synthesis</span>
+                </h3>
+                <span className="px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-mono text-xs font-bold rounded-lg flex items-center gap-1.5">
+                  <Clock className="w-3.5 h-3.5" />
+                  <span>Total Video: {getTimelineDurations(currentConfig).total.toFixed(1)}s</span>
+                </span>
+              </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {/* Duration Mode */}
@@ -787,13 +793,44 @@ export const ShortsStudio: React.FC<ShortsStudioProps> = ({ onBack, preselectedQ
                   </label>
                   <select
                     value={durationMode}
-                    onChange={e => setDurationMode(e.target.value as any)}
-                    className="w-full bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-xl p-2.5 outline-none focus:border-emerald-500 cursor-pointer"
+                    onChange={e => {
+                      const newMode = e.target.value as any;
+                      setDurationMode(newMode);
+                      if (newMode === 'viral' && timerSeconds > 5) {
+                        setTimerSeconds(5);
+                      } else if (newMode === 'standard' && timerSeconds < 8) {
+                        setTimerSeconds(10);
+                      }
+                    }}
+                    className="w-full bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-xl p-2.5 outline-none focus:border-emerald-500 cursor-pointer font-medium"
                   >
-                    <option value="viral">⚡ Viral Fast (~14s)</option>
-                    <option value="standard">⏱️ Standard (~24s)</option>
-                    <option value="extended">📚 Extended (~32s)</option>
+                    <option value="viral">⚡ Viral Fast (14.0s Total)</option>
+                    <option value="standard">⏱️ Standard (24.0s Total)</option>
+                    <option value="extended">📚 Extended (32.0s Total)</option>
                   </select>
+                </div>
+
+                {/* Question Countdown Timer */}
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+                    MCQ Timer Countdown
+                  </label>
+                  <div className="grid grid-cols-4 gap-1">
+                    {[5, 8, 10, 15].map(sec => (
+                      <button
+                        key={sec}
+                        type="button"
+                        onClick={() => setTimerSeconds(sec)}
+                        className={`py-2 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer ${
+                          timerSeconds === sec
+                            ? 'bg-emerald-500 text-slate-950 shadow-sm'
+                            : 'bg-slate-950 border border-slate-800 text-slate-400 hover:border-slate-700 hover:text-white'
+                        }`}
+                      >
+                        {sec}s
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
                 {/* Render Quality */}
@@ -810,23 +847,21 @@ export const ShortsStudio: React.FC<ShortsStudioProps> = ({ onBack, preselectedQ
                     <option value="1080p">💎 Full HD 1080p (1080x1920)</option>
                   </select>
                 </div>
+              </div>
 
-                {/* Audio Option */}
-                <div>
-                  <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
-                    Synthesized Audio
-                  </label>
-                  <button
-                    onClick={() => setIncludeAudio(!includeAudio)}
-                    className={`w-full py-2.5 px-3 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
-                      includeAudio
-                        ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400'
-                        : 'bg-slate-950 border-slate-800 text-slate-400'
-                    }`}
-                  >
-                    {includeAudio ? '🔊 SFX & Ticks ON' : '🔇 Audio Muted'}
-                  </button>
-                </div>
+              {/* Audio Option Row */}
+              <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between">
+                <span className="text-xs text-slate-400">Audio Sound Effects & Countdown Ticks:</span>
+                <button
+                  onClick={() => setIncludeAudio(!includeAudio)}
+                  className={`py-1.5 px-3.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
+                    includeAudio
+                      ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400'
+                      : 'bg-slate-950 border-slate-800 text-slate-400'
+                  }`}
+                >
+                  {includeAudio ? '🔊 SFX & Ticks ON' : '🔇 Audio Muted'}
+                </button>
               </div>
             </div>
 

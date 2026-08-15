@@ -36,13 +36,14 @@ export function getTimelineDurations(config: ShortConfig): TimelineDurations {
   const mode = config.durationMode || 'standard';
 
   if (config.phaseDurations) {
-    const intro = config.phaseDurations.intro ?? (mode === 'viral' ? 1.5 : mode === 'standard' ? 3.0 : 4.0);
+    const intro = config.phaseDurations.intro ?? (mode === 'viral' ? 1.0 : mode === 'standard' ? 2.0 : 2.5);
     const hook = config.phaseDurations.hook ?? (mode === 'viral' ? 2.0 : mode === 'standard' ? 2.5 : 3.0);
-    const question = config.phaseDurations.question ?? config.timerSeconds ?? (mode === 'viral' ? 7.0 : 10.0);
-    const reveal = config.phaseDurations.reveal ?? (mode === 'viral' ? 3.0 : mode === 'standard' ? 4.0 : 5.0);
-    const explanation = config.phaseDurations.explanation ?? (mode === 'viral' ? 4.5 : mode === 'standard' ? 6.0 : 8.0);
-    const cta = config.phaseDurations.cta ?? (mode === 'viral' ? 2.5 : mode === 'standard' ? 3.0 : 4.0);
+    const question = config.phaseDurations.question ?? (config.timerSeconds || (mode === 'viral' ? 5.0 : 10.0));
+    const reveal = config.phaseDurations.reveal ?? (mode === 'viral' ? 2.0 : mode === 'standard' ? 3.0 : 4.0);
+    const explanation = config.phaseDurations.explanation ?? (mode === 'viral' ? 2.5 : mode === 'standard' ? 4.5 : 7.5);
+    const cta = config.phaseDurations.cta ?? (mode === 'viral' ? 1.5 : mode === 'standard' ? 2.0 : 3.0);
 
+    const total = +(intro + hook + question + reveal + explanation + cta).toFixed(1);
     return {
       intro,
       hook,
@@ -50,18 +51,19 @@ export function getTimelineDurations(config: ShortConfig): TimelineDurations {
       reveal,
       explanation,
       cta,
-      total: intro + hook + question + reveal + explanation + cta,
+      total,
     };
   }
 
   if (mode === 'viral') {
-    // ⚡ Fast Viral Short (18-20s)
-    const intro = 1.5;
+    // ⚡ 14-Second Fast Viral Short (1.0s + 2.0s + 5.0s + 2.0s + 2.5s + 1.5s = 14.0s)
+    const intro = 1.0;
     const hook = 2.0;
-    const question = Math.min(config.timerSeconds || 8, 8);
-    const reveal = 3.0;
-    const explanation = 4.5;
-    const cta = 2.5;
+    const question = config.timerSeconds ? Math.min(config.timerSeconds, 6) : 5.0;
+    const reveal = 2.0;
+    const explanation = 2.5;
+    const cta = 1.5;
+    const total = +(intro + hook + question + reveal + explanation + cta).toFixed(1);
     return {
       intro,
       hook,
@@ -69,18 +71,19 @@ export function getTimelineDurations(config: ShortConfig): TimelineDurations {
       reveal,
       explanation,
       cta,
-      total: intro + hook + question + reveal + explanation + cta,
+      total,
     };
   }
 
   if (mode === 'extended') {
-    // 🎥 Extended Short (34-36s)
-    const intro = 4.0;
+    // 🎥 32-Second In-Depth Short (2.5s + 3.0s + 12.0s + 4.0s + 7.5s + 3.0s = 32.0s)
+    const intro = 2.5;
     const hook = 3.0;
-    const question = config.timerSeconds || 10;
-    const reveal = 5.0;
-    const explanation = 8.0;
-    const cta = 4.0;
+    const question = config.timerSeconds || 12.0;
+    const reveal = 4.0;
+    const explanation = 7.5;
+    const cta = 3.0;
+    const total = +(intro + hook + question + reveal + explanation + cta).toFixed(1);
     return {
       intro,
       hook,
@@ -88,17 +91,18 @@ export function getTimelineDurations(config: ShortConfig): TimelineDurations {
       reveal,
       explanation,
       cta,
-      total: intro + hook + question + reveal + explanation + cta,
+      total,
     };
   }
 
-  // 🎬 Standard Short (~26s)
-  const intro = 3.0;
+  // 🎬 24-Second Standard Short Default (2.0s + 2.5s + 10.0s + 3.0s + 4.5s + 2.0s = 24.0s)
+  const intro = 2.0;
   const hook = 2.5;
-  const question = config.timerSeconds || 10;
-  const reveal = 4.0;
-  const explanation = 6.0;
-  const cta = 3.5;
+  const question = config.timerSeconds || 10.0;
+  const reveal = 3.0;
+  const explanation = 4.5;
+  const cta = 2.0;
+  const total = +(intro + hook + question + reveal + explanation + cta).toFixed(1);
   return {
     intro,
     hook,
@@ -106,7 +110,7 @@ export function getTimelineDurations(config: ShortConfig): TimelineDurations {
     reveal,
     explanation,
     cta,
-    total: intro + hook + question + reveal + explanation + cta,
+    total,
   };
 }
 
@@ -231,7 +235,7 @@ export function drawShortFrame(
 
   ctx.fillStyle = '#f8fafc';
   ctx.font = '800 24px sans-serif';
-  ctx.fillText('⚡ 10 SECONDS MCQ CHALLENGE', width / 2, 172);
+  ctx.fillText(`⚡ ${Math.round(qDuration)} SECONDS MCQ CHALLENGE`, width / 2, 172);
 
   // Subject & Exam Badge Pill
   const badgeText = layoutCache?.badgeText ?? `${question.subject.toUpperCase()} • ${question.exam.toUpperCase()}`;
@@ -1041,9 +1045,13 @@ export function exportShortVideo(
   let audioCleanup: (() => void) | null = null;
   let streamTracks: MediaStreamTrack[] = [];
   let watchdogTimeout: any = null;
+  let animFrameId: any = null;
+  let intervalTimer: any = null;
 
   const cancel = () => {
     isCancelled = true;
+    if (animFrameId) cancelAnimationFrame(animFrameId);
+    if (intervalTimer) clearInterval(intervalTimer);
     if (watchdogTimeout) clearTimeout(watchdogTimeout);
     try {
       if (mediaRecorder && mediaRecorder.state !== 'inactive') {
@@ -1059,7 +1067,7 @@ export function exportShortVideo(
 
   (async () => {
     try {
-      callbacks.onProgress(3, 'Initializing High-Speed Video Engine...');
+      callbacks.onProgress(2, 'Initializing Precision Video Engine...');
 
       const quality = config.renderQuality || '1080p';
       const is720p = quality === '720p' || quality === 'fast';
@@ -1082,7 +1090,7 @@ export function exportShortVideo(
       const totalFrames = Math.max(1, Math.floor(totalDuration * fps));
 
       // Build Layout Cache ONCE for maximum performance
-      callbacks.onProgress(8, 'Precomputing typography layout cache...');
+      callbacks.onProgress(5, 'Precomputing typography layout cache...');
       ctx.save();
       if (scaleFactor !== 1.0) {
         ctx.scale(scaleFactor, scaleFactor);
@@ -1090,9 +1098,17 @@ export function exportShortVideo(
       const layoutCache = buildLayoutCache(ctx, CANVAS_WIDTH, config);
       ctx.restore();
 
-      // Audio setup
+      // Audio setup (ticks & chime synthesized via Web Audio)
       const audio = createAudioTrack(durations, config.includeAudio);
       audioCleanup = audio.cleanup;
+
+      // Draw initial frame at t = 0 to prime the canvas buffer
+      ctx.save();
+      if (scaleFactor !== 1.0) {
+        ctx.scale(scaleFactor, scaleFactor);
+      }
+      drawShortFrame(ctx, CANVAS_WIDTH, CANVAS_HEIGHT, 0, config, layoutCache);
+      ctx.restore();
 
       const canvasStream = canvas.captureStream(fps);
       const combinedTracks: MediaStreamTrack[] = [...canvasStream.getVideoTracks()];
@@ -1112,7 +1128,7 @@ export function exportShortVideo(
         }
       }
 
-      const bitrate = is720p ? 3500000 : 7000000;
+      const bitrate = is720p ? 3000000 : 6000000;
       mediaRecorder = new MediaRecorder(stream, {
         mimeType,
         videoBitsPerSecond: bitrate,
@@ -1141,7 +1157,7 @@ export function exportShortVideo(
         streamTracks.forEach(t => t.stop());
         if (audioCleanup) audioCleanup();
 
-        callbacks.onProgress(100, 'Video Ready!');
+        callbacks.onProgress(100, `Video Ready (${totalDuration.toFixed(1)}s)!`);
         callbacks.onComplete(blob, videoUrl);
       };
 
@@ -1149,70 +1165,94 @@ export function exportShortVideo(
         finalizeExport();
       };
 
-      mediaRecorder.start(100); // chunk every 100ms
-      callbacks.onProgress(15, `Processing frames: 0/${totalFrames} (0%)`, 0, totalFrames);
+      // Start recording chunks
+      mediaRecorder.start(100);
+      callbacks.onProgress(10, `Recording short: 0.0s / ${totalDuration.toFixed(1)}s (0%)`, 0, totalFrames);
 
-      let currentFrame = 0;
+      const renderStartTime = performance.now();
+      let lastReportedTenth = -1;
+      let hasCompleted = false;
 
-      // High-speed non-blocking chunked frame loop
-      const processFrameBatch = async () => {
-        if (isCancelled) return;
+      const finishRecording = () => {
+        if (hasCompleted || isCancelled) return;
+        hasCompleted = true;
+        if (animFrameId) cancelAnimationFrame(animFrameId);
+        if (intervalTimer) clearInterval(intervalTimer);
 
-        const batchSize = is720p ? 3 : 2; // Process multiple frames per event tick
-        for (let b = 0; b < batchSize && currentFrame <= totalFrames; b++) {
-          const currentTime = (currentFrame / totalFrames) * totalDuration;
+        callbacks.onProgress(96, `Encoding ${totalDuration.toFixed(1)}s video stream...`, totalFrames, totalFrames);
 
-          ctx.save();
-          if (scaleFactor !== 1.0) {
-            ctx.scale(scaleFactor, scaleFactor);
+        if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+          try {
+            mediaRecorder.requestData();
+          } catch {
+            // ignore
           }
-          drawShortFrame(ctx, CANVAS_WIDTH, CANVAS_HEIGHT, currentTime, config, layoutCache);
-          ctx.restore();
+          mediaRecorder.stop();
 
-          currentFrame++;
-        }
-
-        if (currentFrame <= totalFrames) {
-          const pct = Math.min(95, Math.floor(15 + (currentFrame / totalFrames) * 80));
-          if (currentFrame % 6 === 0 || currentFrame >= totalFrames) {
-            callbacks.onProgress(
-              pct,
-              `Processing frames: ${Math.min(currentFrame, totalFrames)}/${totalFrames} (${pct}%)`,
-              Math.min(currentFrame, totalFrames),
-              totalFrames
-            );
-          }
-
-          // Micro-yielding to prevent UI freezing & keep browser responsive
-          await new Promise(resolve => setTimeout(resolve, 0));
-          processFrameBatch();
-        } else {
-          // Complete rendering with watchdog protection
-          callbacks.onProgress(96, `Encoding video stream: ${totalFrames}/${totalFrames} frames...`, totalFrames, totalFrames);
-          
-          if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-            try {
-              mediaRecorder.requestData();
-            } catch {
-              // ignore
+          // Anti-hang Watchdog: If onstop doesn't fire within 3000ms, force finalization
+          watchdogTimeout = setTimeout(() => {
+            if (chunks.length > 0) {
+              finalizeExport();
+            } else {
+              callbacks.onError('Video encoding timed out. Please try Fast 720p mode.');
             }
-            mediaRecorder.stop();
-
-            // Anti-hang Watchdog: If onstop doesn't fire within 2500ms, force finalization
-            watchdogTimeout = setTimeout(() => {
-              if (chunks.length > 0) {
-                finalizeExport();
-              } else {
-                callbacks.onError('Video encoding timed out. Please try Fast 720p mode.');
-              }
-            }, 2500);
-          } else {
-            finalizeExport();
-          }
+          }, 3000);
+        } else {
+          finalizeExport();
         }
       };
 
-      processFrameBatch();
+      const tick = () => {
+        if (isCancelled || hasCompleted) return;
+
+        const now = performance.now();
+        const elapsedSec = (now - renderStartTime) / 1000;
+        const currentSec = Math.min(totalDuration, elapsedSec);
+
+        ctx.save();
+        if (scaleFactor !== 1.0) {
+          ctx.scale(scaleFactor, scaleFactor);
+        }
+        drawShortFrame(ctx, CANVAS_WIDTH, CANVAS_HEIGHT, currentSec, config, layoutCache);
+        ctx.restore();
+
+        const currentFrameIndex = Math.min(totalFrames, Math.floor(currentSec * fps));
+        const currentTenth = Math.floor(currentSec * 2) / 2; // Every 0.5s
+
+        if (currentTenth !== lastReportedTenth || currentSec >= totalDuration) {
+          lastReportedTenth = currentTenth;
+          const pct = Math.min(95, Math.floor(10 + (currentSec / totalDuration) * 85));
+          callbacks.onProgress(
+            pct,
+            `Recording video: ${currentSec.toFixed(1)}s / ${totalDuration.toFixed(1)}s (${pct}%)`,
+            currentFrameIndex,
+            totalFrames
+          );
+        }
+
+        if (currentSec >= totalDuration) {
+          finishRecording();
+        }
+      };
+
+      // Real-time animation loop for high precision 30/60fps capture
+      const runRaf = () => {
+        if (isCancelled || hasCompleted) return;
+        tick();
+        if (!hasCompleted) {
+          animFrameId = requestAnimationFrame(runRaf);
+        }
+      };
+      animFrameId = requestAnimationFrame(runRaf);
+
+      // Background tab safety interval (in case browser throttles rAF)
+      intervalTimer = setInterval(() => {
+        if (isCancelled || hasCompleted) {
+          clearInterval(intervalTimer);
+          return;
+        }
+        tick();
+      }, 40);
     } catch (err: any) {
       if (!isCancelled) {
         callbacks.onError(err.message || 'Failed to render short video');
