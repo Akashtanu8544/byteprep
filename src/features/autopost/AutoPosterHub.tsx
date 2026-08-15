@@ -37,6 +37,8 @@ import { StorageService } from '../../services/storageService';
 import { QuestionLoader } from '../../services/questionLoader';
 import { SeriesTitleCustomizer } from './SeriesTitleCustomizer';
 import { ConnectedAccountsModal } from './ConnectedAccountsModal';
+import { YouTubeService } from '../../services/youtubeService';
+import { getCachedAccessToken } from '../../services/authService';
 
 interface AutoPosterHubProps {
   onOpenShortsStudio?: (questionId?: string) => void;
@@ -80,6 +82,29 @@ export const AutoPosterHub: React.FC<AutoPosterHubProps> = ({ onOpenShortsStudio
     setPublishingId(item.id);
     try {
       const webhookAcc = accounts.find(a => a.id === 'webhook');
+      const ytAcc = accounts.find(a => a.id === 'youtube');
+      const postUrls: Record<string, string> = {};
+
+      // Check if genuine YouTube upload is possible
+      if (item.targetPlatforms.includes('youtube') && item.blob) {
+        const token = getCachedAccessToken();
+        if (token) {
+          try {
+            const ytResult = await YouTubeService.uploadShortVideo({
+              videoBlob: item.blob,
+              title: item.formattedTitle,
+              description: `${item.caption}\n\n${item.hashtags.join(' ')}`,
+              tags: item.hashtags,
+              privacyStatus: ytAcc?.defaultPrivacy || 'public',
+              accessToken: token,
+            });
+            postUrls.youtube = ytResult.videoUrl;
+          } catch (ytErr) {
+            console.warn('YouTube direct upload fallback:', ytErr);
+          }
+        }
+      }
+
       const res = await fetch('/api/social/publish', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -100,7 +125,7 @@ export const AutoPosterHub: React.FC<AutoPosterHubProps> = ({ onOpenShortsStudio
           status: 'published',
           publishedAt: new Date().toISOString(),
           postUrls: {
-            youtube: data.results?.youtube?.url,
+            youtube: postUrls.youtube || data.results?.youtube?.url,
             instagram: data.results?.instagram?.url,
             facebook: data.results?.facebook?.url,
           },

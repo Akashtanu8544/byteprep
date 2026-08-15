@@ -15,6 +15,7 @@ import {
   Hash,
   Share2,
   Sliders,
+  AlertTriangle,
 } from 'lucide-react';
 import {
   NormalizedQuestion,
@@ -24,6 +25,8 @@ import {
   ScheduledPostItem,
 } from '../../types';
 import { StorageService } from '../../services/storageService';
+import { YouTubeService } from '../../services/youtubeService';
+import { getCachedAccessToken } from '../../services/authService';
 
 interface DirectPublishModalProps {
   isOpen: boolean;
@@ -144,48 +147,93 @@ export const DirectPublishModal: React.FC<DirectPublishModalProps> = ({
 
     try {
       const webhookAcc = accounts.find(a => a.id === 'webhook');
-      const res = await fetch('/api/social/publish', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          platforms: selectedPlatforms,
-          formattedTitle,
-          caption,
-          hashtags: hashtags.split(' ').filter(Boolean),
-          seriesNumber: seriesConfig.currentNumber,
-          questionId: question.id,
-          webhookUrl: webhookAcc?.webhookUrl,
-        }),
-      });
-      const data = await res.json();
+      const ytAcc = accounts.find(a => a.id === 'youtube');
+      const tagList = hashtags.split(' ').filter(Boolean);
 
-      if (data.success) {
-        setPublishSuccess(data.results);
+      // Results object
+      const combinedResults: Record<string, any> = {};
 
-        // Auto increment series number if enabled
-        if (seriesConfig.autoIncrement) {
-          StorageService.incrementSeriesNumber();
+      // 1. If YouTube is selected and videoBlob exists, do genuine YouTube upload
+      if (selectedPlatforms.includes('youtube') && videoBlob) {
+        const token = getCachedAccessToken();
+        if (token) {
+          try {
+            const ytUpload = await YouTubeService.uploadShortVideo({
+              videoBlob,
+              title: formattedTitle,
+              description: `${caption}\n\n${hashtags}`,
+              tags: tagList,
+              privacyStatus: ytAcc?.defaultPrivacy || 'public',
+              accessToken: token,
+            });
+            combinedResults.youtube = {
+              status: 'published',
+              postId: ytUpload.videoId,
+              url: ytUpload.videoUrl,
+              message: 'Genuinely uploaded to YouTube Shorts!',
+              isRealUpload: true,
+            };
+          } catch (ytErr: any) {
+            console.error('YouTube genuine upload failed:', ytErr);
+            combinedResults.youtube = {
+              status: 'failed',
+              error: ytErr.message || 'YouTube upload error',
+              message: `YouTube Upload failed: ${ytErr.message}`,
+            };
+          }
         }
-
-        const scheduledItem: ScheduledPostItem = {
-          id: `post-${Date.now()}`,
-          questionId: question.id,
-          question,
-          shortConfig,
-          seriesNumber: seriesConfig.currentNumber,
-          formattedTitle,
-          caption,
-          hashtags: hashtags.split(' ').filter(Boolean),
-          targetPlatforms: selectedPlatforms as any,
-          scheduledTime: new Date().toISOString(),
-          status: 'published',
-          publishedAt: new Date().toISOString(),
-          videoUrl,
-          blob: videoBlob,
-        };
-        StorageService.addToScheduledQueue(scheduledItem);
-        if (onPostSuccess) onPostSuccess(scheduledItem);
       }
+
+      // 2. Call backend server to execute Instagram, Facebook, Webhook or fallback
+      const nonYtPlatforms = selectedPlatforms.filter(
+        p => p !== 'youtube' || !combinedResults.youtube
+      );
+
+      if (nonYtPlatforms.length > 0) {
+        const res = await fetch('/api/social/publish', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            platforms: nonYtPlatforms,
+            formattedTitle,
+            caption,
+            hashtags: tagList,
+            seriesNumber: seriesConfig.currentNumber,
+            questionId: question.id,
+            webhookUrl: webhookAcc?.webhookUrl,
+          }),
+        });
+        const data = await res.json();
+        if (data.success && data.results) {
+          Object.assign(combinedResults, data.results);
+        }
+      }
+
+      setPublishSuccess(combinedResults);
+
+      // Auto increment series number if enabled
+      if (seriesConfig.autoIncrement) {
+        StorageService.incrementSeriesNumber();
+      }
+
+      const scheduledItem: ScheduledPostItem = {
+        id: `post-${Date.now()}`,
+        questionId: question.id,
+        question,
+        shortConfig,
+        seriesNumber: seriesConfig.currentNumber,
+        formattedTitle,
+        caption,
+        hashtags: tagList,
+        targetPlatforms: selectedPlatforms as any,
+        scheduledTime: new Date().toISOString(),
+        status: 'published',
+        publishedAt: new Date().toISOString(),
+        videoUrl: combinedResults.youtube?.url || videoUrl,
+        blob: videoBlob,
+      };
+      StorageService.addToScheduledQueue(scheduledItem);
+      if (onPostSuccess) onPostSuccess(scheduledItem);
     } catch (err: any) {
       console.error('Publish error:', err);
     } finally {
@@ -265,19 +313,37 @@ export const DirectPublishModal: React.FC<DirectPublishModalProps> = ({
 
               <div className="p-4 bg-slate-950 rounded-2xl border border-slate-800 space-y-2 text-left text-xs">
                 {Object.entries(publishSuccess).map(([plat, res]: [string, any]) => (
-                  <div key={plat} className="flex items-center justify-between p-2 rounded-xl bg-slate-900/60">
-                    <span className="font-bold capitalize text-slate-200 flex items-center gap-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                      {plat} Shorts/Reels
-                    </span>
-                    <a
-                      href={res.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-emerald-400 hover:underline flex items-center gap-1 font-mono text-[11px]"
-                    >
-                      View Live <ExternalLink className="w-3 h-3" />
-                    </a>
+                  <div key={plat} className="flex items-center justify-between p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
+                    <div className="flex items-center gap-2">
+                      {res.status === 'failed' ? (
+                        <AlertTriangle className="w-4 h-4 text-amber-400" />
+                      ) : (
+                        <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                      )}
+                      <div>
+                        <div className="flex items-center gap-1.5 font-bold capitalize text-slate-200">
+                          <span>{plat} Shorts/Reels</span>
+                          {res.isRealUpload && (
+                            <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-red-500/20 text-red-400 border border-red-500/30 uppercase tracking-wider font-black">
+                              Live YT API Upload
+                            </span>
+                          )}
+                        </div>
+                        {res.message && (
+                          <p className="text-[10px] text-slate-400">{res.message}</p>
+                        )}
+                      </div>
+                    </div>
+                    {res.url && (
+                      <a
+                        href={res.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-emerald-400 hover:underline flex items-center gap-1 font-mono text-[11px] shrink-0"
+                      >
+                        View Live <ExternalLink className="w-3 h-3" />
+                      </a>
+                    )}
                   </div>
                 ))}
               </div>
