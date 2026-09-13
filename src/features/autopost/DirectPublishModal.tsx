@@ -281,30 +281,111 @@ export const DirectPublishModal: React.FC<DirectPublishModalProps> = ({
     }
   };
 
-  const handleSchedulePost = () => {
-    const scheduledDateTime = new Date(`${scheduleDate}T${scheduleTime}:00`).toISOString();
-    const scheduledItem: ScheduledPostItem = {
-      id: `post-${Date.now()}`,
-      questionId: question.id,
-      question,
-      shortConfig,
-      seriesNumber: seriesConfig.currentNumber,
-      formattedTitle,
-      caption,
-      hashtags: hashtags.split(' ').filter(Boolean),
-      targetPlatforms: selectedPlatforms as any,
-      scheduledTime: scheduledDateTime,
-      status: 'scheduled',
-      videoUrl,
-      blob: videoBlob,
-    };
+  const seoTitle = `Solve in 10s: ${question.question.slice(0, 50)}... 🧠 | BytePrep CS Challenge #${seriesConfig.currentNumber}`;
 
-    StorageService.addToScheduledQueue(scheduledItem);
-    if (seriesConfig.autoIncrement) {
-      StorageService.incrementSeriesNumber();
+  const seoDescription = `🚀 Elevate your Computer Science exam prep with BytePrep! Can you solve this challenge in 10 seconds?
+
+❓ SUBJECT: ${question.subject}
+❓ TOPIC: ${question.topic || 'General'}
+❓ EXAM TARGET: ${question.exam || 'DSSSB / KVS / PGT / TGT'}
+
+📝 QUESTION:
+${question.question}
+
+💡 OPTIONS:
+A) ${question.options[0]}
+B) ${question.options[1]}
+C) ${question.options[2]}
+D) ${question.options[3]}
+
+👇 Comment your answer below before the timer runs out!
+
+✅ ANSWER & EXPLANATION:
+Option (${String.fromCharCode(65 + question.correctAnswer)}) is correct.
+${question.explanation}
+
+🎯 Targeted Exams:
+- DSSSB TGT / PGT Computer Science
+- KVS / NVS PGT CS
+- UGC NET, GATE, ISRO & Software Engineering Job Interviews
+
+🔗 Practice 5000+ Verified MCQ & PYQs: dsssbpyq.online
+📱 Download "BytePrep TGT PGT CS" on Google Play Store!
+
+#BytePrep #ComputerScience #Shorts #CodingChallenge #CSQuiz #TechJobs #DSSSB #PGT #TGT`;
+
+  const handleSchedulePost = async () => {
+    setIsPublishing(true);
+    const scheduledDateTime = new Date(`${scheduleDate}T${scheduleTime}:00`).toISOString();
+    const tagList = hashtags.split(' ').filter(Boolean);
+    const combinedResults: Record<string, any> = {};
+
+    try {
+      if (selectedPlatforms.includes('youtube') && videoBlob) {
+        const token = getCachedAccessToken('youtube');
+        if (token) {
+          try {
+            const ytUpload = await YouTubeService.uploadShortVideo({
+              videoBlob,
+              title: formattedTitle || seoTitle,
+              description: `${caption || seoDescription}\n\n${hashtags}`,
+              tags: tagList,
+              publishAt: scheduledDateTime,
+              accessToken: token,
+            });
+            combinedResults.youtube = {
+              status: 'scheduled',
+              postId: ytUpload.videoId,
+              url: ytUpload.videoUrl,
+              message: `Successfully Scheduled on YouTube for ${new Date(scheduledDateTime).toLocaleString()} via YouTube API!`,
+              isRealUpload: true,
+            };
+          } catch (ytErr: any) {
+            console.error('YouTube scheduled upload error:', ytErr);
+            alert(`YouTube API Scheduling Failed: ${ytErr.message || ytErr}. Saving to local queue instead.`);
+          }
+        }
+      }
+
+      const scheduledItem: ScheduledPostItem = {
+        id: `post-${Date.now()}`,
+        questionId: question.id,
+        question,
+        shortConfig,
+        seriesNumber: seriesConfig.currentNumber,
+        formattedTitle: formattedTitle || seoTitle,
+        caption: caption || seoDescription,
+        hashtags: tagList,
+        targetPlatforms: selectedPlatforms as any,
+        scheduledTime: scheduledDateTime,
+        status: combinedResults.youtube ? 'scheduled' : 'scheduled',
+        videoUrl: combinedResults.youtube?.url || videoUrl,
+        blob: videoBlob,
+      };
+
+      StorageService.addToScheduledQueue(scheduledItem);
+      if (seriesConfig.autoIncrement) {
+        StorageService.incrementSeriesNumber();
+      }
+
+      if (combinedResults.youtube) {
+        setPublishSuccess({
+          youtube: {
+            status: 'scheduled',
+            url: combinedResults.youtube.url,
+            message: combinedResults.youtube.message,
+            isRealUpload: true,
+          }
+        });
+      } else {
+        if (onPostSuccess) onPostSuccess(scheduledItem);
+        onClose();
+      }
+    } catch (err: any) {
+      console.error('Scheduling error:', err);
+    } finally {
+      setIsPublishing(false);
     }
-    if (onPostSuccess) onPostSuccess(scheduledItem);
-    onClose();
   };
 
   return (
@@ -412,6 +493,87 @@ export const DirectPublishModal: React.FC<DirectPublishModalProps> = ({
                     <Calendar className="w-3.5 h-3.5" />
                     <span>📅 Schedule</span>
                   </button>
+                </div>
+
+                {/* 🌟 ONE-TIME COPY-PASTE SEO PACK */}
+                <div className="bg-gradient-to-tr from-slate-900 via-slate-950 to-slate-900 border-2 border-dashed border-rose-500/40 rounded-3xl p-5 space-y-4 shadow-xl">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="w-5 h-5 text-amber-400 animate-pulse" />
+                      <div>
+                        <h4 className="text-white font-black text-sm tracking-tight">
+                          ⚡ ONE-TIME SEO COPY-PASTE PACK
+                        </h4>
+                        <p className="text-[10px] text-slate-400 font-medium">
+                          Perfectly formatted for YouTube Shorts, Reels, and TikTok
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        copyToClipboard(`${seoTitle}\n\n${seoDescription}`, 'full_seo');
+                      }}
+                      className="text-xs bg-rose-500 hover:bg-rose-600 text-white px-3 py-1.5 rounded-xl font-bold flex items-center gap-1 cursor-pointer transition-colors"
+                    >
+                      {copiedKey === 'full_seo' ? (
+                        <Check className="w-3.5 h-3.5 text-emerald-300" />
+                      ) : (
+                        <Copy className="w-3.5 h-3.5" />
+                      )}
+                      <span>{copiedKey === 'full_seo' ? 'Copied All!' : 'Copy Entire Pack'}</span>
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* SEO TITLE */}
+                    <div className="bg-slate-900 border border-slate-800 rounded-2xl p-3.5 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-black uppercase tracking-wider text-rose-400">
+                          1. SEO Title
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => copyToClipboard(seoTitle, 'seo_title')}
+                          className="text-xs text-sky-400 hover:text-sky-300 flex items-center gap-1 font-bold cursor-pointer"
+                        >
+                          {copiedKey === 'seo_title' ? (
+                            <Check className="w-3 h-3 text-emerald-400" />
+                          ) : (
+                            <Copy className="w-3 h-3" />
+                          )}
+                          <span>Copy Title</span>
+                        </button>
+                      </div>
+                      <p className="text-xs text-amber-300 font-bold font-mono p-2 bg-slate-950 rounded-xl border border-slate-800/60 select-all">
+                        {seoTitle}
+                      </p>
+                    </div>
+
+                    {/* SEO DESCRIPTION */}
+                    <div className="bg-slate-900 border border-slate-800 rounded-2xl p-3.5 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-black uppercase tracking-wider text-rose-400">
+                          2. One-Time Description
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => copyToClipboard(seoDescription, 'seo_desc')}
+                          className="text-xs text-sky-400 hover:text-sky-300 flex items-center gap-1 font-bold cursor-pointer"
+                        >
+                          {copiedKey === 'seo_desc' ? (
+                            <Check className="w-3 h-3 text-emerald-400" />
+                          ) : (
+                            <Copy className="w-3 h-3" />
+                          )}
+                          <span>Copy Description</span>
+                        </button>
+                      </div>
+                      <div className="p-2 bg-slate-950 rounded-xl border border-slate-800/60 max-h-[110px] overflow-y-auto text-[11px] text-slate-300 font-mono select-all whitespace-pre-wrap leading-relaxed custom-scrollbar">
+                        {seoDescription}
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 {/* FAST LAUNCH MODE (100% RELIABLE) */}

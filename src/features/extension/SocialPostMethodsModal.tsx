@@ -19,6 +19,7 @@ import {
   Info,
   ShieldCheck,
   Check,
+  ArrowLeft,
 } from 'lucide-react';
 import { generateExtensionZip } from './extensionFiles';
 
@@ -30,6 +31,7 @@ interface SocialPostMethodsModalProps {
   currentHashtags?: string;
   videoUrl?: string;
   videoBlob?: Blob;
+  isFullPage?: boolean;
 }
 
 export const SocialPostMethodsModal: React.FC<SocialPostMethodsModalProps> = ({
@@ -40,6 +42,7 @@ export const SocialPostMethodsModal: React.FC<SocialPostMethodsModalProps> = ({
   currentHashtags = '#BytePrep #ComputerScience #Shorts #CodingChallenge',
   videoUrl,
   videoBlob,
+  isFullPage = false,
 }) => {
   const [activeTab, setActiveTab] = useState<'extension' | 'fastlaunch' | 'mobile' | 'webhook'>('extension');
   const [isDownloadingZip, setIsDownloadingZip] = useState<boolean>(false);
@@ -116,87 +119,87 @@ export const SocialPostMethodsModal: React.FC<SocialPostMethodsModalProps> = ({
     setTimeout(() => setCopiedKey(null), 2500);
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md animate-fadeIn">
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-3xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
-        {/* Header */}
-        <div className="px-6 py-5 border-b border-slate-800 flex items-center justify-between bg-slate-950/60">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-rose-500 via-purple-500 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-rose-500/20">
-              <Puzzle className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-lg font-black text-white">Social Posting Methods & Extension</h2>
-                <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 uppercase tracking-wide">
-                  100% Reliable
-                </span>
-              </div>
-              <p className="text-xs text-slate-400">
-                Choose the best method to post YouTube Shorts, Instagram Reels, TikTok & FB Reels without OAuth blocks.
-              </p>
-            </div>
+  const cardContent = (
+    <div className="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-3xl flex flex-col shadow-2xl overflow-hidden">
+      {/* Header */}
+      <div className="px-5 sm:px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/60">
+        <div className="flex items-center gap-3">
+          {isFullPage && (
+            <button
+              type="button"
+              onClick={onClose}
+              className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl transition-colors cursor-pointer"
+              title="Back"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+          )}
+          <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-rose-500 via-purple-500 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-rose-500/20">
+            <Puzzle className="w-5 h-5" />
           </div>
+          <div>
+            <h1 className="text-lg font-black text-white">Post Methods</h1>
+          </div>
+        </div>
+        {!isFullPage && (
           <button
             onClick={onClose}
             className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
-        </div>
+        )}
+      </div>
 
-        {/* Tab Selector */}
-        <div className="px-6 py-3 border-b border-slate-800/80 bg-slate-950/40 flex items-center gap-2 overflow-x-auto">
-          {[
-            { id: 'extension', name: 'Chrome Extension', icon: Puzzle, color: 'text-rose-400' },
-            { id: 'fastlaunch', name: '1-Click Fast Launcher', icon: Zap, color: 'text-amber-400' },
-            { id: 'mobile', name: 'Mobile Phone QR', icon: Smartphone, color: 'text-sky-400' },
-            { id: 'webhook', name: 'Webhooks & Zapier', icon: Webhook, color: 'text-purple-400' },
-          ].map(tab => {
-            const Icon = tab.icon;
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-                  isActive
-                    ? 'bg-slate-800 text-white shadow-md border border-slate-700 font-black'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
-                }`}
-              >
-                <Icon className={`w-3.5 h-3.5 ${tab.color}`} />
-                <span>{tab.name}</span>
-              </button>
-            );
-          })}
-        </div>
+      {/* Tab Selector */}
+      <div className="px-5 sm:px-6 py-3 border-b border-slate-800/80 bg-slate-950/40 flex items-center gap-2 overflow-x-auto">
+        {[
+          { id: 'extension', name: 'Extension', icon: Puzzle, color: 'text-rose-400' },
+          { id: 'fastlaunch', name: 'Fast Launch', icon: Zap, color: 'text-amber-400' },
+          { id: 'mobile', name: 'Mobile Share', icon: Smartphone, color: 'text-sky-400' },
+          { id: 'webhook', name: 'Webhook', icon: Webhook, color: 'text-purple-400' },
+        ].map(tab => {
+          const Icon = tab.icon;
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as any)}
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                isActive
+                  ? 'bg-slate-800 text-white shadow-md border border-slate-700 font-black'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
+              }`}
+            >
+              <Icon className={`w-3.5 h-3.5 ${tab.color}`} />
+              <span>{tab.name}</span>
+            </button>
+          );
+        })}
+      </div>
 
-        {/* Modal Body */}
-        <div className="p-6 space-y-5 overflow-y-auto flex-1 custom-scrollbar">
-          {/* TAB 1: CHROME EXTENSION */}
-          {activeTab === 'extension' && (
-            <div className="space-y-4 animate-fadeIn">
-              {/* Highlight Hero Card */}
-              <div className="p-5 bg-gradient-to-r from-rose-950/40 via-purple-950/40 to-slate-950 border border-rose-500/30 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xl">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-rose-400" />
-                    <h3 className="text-sm font-black text-white">BytePrep Social Auto-Poster Extension</h3>
-                  </div>
-                  <p className="text-xs text-slate-300 max-w-lg leading-relaxed">
-                    Auto-fills Title, Description, #Shorts Tags, and upload settings directly on YouTube Studio, Instagram Web, Facebook Reels, and TikTok in 1-click.
-                  </p>
+      {/* Modal Body */}
+      <div className="p-5 sm:p-6 space-y-5 overflow-y-auto flex-1 custom-scrollbar">
+        {/* TAB 1: CHROME EXTENSION */}
+        {activeTab === 'extension' && (
+          <div className="space-y-4 animate-fadeIn">
+            {/* Highlight Hero Card */}
+            <div className="p-4.5 bg-gradient-to-r from-rose-950/40 via-purple-950/40 to-slate-950 border border-rose-500/30 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xl">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-rose-400" />
+                  <h3 className="text-sm font-black text-white">Auto-Poster Extension</h3>
                 </div>
-                <button
-                  onClick={handleDownloadExtensionZip}
-                  disabled={isDownloadingZip}
-                  className="w-full sm:w-auto px-5 py-3 bg-gradient-to-r from-rose-500 to-indigo-600 hover:from-rose-400 hover:to-indigo-500 text-white text-xs font-black rounded-xl shadow-lg shadow-rose-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer shrink-0 disabled:opacity-50"
-                >
-                  <Download className="w-4 h-4" />
-                  <span>{isDownloadingZip ? 'Zipping Extension...' : 'DOWNLOAD EXTENSION (.ZIP)'}</span>
-                </button>
               </div>
+              <button
+                onClick={handleDownloadExtensionZip}
+                disabled={isDownloadingZip}
+                className="w-full sm:w-auto px-5 py-2.5 bg-gradient-to-r from-rose-500 to-indigo-600 hover:from-rose-400 hover:to-indigo-500 text-white text-xs font-black rounded-xl shadow-lg shadow-rose-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer shrink-0 disabled:opacity-50"
+              >
+                <Download className="w-4 h-4" />
+                <span>{isDownloadingZip ? 'Zipping...' : 'Download ZIP'}</span>
+              </button>
+            </div>
 
               {/* 30-Second Setup Instructions */}
               <div className="p-5 bg-slate-950/80 border border-slate-800 rounded-2xl space-y-3">
@@ -483,18 +486,29 @@ export const SocialPostMethodsModal: React.FC<SocialPostMethodsModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-slate-800 bg-slate-950/70 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-xs text-slate-400">
-            <Info className="w-3.5 h-3.5 text-sky-400" />
-            <span>All methods are 100% free of OAuth domain limits.</span>
-          </div>
+        <div className="px-5 sm:px-6 py-3.5 border-t border-slate-800 bg-slate-950/70 flex items-center justify-end">
           <button
             onClick={onClose}
             className="px-5 py-2 bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs rounded-xl transition-all cursor-pointer"
           >
-            Close
+            Done
           </button>
         </div>
+      </div>
+  );
+
+  if (isFullPage) {
+    return (
+      <div className="w-full max-w-4xl mx-auto py-4 sm:py-6 px-3 sm:px-6 animate-fadeIn">
+        {cardContent}
+      </div>
+    );
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/85 backdrop-blur-md animate-fadeIn">
+      <div className="max-w-3xl w-full max-h-[92vh] flex flex-col my-auto">
+        {cardContent}
       </div>
     </div>
   );

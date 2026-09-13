@@ -23,6 +23,10 @@ export const DEFAULT_BRAND_KIT: BrandKitConfig = {
   watermarkPosition: 'top-right',
   defaultCtaText: 'Practice more Computer Science questions with BytePrep TGT PGT CS.',
   defaultOutroDuration: 4,
+  logoDataUrl: '',
+  backgroundImageUrl: '',
+  liveImageToVideoUrl: '',
+  savedTemplates: [],
 };
 
 export class BrandKitService {

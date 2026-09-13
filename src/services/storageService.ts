@@ -115,6 +115,11 @@ export const DEFAULT_SETTINGS: ChallengeSettings = {
   defaultShortHook: 'Can You Solve This in 10 Seconds?',
   ctaEnabled: true,
   appUrl: 'https://byteprep.cs/app',
+  bgmEnabled: true,
+  bgmTrackId: 'lofi-study',
+  customBgmDataUrl: undefined,
+  customBgmName: undefined,
+  bgmVolume: 0.6,
 };
 
 export const DEFAULT_STATS: UserStats = {

@@ -1,6 +1,6 @@
 {
   "name": "BytePrep CS",
-  "description": "Interactive 10 Second CS MCQ Challenge, Daily Streaks, and Shorts Studio 9:16 Video Generator for Computer Science exams.",
+  "description": "Interactive 10 Second CS MCQ Challenge, 9:16 Shorts Studio Video Generator, Subject-separated Question Bank, and Automated Telegram Quiz Bot with AI DSSSB TGT PYQ 10 daily question generator with full PWA mobile offline support.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

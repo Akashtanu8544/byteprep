@@ -1,0 +1,1282 @@
+[
+  {
+    "id": "c_cpp_01",
+    "question": "What does the declaration \"int *ptr;\" signify in C/C++?",
+    "options": [
+      "A variable that stores an integer value",
+      "A pointer variable that stores the memory address of an integer",
+      "An array of integers",
+      "A constant integer"
+    ],
+    "correctAnswer": 1,
+    "explanation": "\"int *ptr;\" declares a pointer variable ptr capable of holding the memory address of an integer data item.",
+    "subject": "Programming Languages",
+    "topic": "Programming in C & C++",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "c_cpp_02",
+    "question": "What is the difference between calloc() and malloc() in the C standard library?",
+    "options": [
+      "malloc() initializes allocated memory to zero; calloc() leaves it uninitialized",
+      "calloc() allocates memory and initializes all bytes to zero; malloc() allocates raw uninitialized memory",
+      "calloc() allocates stack memory; malloc() allocates heap memory",
+      "There is no difference"
+    ],
+    "correctAnswer": 1,
+    "explanation": "calloc(num, size) clears allocated bytes to 0 and takes two arguments; malloc(size) allocates contiguous bytes leaving memory garbage values.",
+    "subject": "Programming Languages",
+    "topic": "Programming in C & C++",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "c_cpp_03",
+    "question": "What is a \"Dangling Pointer\" in C/C++?",
+    "options": [
+      "A pointer initialized to NULL",
+      "A pointer that continues to point to a memory location that has already been deallocated or freed",
+      "A pointer that points to another pointer",
+      "A pointer stored in read-only memory"
+    ],
+    "correctAnswer": 1,
+    "explanation": "A dangling pointer references deallocated heap memory or out-of-scope stack frames, leading to undefined behavior upon dereference.",
+    "subject": "Programming Languages",
+    "topic": "Programming in C & C++",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "c_cpp_04",
+    "question": "What is a \"Memory Leak\" in C/C++ program execution?",
+    "options": [
+      "Data leaking onto the network",
+      "Dynamically allocated heap memory that is no longer needed but has not been freed using free() or delete, wasting available RAM",
+      "A physical fault in RAM chips",
+      "Stack overflow during recursion"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Memory leaks occur when pointers to allocated heap blocks are lost without calling free()/delete, depleting system memory over time.",
+    "subject": "Programming Languages",
+    "topic": "Programming in C & C++",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "c_cpp_05",
+    "question": "What is the output of the following C code snippet?\nint a = 5;\nprintf(\"%d %d\", a++, ++a); (assuming right-to-left evaluation standard)",
+    "options": [
+      "5 7",
+      "6 7",
+      "Undefined behavior according to the C standard (modifying a variable more than once between sequence points)",
+      "5 6"
+    ],
+    "correctAnswer": 2,
+    "explanation": "Modifying a scalar object more than once without an intervening sequence point invokes Undefined Behavior (UB) under the ANSI C standard.",
+    "subject": "Programming Languages",
+    "topic": "Programming in C & C++",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "c_cpp_06",
+    "question": "What is a \"Segment Fault\" (SIGSEGV) in C/C++?",
+    "options": [
+      "A syntax error detected by the compiler",
+      "A runtime error triggered by attempting to access memory that the program does not have permission to access (e.g., dereferencing NULL or out-of-bounds array)",
+      "A division by zero error",
+      "A floating point underflow"
+    ],
+    "correctAnswer": 1,
+    "explanation": "SIGSEGV occurs when a process attempts to read or write an invalid virtual memory page or violates read-only memory protections.",
+    "subject": "Programming Languages",
+    "topic": "Programming in C & C++",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "c_cpp_07",
+    "question": "What is the purpose of the \"static\" keyword when applied to a local variable inside a C function?",
+    "options": [
+      "Makes the variable accessible globally across all files",
+      "Preserves the variable’s value across repeated function calls by allocating it in the data segment rather than the stack",
+      "Prevents the variable from being modified (constant)",
+      "Deletes the variable after first execution"
+    ],
+    "correctAnswer": 1,
+    "explanation": "A static local variable retains its value between function invocations because it persists in static data storage for the lifetime of the program.",
+    "subject": "Programming Languages",
+    "topic": "Programming in C & C++",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "c_cpp_08",
+    "question": "What is the role of the \"extern\" keyword in C/C++?",
+    "options": [
+      "Allocates external hard drive storage",
+      "Declares a variable or function that is defined in another translation unit (file) without re-allocating memory for it",
+      "Imports external Python code",
+      "Deletes external references"
+    ],
+    "correctAnswer": 1,
+    "explanation": "extern informs the compiler that a variable or function exists and has linkage to a definition located in another source file.",
+    "subject": "Programming Languages",
+    "topic": "Programming in C & C++",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "c_cpp_09",
+    "question": "What is the purpose of the \"volatile\" type qualifier in C/C++?",
+    "options": [
+      "Informs the compiler that an object’s value can change unexpectedly (by hardware or concurrent threads), inhibiting aggressive compiler optimization reads from registers",
+      "Makes a variable constant",
+      "Speeds up execution by caching in L1",
+      "Compresses data in memory"
+    ],
+    "correctAnswer": 0,
+    "explanation": "volatile forces the compiler to reload the variable directly from memory every time it is referenced, crucial for memory-mapped I/O and ISR flags.",
+    "subject": "Programming Languages",
+    "topic": "Programming in C & C++",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "c_cpp_10",
+    "question": "In C, what is the fundamental difference between a struct and a union?",
+    "options": [
+      "In a struct, each member has its own separate memory space; in a union, all members share the exact same memory location (sized to its largest member)",
+      "Unions can hold functions; structs cannot",
+      "Structs cannot store integers",
+      "There is no difference"
+    ],
+    "correctAnswer": 0,
+    "explanation": "A struct’s total size is the sum of its members (plus padding). A union’s size is determined by its largest member, holding only one member at any given time.",
+    "subject": "Programming Languages",
+    "topic": "Programming in C & C++",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "c_cpp_11",
+    "question": "In C++, what is a Reference variable (&ref)?",
+    "options": [
+      "A pointer that can be NULL",
+      "An alias (alternative name) for an already existing variable; it must be initialized upon declaration and cannot be reseated",
+      "A dynamic array",
+      "A copy of an integer"
+    ],
+    "correctAnswer": 1,
+    "explanation": "A C++ reference is an immutable alias to an object; it cannot be NULL, cannot be reseated to another variable, and does not require dereference syntax (*).",
+    "subject": "Programming Languages",
+    "topic": "Programming in C & C++",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "c_cpp_12",
+    "question": "What is Function Overloading in C++?",
+    "options": [
+      "Defining multiple functions in the same scope with the exact same name but differing parameter lists (types or counts)",
+      "Overwriting code in memory",
+      "Calling a function too many times",
+      "Passing infinite arguments to a macro"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Function overloading enables multiple functions to share a name if their signatures (parameter types, order, or arity) differ, resolved at compile-time.",
+    "subject": "Programming Languages",
+    "topic": "Programming in C & C++",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "c_cpp_13",
+    "question": "Can a function in C++ be overloaded solely on the basis of different return types?",
+    "options": [
+      "Yes, always",
+      "No; overloading resolution depends strictly on parameter lists (the return type alone is insufficient to distinguish calls)",
+      "Only if one return type is void",
+      "Only in templates"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The compiler cannot deduce which overloaded version to call based purely on return type if argument types are identical.",
+    "subject": "Programming Languages",
+    "topic": "Programming in C & C++",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "c_cpp_14",
+    "question": "What is an \"inline\" function in C++?",
+    "options": [
+      "A function that executes on a single line of code",
+      "A suggestion to the compiler to substitute the function’s body directly at the call site, eliminating the overhead of a function call",
+      "A function running in user space",
+      "A recursive function"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Inline functions replace call instructions with expanded code directly at the call site, saving stack frame creation overhead for small functions.",
+    "subject": "Programming Languages",
+    "topic": "Programming in C & C++",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "c_cpp_15",
+    "question": "What is a Copy Constructor in C++ and what is its standard signature for class MyClass?",
+    "options": [
+      "MyClass(MyClass other);",
+      "MyClass(const MyClass &other);",
+      "void MyClass(MyClass *other);",
+      "MyClass() = default;"
+    ],
+    "correctAnswer": 1,
+    "explanation": "A copy constructor creates a new object as a copy of an existing object: MyClass(const MyClass &other); (pass-by-reference is required to prevent infinite recursion).",
+    "subject": "Programming Languages",
+    "topic": "Programming in C & C++",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "c_cpp_16",
+    "question": "What is the difference between Shallow Copy and Deep Copy in C++ when a class encapsulates dynamic memory pointers?",
+    "options": [
+      "Shallow copy duplicates pointer addresses (sharing the same heap memory, leading to double-free errors); deep copy allocates distinct heap memory and copies the actual contents",
+      "Shallow copy is slower than deep copy",
+      "Deep copy only copies primitive variables",
+      "They are identical"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Default copy constructors perform shallow member-wise copies. Custom copy constructors must allocate new heap memory to execute a safe deep copy.",
+    "subject": "Programming Languages",
+    "topic": "Programming in C & C++",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "c_cpp_17",
+    "question": "What is a Friend Function in C++?",
+    "options": [
+      "A function that can access the private and protected members of a class despite not being a member of that class",
+      "A public member function",
+      "A global function that cannot use pointers",
+      "An inherited function"
+    ],
+    "correctAnswer": 0,
+    "explanation": "A friend function or friend class is granted explicit access to private and protected attributes of the class declaring it.",
+    "subject": "Programming Languages",
+    "topic": "Programming in C & C++",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "c_cpp_18",
+    "question": "In C++, what operator cannot be overloaded?",
+    "options": [
+      "+ (Addition)",
+      ":: (Scope Resolution Operator) and . (Member Access)",
+      "[] (Subscript)",
+      "() (Function Call)"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Operators that cannot be overloaded in C++ include: scope resolution (::), member selection (.), pointer-to-member (.*), sizeof, and ternary conditional (?:).",
+    "subject": "Programming Languages",
+    "topic": "Programming in C & C++",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "c_cpp_19",
+    "question": "What happens when \"delete[] ptr;\" is called on a dynamic array allocated with \"new int[10];\"?",
+    "options": [
+      "Only the first element is freed",
+      "All destructors (if any) are invoked and the entire block of memory for all array elements is correctly deallocated",
+      "The memory is leaked",
+      "A compiler error occurs"
+    ],
+    "correctAnswer": 1,
+    "explanation": "delete[] invokes destructors for each element in the dynamic array and returns the entire allocated memory block back to the heap.",
+    "subject": "Programming Languages",
+    "topic": "Programming in C & C++",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "c_cpp_20",
+    "question": "What is the \"Rule of Three\" in classic C++ design?",
+    "options": [
+      "If a class defines a Destructor, Copy Constructor, or Copy Assignment Operator, it should almost certainly explicitly define all three",
+      "Every class must have 3 variables",
+      "Methods must have at most 3 parameters",
+      "Inheritance depth cannot exceed 3"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Managing raw dynamic resources requires consistent management across cleanup (destructor), cloning (copy constructor), and reassignment (copy assignment operator).",
+    "subject": "Programming Languages",
+    "topic": "Programming in C & C++",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "oop_01",
+    "question": "What are the four foundational pillars of Object-Oriented Programming (OOP)?",
+    "options": [
+      "Encapsulation, Abstraction, Inheritance, Polymorphism",
+      "Arrays, Stacks, Queues, Graphs",
+      "Selection, Iteration, Sequencing, Recursion",
+      "Compiling, Linking, Loading, Debugging"
+    ],
+    "correctAnswer": 0,
+    "explanation": "The four core principles of OOP are Encapsulation (data hiding), Abstraction (hiding complexity), Inheritance (code reuse), and Polymorphism (many forms).",
+    "subject": "Programming Languages",
+    "topic": "Object-Oriented Programming (OOP) Concepts",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "oop_02",
+    "question": "What is \"Encapsulation\" in OOP?",
+    "options": [
+      "Allowing all variables to be public",
+      "Bundling data (attributes) and methods that operate on that data into a single unit (class) and restricting direct access from the outside (data hiding)",
+      "Reusing code via parent classes",
+      "Changing function behavior at runtime"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Encapsulation bundles state and behaviors together while restricting direct access to internal representation using private/protected access modifiers.",
+    "subject": "Programming Languages",
+    "topic": "Object-Oriented Programming (OOP) Concepts",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "oop_03",
+    "question": "What is \"Abstraction\" in OOP?",
+    "options": [
+      "Displaying all implementation details to the user",
+      "Hiding background implementation complexities and showing only the essential interfaces/features to the outside world",
+      "Copying objects",
+      "Creating endless loops"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Abstraction presents a clean public interface while shielding consumers from underlying internal mechanics (e.g., using abstract classes or interfaces).",
+    "subject": "Programming Languages",
+    "topic": "Object-Oriented Programming (OOP) Concepts",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "oop_04",
+    "question": "What is Polymorphism in Object-Oriented Programming?",
+    "options": [
+      "The ability of an entity (function, operator, or object) to take on multiple distinct forms depending on the invocation context",
+      "Having multiple subclasses with no methods",
+      "Running programs on multiple computers",
+      "Storing multiple types in an array"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Polymorphism enables a single interface to represent different underlying forms, divided into Compile-time (static) and Runtime (dynamic) polymorphism.",
+    "subject": "Programming Languages",
+    "topic": "Object-Oriented Programming (OOP) Concepts",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "oop_05",
+    "question": "What is Compile-Time (Static) Polymorphism, and how is it achieved in C++/Java?",
+    "options": [
+      "Method Overriding and Virtual Functions",
+      "Method Overloading and Operator Overloading (resolved at compile-time by the compiler)",
+      "Late binding via vtables",
+      "Dynamic type casting"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Compile-time polymorphism resolves method calls during compilation using parameter signatures (function overloading and operator overloading).",
+    "subject": "Programming Languages",
+    "topic": "Object-Oriented Programming (OOP) Concepts",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "oop_06",
+    "question": "What is Run-Time (Dynamic) Polymorphism, and how is it achieved?",
+    "options": [
+      "Method Overriding using Virtual Functions and Dynamic Binding (resolved at runtime based on the actual object type)",
+      "Function Overloading",
+      "Preprocessor macros",
+      "Templates only"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Run-time polymorphism binds function calls dynamically at execution time via virtual methods and virtual function tables (vtables).",
+    "subject": "Programming Languages",
+    "topic": "Object-Oriented Programming (OOP) Concepts",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "oop_07",
+    "question": "In C++, what is a \"Pure Virtual Function\"?",
+    "options": [
+      "A virtual function with no implementation in the base class, declared with \"= 0\" (e.g., virtual void draw() = 0;)",
+      "A function that takes no parameters",
+      "A function that cannot be overridden",
+      "A private function"
+    ],
+    "correctAnswer": 0,
+    "explanation": "A pure virtual function specifies an abstract interface contract that all derived classes must implement.",
+    "subject": "Programming Languages",
+    "topic": "Object-Oriented Programming (OOP) Concepts",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "oop_08",
+    "question": "What is an \"Abstract Class\"?",
+    "options": [
+      "A class with no methods",
+      "A class containing at least one pure virtual function (or declared abstract) that CANNOT be directly instantiated into objects",
+      "A class that cannot be inherited from",
+      "A class with only public members"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Abstract classes define common templates and contracts for subclasses and cannot be instantiated directly with \"new\" or by value.",
+    "subject": "Programming Languages",
+    "topic": "Object-Oriented Programming (OOP) Concepts",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "oop_09",
+    "question": "What is the \"Diamond Problem\" in multiple inheritance, and how is it resolved in C++?",
+    "options": [
+      "A compiler crash; resolved by rebooting",
+      "When a subclass inherits from two intermediate classes that both inherit from the same common base class, causing duplicate base class subobjects; resolved using Virtual Inheritance (virtual base classes)",
+      "A syntax error with diamond brackets",
+      "A memory leak in destructors"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Virtual base classes (e.g., class B : virtual public A) ensure that only one shared instance of the ancestor class A is included in the most derived class.",
+    "subject": "Programming Languages",
+    "topic": "Object-Oriented Programming (OOP) Concepts",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "oop_10",
+    "question": "Why should a Base Class Destructor always be declared \"virtual\" when using polymorphism in C++?",
+    "options": [
+      "To speed up compilation",
+      "To ensure that when a derived object is deleted via a base class pointer, the derived class destructor is invoked properly before the base class destructor, avoiding memory leaks",
+      "To prevent inheritance",
+      "Because non-virtual destructors are illegal"
+    ],
+    "correctAnswer": 1,
+    "explanation": "If a base class destructor is non-virtual, deleting a derived object via a Base* pointer causes undefined behavior, skipping the derived class destructor.",
+    "subject": "Programming Languages",
+    "topic": "Object-Oriented Programming (OOP) Concepts",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "oop_11",
+    "question": "What is the difference between Method Overloading and Method Overriding?",
+    "options": [
+      "Overloading occurs within the same class with different parameters (compile-time); Overriding occurs in derived classes re-implementing a base method with the exact same signature (runtime)",
+      "They are synonymous terms",
+      "Overriding has different return types only",
+      "Overloading requires virtual keyword"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Overloading provides multiple methods with same name but distinct parameters in one class; overriding redefines a base method in a derived class.",
+    "subject": "Programming Languages",
+    "topic": "Object-Oriented Programming (OOP) Concepts",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "oop_12",
+    "question": "What is a \"Virtual Method Table\" (vtable) and \"vptr\" in C++ runtime implementation?",
+    "options": [
+      "A list of all global variables",
+      "A lookup table of function pointers created for classes with virtual functions, with each object storing an invisible pointer (vptr) to its class vtable for dynamic dispatch",
+      "A heap allocation tracking table",
+      "A thread scheduler table"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The compiler creates a vtable containing pointers to virtual methods; objects contain a vptr pointing to their class’s vtable to dispatch method calls at runtime.",
+    "subject": "Programming Languages",
+    "topic": "Object-Oriented Programming (OOP) Concepts",
+    "difficulty": "hard",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "oop_13",
+    "question": "What is the difference between Composition and Inheritance (\"HAS-A\" vs \"IS-A\" relationship)?",
+    "options": [
+      "Inheritance models an \"IS-A\" hierarchy (e.g., Dog is an Animal); Composition models a \"HAS-A\" relationship where a class contains references/instances of other classes (e.g., Car has an Engine)",
+      "Composition uses more memory than inheritance",
+      "Inheritance cannot access public methods",
+      "They are identical"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Software engineering favors composition over inheritance for loose coupling: \"HAS-A\" delegates tasks, while \"IS-A\" creates rigid class hierarchies.",
+    "subject": "Programming Languages",
+    "topic": "Object-Oriented Programming (OOP) Concepts",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "oop_14",
+    "question": "In Java, why is Multiple Inheritance of classes disallowed, and how is its behavior supported instead?",
+    "options": [
+      "To avoid memory consumption; supported via packages",
+      "To avoid the Diamond Problem and architectural ambiguity; supported by allowing a class to implement multiple Interfaces",
+      "Java does not allow inheritance at all",
+      "Supported via threads"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Java eliminates class-based multiple inheritance to prevent ambiguity, allowing classes to implement multiple interfaces instead.",
+    "subject": "Programming Languages",
+    "topic": "Object-Oriented Programming (OOP) Concepts",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "oop_15",
+    "question": "What is the purpose of the \"super\" (or base in C#) keyword in object-oriented languages?",
+    "options": [
+      "To call methods or constructors of the immediate parent (superclass)",
+      "To declare a superuser function",
+      "To allocate memory in RAM",
+      "To exit the program"
+    ],
+    "correctAnswer": 0,
+    "explanation": "The \"super\" keyword provides explicit access to overridden methods and constructors of the parent superclass.",
+    "subject": "Programming Languages",
+    "topic": "Object-Oriented Programming (OOP) Concepts",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "oop_16",
+    "question": "What is the \"Liskov Substitution Principle\" (LSP) in SOLID design principles?",
+    "options": [
+      "Subclasses should always have more methods than superclasses",
+      "Objects of a superclass should be replaceable with objects of its subclasses without breaking application correctness",
+      "Classes should only have one method",
+      "All classes must be abstract"
+    ],
+    "correctAnswer": 1,
+    "explanation": "LSP dictates that derived classes must honor the contracts of their base types without altering expected behavior or throwing unexpected exceptions.",
+    "subject": "Programming Languages",
+    "topic": "Object-Oriented Programming (OOP) Concepts",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "oop_17",
+    "question": "What is the \"Single Responsibility Principle\" (SRP) in SOLID design?",
+    "options": [
+      "A class should have only one single reason to change (should encapsulate one focused responsibility)",
+      "A program should have only one developer",
+      "Each function must have only one line of code",
+      "All variables must be private"
+    ],
+    "correctAnswer": 0,
+    "explanation": "SRP asserts that each class should focus on a single piece of functionality, reducing coupling and making maintenance straightforward.",
+    "subject": "Programming Languages",
+    "topic": "Object-Oriented Programming (OOP) Concepts",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "oop_18",
+    "question": "What is an \"Interface\" in OOP languages like Java or TypeScript?",
+    "options": [
+      "A visual GUI window",
+      "A completely abstract blueprint defining method signatures that conforming classes must implement, containing no instance state",
+      "A physical cable connecting PCs",
+      "A database table"
+    ],
+    "correctAnswer": 1,
+    "explanation": "An interface specifies what a class must do without specifying how it does it, enabling polymorphism across unrelated hierarchies.",
+    "subject": "Programming Languages",
+    "topic": "Object-Oriented Programming (OOP) Concepts",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "oop_19",
+    "question": "What is a \"Static Method\" in a class?",
+    "options": [
+      "A method that cannot be run",
+      "A method that belongs to the class itself rather than to any specific object instance, callable without instantiating the class",
+      "A method that changes its code at runtime",
+      "A private method"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Static methods operate on the class level and do not have access to an implicit \"this\" instance reference.",
+    "subject": "Programming Languages",
+    "topic": "Object-Oriented Programming (OOP) Concepts",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "oop_20",
+    "question": "What is the purpose of a Constructor in a class?",
+    "options": [
+      "To destroy an object when execution ends",
+      "A special initialization member function invoked automatically upon object instantiation to set up initial state and allocate resources",
+      "To compile the source code",
+      "To convert objects to strings"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Constructors initialize object fields, allocate necessary resources, and enforce invariants whenever a new class instance is created.",
+    "subject": "Programming Languages",
+    "topic": "Object-Oriented Programming (OOP) Concepts",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "py_01",
+    "question": "What are the built-in Mutable data types in Python?",
+    "options": [
+      "List, Dictionary, Set",
+      "Tuple, String, Integer",
+      "FrozenSet, Float, Boolean",
+      "Tuple, List, String"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Lists, Dictionaries, and Sets can be altered in-place after creation (mutable). Numbers, Strings, and Tuples are immutable.",
+    "subject": "Programming Languages",
+    "topic": "Python Programming & Scripting",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "py_02",
+    "question": "What is the output of the Python expression: [1, 2, 3] * 2?",
+    "options": [
+      "[2, 4, 6]",
+      "[1, 2, 3, 1, 2, 3]",
+      "[[1, 2, 3], [1, 2, 3]]",
+      "Error: multiplication not supported for lists"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The asterisk operator on Python sequences (lists, strings, tuples) performs sequence repetition: [1, 2, 3] * 2 = [1, 2, 3, 1, 2, 3].",
+    "subject": "Programming Languages",
+    "topic": "Python Programming & Scripting",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "py_03",
+    "question": "What is the difference between \"==\" and \"is\" in Python?",
+    "options": [
+      "\"==\" compares equality of values/contents; \"is\" tests identity (checks if both variables reference the exact same memory object)",
+      "\"is\" compares values; \"==\" compares memory addresses",
+      "They are completely identical",
+      "\"is\" is used only for strings"
+    ],
+    "correctAnswer": 0,
+    "explanation": "x == y invokes the __eq__ method to compare data values. x is y checks if id(x) == id(y) (same object identity in memory).",
+    "subject": "Programming Languages",
+    "topic": "Python Programming & Scripting",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "py_04",
+    "question": "What is the Global Interpreter Lock (GIL) in CPython?",
+    "options": [
+      "A security feature that blocks viruses",
+      "A mutex lock in the CPython interpreter that allows only one native thread to execute Python bytecode at a time, restricting CPU-bound multithreading",
+      "A lock on file write operations",
+      "A lock on memory allocation"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The GIL simplifies CPython memory management and reference counting, but limits CPU-bound multi-threading to single-core execution.",
+    "subject": "Programming Languages",
+    "topic": "Python Programming & Scripting",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "py_05",
+    "question": "What is a \"Generator\" in Python, and which keyword produces its values lazily on-demand?",
+    "options": [
+      "A class that compiles code; return keyword",
+      "A function that produces an iterator stream using the \"yield\" keyword, executing lazily without storing all elements in memory",
+      "A hardware power generator",
+      "A script that generates HTML"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Generators yield values one at a time via the \"yield\" keyword, maintaining function execution state across iterations with low memory usage.",
+    "subject": "Programming Languages",
+    "topic": "Python Programming & Scripting",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "py_06",
+    "question": "What is a Python \"Decorator\"?",
+    "options": [
+      "A graphical styling tool",
+      "A higher-order function that takes another function as an argument, extends its behavior without modifying its source code, and returns the modified function",
+      "A CSS wrapper for web forms",
+      "A comment in code"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Decorators wrap functions (using the @decorator syntax) to augment functionality such as logging, authentication, and caching.",
+    "subject": "Programming Languages",
+    "topic": "Python Programming & Scripting",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "py_07",
+    "question": "What is the output of the slice expression: \"DSSSB_EXAM\"[::-1]?",
+    "options": [
+      "DSSSB_EXAM",
+      "MAXE_BSSSD",
+      "EXAM_DSSSB",
+      "Error"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The slice [start:stop:step] with step = -1 reverses the entire string: \"DSSSB_EXAM\" reversed is \"MAXE_BSSSD\".",
+    "subject": "Programming Languages",
+    "topic": "Python Programming & Scripting",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "py_08",
+    "question": "What is the difference between *args and **kwargs in Python function definitions?",
+    "options": [
+      "*args collects arbitrary positional arguments as a Tuple; **kwargs collects arbitrary keyword arguments as a Dictionary",
+      "*args is for numbers; **kwargs is for strings",
+      "**kwargs is passed by reference; *args by value",
+      "There is no difference"
+    ],
+    "correctAnswer": 0,
+    "explanation": "*args unpacks variable non-keyworded arguments into a tuple; **kwargs unpacks keyworded name=value arguments into a dictionary.",
+    "subject": "Programming Languages",
+    "topic": "Python Programming & Scripting",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "py_09",
+    "question": "What is the purpose of the __init__ method in a Python class?",
+    "options": [
+      "To compile the class bytecode",
+      "The object constructor / initializer method invoked automatically when a new instance of the class is created",
+      "To delete the object from memory",
+      "To import standard libraries"
+    ],
+    "correctAnswer": 1,
+    "explanation": "__init__ is the initializer method that receives newly instantiated objects as \"self\" and initializes their instance attributes.",
+    "subject": "Programming Languages",
+    "topic": "Python Programming & Scripting",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "py_10",
+    "question": "What is List Comprehension in Python?",
+    "options": [
+      "A tool that reads lists aloud",
+      "A concise, readable syntactic construct to create new lists by applying expressions and filtering predicates over existing iterables",
+      "Sorting lists alphabetically",
+      "Merging two dictionaries"
+    ],
+    "correctAnswer": 1,
+    "explanation": "List comprehensions (e.g., [x**2 for x in nums if x > 0]) provide an expressive, fast alternative to traditional map/filter loops.",
+    "subject": "Programming Languages",
+    "topic": "Python Programming & Scripting",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "py_11",
+    "question": "What is the output of: type((1)) and type((1,)) in Python?",
+    "options": [
+      "tuple and tuple",
+      "int and tuple",
+      "int and int",
+      "tuple and list"
+    ],
+    "correctAnswer": 1,
+    "explanation": "(1) is an integer enclosed in arithmetic parentheses: int. A single-element tuple requires a trailing comma: (1,) is a tuple.",
+    "subject": "Programming Languages",
+    "topic": "Python Programming & Scripting",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "py_12",
+    "question": "How does Python handle memory management and deallocation of unused objects?",
+    "options": [
+      "Manual free() calls by the programmer",
+      "Automatic Reference Counting combined with a Cyclic Garbage Collector (gc module) to detect circular references",
+      "Rebooting the OS every hour",
+      "Static compile-time deallocation"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Python uses reference counting to deallocate objects immediately when refcount reaches 0, augmented by generational GC for reference cycles.",
+    "subject": "Programming Languages",
+    "topic": "Python Programming & Scripting",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "py_13",
+    "question": "What is the purpose of the \"with\" statement (Context Manager) in Python (e.g., with open(\"file.txt\") as f)?",
+    "options": [
+      "To create loops",
+      "To guarantee proper resource setup and cleanup (such as automatically closing files or releasing locks) via __enter__ and __exit__ methods",
+      "To catch all exceptions silently",
+      "To declare global variables"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Context managers encapsulate try...finally patterns, guaranteeing resource closure even if exceptions occur inside the block.",
+    "subject": "Programming Languages",
+    "topic": "Python Programming & Scripting",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "py_14",
+    "question": "What is a \"lambda\" function in Python?",
+    "options": [
+      "A function that calculates Greek letters",
+      "An anonymous, inline single-expression function defined with the \"lambda\" keyword (e.g., lambda x: x * 2)",
+      "A multi-threaded function",
+      "A function running in the cloud"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Lambda functions are small, unnamed inline functions restricted to a single expression, frequently used with sort key functions and map/filter.",
+    "subject": "Programming Languages",
+    "topic": "Python Programming & Scripting",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "py_15",
+    "question": "What is the output of: print(bool(0), bool([]), bool(\"\"), bool(None)) in Python?",
+    "options": [
+      "True True True True",
+      "False False False False",
+      "False True False True",
+      "True False True False"
+    ],
+    "correctAnswer": 1,
+    "explanation": "In Python, zero, empty containers ([], (), {}, set()), empty strings (\"\"), and None are evaluated as \"falsy\" (False in boolean context).",
+    "subject": "Programming Languages",
+    "topic": "Python Programming & Scripting",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "py_16",
+    "question": "What is the Method Resolution Order (MRO) algorithm used in Python 3 for multiple inheritance?",
+    "options": [
+      "Depth-First Search",
+      "C3 Linearization algorithm",
+      "Breadth-First Search",
+      "Random selection"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Python uses the C3 Linearization algorithm to determine a consistent, monotonic Method Resolution Order (accessible via Class.__mro__).",
+    "subject": "Programming Languages",
+    "topic": "Python Programming & Scripting",
+    "difficulty": "hard",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "py_17",
+    "question": "What is the difference between deepcopy() and copy() in Python’s \"copy\" module?",
+    "options": [
+      "copy() creates a shallow copy where inner compound objects are referenced; deepcopy() recursively clones all nested objects creating fully independent copies",
+      "deepcopy() is faster than copy()",
+      "copy() can only copy integers",
+      "There is no difference"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Shallow copy (copy.copy) constructs a new collection but inserts references to original child objects; copy.deepcopy copies nested objects recursively.",
+    "subject": "Programming Languages",
+    "topic": "Python Programming & Scripting",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "py_18",
+    "question": "What is the pass statement in Python?",
+    "options": [
+      "Passes execution to another file",
+      "A null statement that serves as a syntactic placeholder where code is required but no action is to be performed",
+      "Exits the loop immediately",
+      "Passes variables by reference"
+    ],
+    "correctAnswer": 1,
+    "explanation": "\"pass\" is a no-operation placeholder used when syntax requires a statement (e.g., in empty function stubs or pass-through exception blocks).",
+    "subject": "Programming Languages",
+    "topic": "Python Programming & Scripting",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "py_19",
+    "question": "What is the difference between append() and extend() on a Python list?",
+    "options": [
+      "append() adds its argument as a single element; extend() iterates over its iterable argument and appends each element individually",
+      "append() sorts the list; extend() does not",
+      "extend() only accepts strings",
+      "They are synonymous"
+    ],
+    "correctAnswer": 0,
+    "explanation": "list.append([4, 5]) appends the sublist as one item: [1, [4, 5]]; list.extend([4, 5]) unrolls elements: [1, 4, 5].",
+    "subject": "Programming Languages",
+    "topic": "Python Programming & Scripting",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "py_20",
+    "question": "What builtin function returns an iterator of tuples containing the index and item when looping over a sequence?",
+    "options": [
+      "range()",
+      "enumerate()",
+      "zip()",
+      "iter()"
+    ],
+    "correctAnswer": 1,
+    "explanation": "enumerate(iterable, start=0) yields (index, value) pairs, allowing clean indexed traversal without manual counter tracking.",
+    "subject": "Programming Languages",
+    "topic": "Python Programming & Scripting",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "se_test_01",
+    "question": "What is the fundamental sequential model of the Software Development Life Cycle (SDLC) where each phase must finish before the next begins?",
+    "options": [
+      "Waterfall Model",
+      "Agile Model",
+      "Spiral Model",
+      "Scrum"
+    ],
+    "correctAnswer": 0,
+    "explanation": "The classical Waterfall model is a linear sequential SDLC model comprising Requirement, Design, Implementation, Verification, and Maintenance phases.",
+    "subject": "Software Engineering",
+    "topic": "Software Engineering & Testing",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "se_test_02",
+    "question": "What is the primary distinctive feature of Boehm’s Spiral Model of software development?",
+    "options": [
+      "Writing code before requirements",
+      "Explicit Risk Analysis and risk mitigation at every iteration/quadrant",
+      "Elimination of testing",
+      "Fixed deadline with no reviews"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The Spiral Model incorporates iterative development with heavy emphasis on early and continuous risk assessment and reduction.",
+    "subject": "Software Engineering",
+    "topic": "Software Engineering & Testing",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "se_test_03",
+    "question": "What is the difference between Verification and Validation in software engineering?",
+    "options": [
+      "Verification asks: \"Are we building the product right?\" (reviews, walkthroughs, code inspection); Validation asks: \"Are we building the right product?\" (testing against user requirements)",
+      "They are synonymous words",
+      "Verification is done by clients; validation by coders",
+      "Verification requires running code; validation does not"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Verification checks adherence to specifications without code execution; Validation confirms the software satisfies end-user operational needs.",
+    "subject": "Software Engineering",
+    "topic": "Software Engineering & Testing",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "se_test_04",
+    "question": "What is \"Black-Box Testing\" (Functional Testing)?",
+    "options": [
+      "Testing hardware in a dark room",
+      "Testing software functionality without any knowledge of internal code structure, paths, or implementation details",
+      "Testing memory leaks using debuggers",
+      "Testing compiler errors"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Black-box testing focuses strictly on software inputs and expected outputs according to specifications, disregarding internal source code logic.",
+    "subject": "Software Engineering",
+    "topic": "Software Engineering & Testing",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "se_test_05",
+    "question": "What is \"White-Box Testing\" (Structural / Glass-Box Testing)?",
+    "options": [
+      "Testing software with complete access to source code, testing branch coverage, condition paths, and internal logic flows",
+      "Testing the graphical design layout",
+      "Testing on paper only",
+      "User acceptance testing"
+    ],
+    "correctAnswer": 0,
+    "explanation": "White-box testing evaluates code execution paths, branches, loops, and conditions based on explicit visibility of the source codebase.",
+    "subject": "Software Engineering",
+    "topic": "Software Engineering & Testing",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "se_test_06",
+    "question": "What is Boundary Value Analysis (BVA) in software test design?",
+    "options": [
+      "Testing only the middle values of input ranges",
+      "A black-box test design technique that tests values at the boundaries of equivalence partitions (min, min+1, nominal, max-1, max)",
+      "Testing maximum disk storage",
+      "Testing internet connection edges"
+    ],
+    "correctAnswer": 1,
+    "explanation": "BVA targets input boundary conditions because errors in programming logic (e.g., < instead of <=) cluster overwhelmingly at boundaries.",
+    "subject": "Software Engineering",
+    "topic": "Software Engineering & Testing",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "se_test_07",
+    "question": "What is Equivalence Partitioning (Equivalence Class Partitioning)?",
+    "options": [
+      "Dividing the software codebase into equal-sized files",
+      "Dividing input data of software into valid and invalid partitions from which representative test cases are selected, assuming all members behave identically",
+      "Splitting testing between two teams",
+      "Running tests on two computers"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Equivalence partitioning partitions input domain into classes where any single test case represents the behavior of all inputs in that partition.",
+    "subject": "Software Engineering",
+    "topic": "Software Engineering & Testing",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "se_test_08",
+    "question": "What is \"Regression Testing\"?",
+    "options": [
+      "Testing a project backwards",
+      "Re-executing test suites to verify that recent code changes or bug fixes have NOT adversely affected or broken existing functionality",
+      "Testing only deleted files",
+      "Testing without documentation"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Regression testing ensures that new features or bug patches do not reintroduce old defects or corrupt previously working modules.",
+    "subject": "Software Engineering",
+    "topic": "Software Engineering & Testing",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "se_test_09",
+    "question": "What is Cyclomatic Complexity in software metrics (McCabe’s metric)?",
+    "options": [
+      "The number of lines of source code",
+      "A quantitative measure of the number of linearly independent paths through a program’s source code module (V(G) = E - N + 2P)",
+      "The number of functions in a class",
+      "The compilation time in seconds"
+    ],
+    "correctAnswer": 1,
+    "explanation": "McCabe’s cyclomatic complexity measures control-flow decision density (V(G) = Edges - Nodes + 2 * Components), indicating the minimum test cases needed for full branch coverage.",
+    "subject": "Software Engineering",
+    "topic": "Software Engineering & Testing",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "se_test_10",
+    "question": "What is the difference between High Cohesion and Loose Coupling in good software design?",
+    "options": [
+      "High cohesion means elements within a module strongly belong together and serve a single purpose; Loose coupling means modules are minimally dependent on each other",
+      "High cohesion means modules call each other constantly",
+      "Loose coupling means having no functions",
+      "They describe the same metric"
+    ],
+    "correctAnswer": 0,
+    "explanation": "High Cohesion within modules and Low (Loose) Coupling between modules are hallmarks of modular, robust, and maintainable software architecture.",
+    "subject": "Software Engineering",
+    "topic": "Software Engineering & Testing",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "se_test_11",
+    "question": "Which of the following represents the WORST (least desirable) type of coupling between software modules?",
+    "options": [
+      "Data Coupling",
+      "Message Coupling",
+      "Content Coupling (one module directly accesses or modifies internal data/code of another)",
+      "Stamp Coupling"
+    ],
+    "correctAnswer": 2,
+    "explanation": "Content coupling is the tightest and worst form of coupling: modifications in one module unpredictably break dependent modules.",
+    "subject": "Software Engineering",
+    "topic": "Software Engineering & Testing",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "se_test_12",
+    "question": "Which of the following represents the BEST (most desirable) type of cohesion inside a software module?",
+    "options": [
+      "Coincidental Cohesion",
+      "Functional Cohesion (all elements of the module cooperate to execute a single well-defined task)",
+      "Temporal Cohesion",
+      "Logical Cohesion"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Functional cohesion is the ideal cohesion type: every part of the module contributes directly to performing a single, specific function.",
+    "subject": "Software Engineering",
+    "topic": "Software Engineering & Testing",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "se_test_13",
+    "question": "What is the COCOMO model (Constructive Cost Model) by Barry Boehm used for?",
+    "options": [
+      "Estimating software effort, project cost, and schedule duration based on size in KLOC (Kilo Lines of Code)",
+      "Writing user manuals",
+      "Detecting buffer overflows",
+      "Running unit tests automatically"
+    ],
+    "correctAnswer": 0,
+    "explanation": "COCOMO calculates development person-months and schedules based on code volume (KLOC) across Organic, Semi-detached, and Embedded project categories.",
+    "subject": "Software Engineering",
+    "topic": "Software Engineering & Testing",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "se_test_14",
+    "question": "In Agile Scrum framework, what is a \"Sprint\"?",
+    "options": [
+      "Running to a meeting",
+      "A time-boxed iteration (typically 1 to 4 weeks) during which the team commits to deliver a potentially shippable product increment",
+      "A quick bug patch applied on production servers",
+      "A marathon coding session lasting 24 hours"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Sprints are fixed-length iterative development cycles where development items from the Product Backlog are implemented, tested, and demonstrated.",
+    "subject": "Software Engineering",
+    "topic": "Software Engineering & Testing",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "se_test_15",
+    "question": "What is a \"Burn-Down Chart\" in Agile project tracking?",
+    "options": [
+      "A graphic showing server temperatures",
+      "A graphical representation showing the amount of remaining work (hours or story points) on the vertical axis versus elapsed sprint time on the horizontal axis",
+      "A financial report of hardware costs",
+      "A list of fired developers"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Burndown charts track sprint progress, visually comparing the actual velocity slope against the ideal linear trendline toward zero remaining work.",
+    "subject": "Software Engineering",
+    "topic": "Software Engineering & Testing",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "se_test_16",
+    "question": "What is Alpha Testing versus Beta Testing?",
+    "options": [
+      "Alpha testing is conducted by internal developers/testers at the developer’s site; Beta testing is conducted by actual prospective end-users in their own real operating environments",
+      "Alpha is black-box; Beta is white-box",
+      "Beta is conducted before Alpha",
+      "There is no difference"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Alpha testing is performed in-house in a controlled environment; Beta testing collects real-world feedback from target end-users before general release.",
+    "subject": "Software Engineering",
+    "topic": "Software Engineering & Testing",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "se_test_17",
+    "question": "What is Integration Testing, and what are the two common strategies: Top-Down and Bottom-Up?",
+    "options": [
+      "Testing individual lines of code",
+      "Testing interfaces between integrated software units; Top-down uses stubs to simulate lower modules, while Bottom-up uses drivers to stimulate higher modules",
+      "Testing database backup recovery",
+      "Testing network cable bandwidth"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Integration testing validates interfaces between combined modules. Top-Down employs dummy stubs; Bottom-Up uses test drivers to invoke lower-level components.",
+    "subject": "Software Engineering",
+    "topic": "Software Engineering & Testing",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "se_test_18",
+    "question": "What is the difference between a \"Stub\" and a \"Driver\" in software integration testing?",
+    "options": [
+      "A Stub replaces a called subordinate module (simulating lower-level response); a Driver replaces a calling module (invoking the module under test from above)",
+      "Stubs are hardware; Drivers are software",
+      "Drivers test UI; Stubs test databases",
+      "They are synonymous"
+    ],
+    "correctAnswer": 0,
+    "explanation": "In Top-Down testing, Stubs simulate incomplete downstream modules. In Bottom-Up testing, Drivers act as master modules calling the components under test.",
+    "subject": "Software Engineering",
+    "topic": "Software Engineering & Testing",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "se_test_19",
+    "question": "What is Capability Maturity Model Integration (CMMI) Level 5?",
+    "options": [
+      "Initial (Ad-hoc)",
+      "Managed",
+      "Defined",
+      "Optimizing (focus on continuous quantitative process improvement and defect prevention)"
+    ],
+    "correctAnswer": 3,
+    "explanation": "CMMI levels: 1-Initial, 2-Managed, 3-Defined, 4-Quantitatively Managed, 5-Optimizing (continuous process optimization).",
+    "subject": "Software Engineering",
+    "topic": "Software Engineering & Testing",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "se_test_20",
+    "question": "What is Mutation Testing in software testing theory?",
+    "options": [
+      "Modifying code randomly until it runs faster",
+      "A fault-based testing technique where deliberate minor faults (mutants) are injected into the code to evaluate the adequacy and effectiveness of test suites (killing mutants)",
+      "Testing AI neural networks",
+      "A biological computing test"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Mutation testing measures test suite quality by injecting small syntax mutants; a strong test suite detects and fails on all mutated versions (\"kills\" them).",
+    "subject": "Software Engineering",
+    "topic": "Software Engineering & Testing",
+    "difficulty": "hard",
+    "exam": "DSSSB TGT CS"
+  }
+]

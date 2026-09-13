@@ -1,0 +1,1602 @@
+[
+  {
+    "id": "os_fund_01",
+    "question": "What is the primary role of the Operating System kernel?",
+    "options": [
+      "To provide an intuitive graphical user interface",
+      "To manage hardware resources and act as a bridge between applications and hardware",
+      "To compile high-level source code into machine language",
+      "To design relational database schemas"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The kernel is the core component of an OS, responsible for memory management, process scheduling, device control, and system calls.",
+    "subject": "Operating Systems",
+    "topic": "Operating System Fundamentals",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_fund_02",
+    "question": "How does the CPU transition from user mode to kernel mode during runtime?",
+    "options": [
+      "By executing a software trap or system call instruction",
+      "By modifying the RAM power state",
+      "By reloading the BIOS",
+      "By changing the display resolution"
+    ],
+    "correctAnswer": 0,
+    "explanation": "A transition from user to kernel mode is initiated via a system call, trap instruction, or hardware interrupt, setting the CPU mode bit to 0.",
+    "subject": "Operating Systems",
+    "topic": "Operating System Fundamentals",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_fund_03",
+    "question": "What is the fundamental architectural philosophy of a Microkernel OS (such as Mach or QNX)?",
+    "options": [
+      "Run all file systems, device drivers, and networking inside kernel address space",
+      "Keep the kernel minimal (IPC, basic scheduling, memory) and run services in user space",
+      "Eliminate all forms of inter-process communication",
+      "Only run single-threaded command line applications"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Microkernels minimize kernel size by offloading services (file systems, networking, drivers) into user-space servers communicating via IPC.",
+    "subject": "Operating Systems",
+    "topic": "Operating System Fundamentals",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_fund_04",
+    "question": "What is SPOOLing in operating system terminology?",
+    "options": [
+      "Single Program Organization On Line",
+      "Simultaneous Peripheral Operations On-Line (buffering data for slower devices on disk)",
+      "Sequential Process Over-the-air Loading",
+      "Synchronous Page Optimization Over-Line"
+    ],
+    "correctAnswer": 1,
+    "explanation": "SPOOLing overlaps the I/O of one job with the computation of other jobs by storing print jobs/data on intermediate disk buffers.",
+    "subject": "Operating Systems",
+    "topic": "Operating System Fundamentals",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_fund_05",
+    "question": "Which system call is used in Unix-like systems to create a duplicate new child process?",
+    "options": [
+      "exec()",
+      "fork()",
+      "wait()",
+      "clone_thread()"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The fork() system call creates a new process by duplicating the calling process, returning 0 to the child and the child PID to the parent.",
+    "subject": "Operating Systems",
+    "topic": "Operating System Fundamentals",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_fund_06",
+    "question": "What is the function of the exec() system call family?",
+    "options": [
+      "Terminates the current process",
+      "Replaces the current process address space and program image with a new executable",
+      "Suspends process execution until children finish",
+      "Allocates dynamic heap memory"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The exec() family replaces the current process image with a new executable program, keeping the same Process ID (PID).",
+    "subject": "Operating Systems",
+    "topic": "Operating System Fundamentals",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_fund_07",
+    "question": "What is a bootstrap loader in computer startup?",
+    "options": [
+      "A program stored in ROM/firmware that initializes hardware and loads the OS kernel into RAM",
+      "A compiler tool that builds boot disks",
+      "An anti-virus program that inspects MBR",
+      "A user application launcher"
+    ],
+    "correctAnswer": 0,
+    "explanation": "The bootstrap loader (BIOS/UEFI) tests hardware (POST) and loads the initial operating system kernel code into memory to begin execution.",
+    "subject": "Operating Systems",
+    "topic": "Operating System Fundamentals",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_fund_08",
+    "question": "What is a monolithic kernel architecture?",
+    "options": [
+      "An OS where all core services (drivers, memory, scheduler, VFS) run in a single shared kernel address space",
+      "An OS with no kernel",
+      "An OS designed only for single-core processors",
+      "An OS running in user mode only"
+    ],
+    "correctAnswer": 0,
+    "explanation": "In a monolithic architecture (e.g., traditional Linux), all system services share a single kernel space, yielding high performance.",
+    "subject": "Operating Systems",
+    "topic": "Operating System Fundamentals",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_fund_09",
+    "question": "What is a \"Trap\" in an operating system?",
+    "options": [
+      "A malicious virus program",
+      "A software-generated interrupt caused by an error (e.g., division by zero) or a system call",
+      "A physical fault in the motherboard",
+      "A hardware timer reset"
+    ],
+    "correctAnswer": 1,
+    "explanation": "A trap is a synchronous software interrupt generated by the CPU when an exceptional condition occurs or a system call is requested.",
+    "subject": "Operating Systems",
+    "topic": "Operating System Fundamentals",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_fund_10",
+    "question": "Which of the following is an example of a Real-Time Operating System (RTOS)?",
+    "options": [
+      "Windows 11",
+      "FreeRTOS / VxWorks",
+      "Ubuntu Desktop",
+      "macOS Sonoma"
+    ],
+    "correctAnswer": 1,
+    "explanation": "FreeRTOS and VxWorks are deterministic real-time operating systems designed to guarantee strict task completion deadlines.",
+    "subject": "Operating Systems",
+    "topic": "Operating System Fundamentals",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_fund_11",
+    "question": "What is the primary difference between a Hard Real-Time and a Soft Real-Time system?",
+    "options": [
+      "Hard real-time systems run only on mainframe computers",
+      "Missing a deadline in hard real-time is a total system failure; soft real-time tolerates occasional delay",
+      "Soft real-time does not use a clock",
+      "Hard real-time systems have no kernel"
+    ],
+    "correctAnswer": 1,
+    "explanation": "In hard RTOS, missing a deadline is catastrophic (e.g., airbag deployment). Soft RTOS prioritizes responsiveness but tolerates minor delays (e.g., video streaming).",
+    "subject": "Operating Systems",
+    "topic": "Operating System Fundamentals",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_fund_12",
+    "question": "What is the role of the Dual-Mode Operation (User Mode vs Kernel Mode) in modern processors?",
+    "options": [
+      "To double the clock speed of arithmetic instructions",
+      "To protect the operating system and other processes from erroneous or rogue user applications",
+      "To allow dual monitors to display separate screens",
+      "To support dual boot systems"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Dual-mode operation provides hardware-level protection by preventing user programs from directly executing privileged instructions or accessing raw devices.",
+    "subject": "Operating Systems",
+    "topic": "Operating System Fundamentals",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_fund_13",
+    "question": "Which register or hardware feature enforces memory protection between different user processes?",
+    "options": [
+      "Base and Limit Registers (or Page Tables with permission bits)",
+      "Accumulator Register",
+      "Instruction Register",
+      "Stack Pointer"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Base and Limit registers define the legal physical address range a process may access, preventing processes from interfering with each other.",
+    "subject": "Operating Systems",
+    "topic": "Operating System Fundamentals",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_fund_14",
+    "question": "What is time-sharing in operating systems?",
+    "options": [
+      "Executing one single batch job to completion before loading the next",
+      "Rapidly switching CPU execution among multiple user tasks so each user gets interactive responsiveness",
+      "Sharing memory with another computer over the network",
+      "Running multiple OS instances on different hard drives"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Time-sharing (multitasking) uses timer interrupts and CPU scheduling to allocate small time quanta, providing an interactive environment.",
+    "subject": "Operating Systems",
+    "topic": "Operating System Fundamentals",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_fund_15",
+    "question": "What is the purpose of the init (or systemd in modern Linux) process?",
+    "options": [
+      "To compile the Linux kernel",
+      "The first user-space process (PID 1) spawned by the kernel, responsible for launching all other system daemons",
+      "To manage the display brightness",
+      "To provide a terminal text editor"
+    ],
+    "correctAnswer": 1,
+    "explanation": "PID 1 (init/systemd) is the ancestor of all user-space processes; it coordinates system startup, services, and adopts orphaned processes.",
+    "subject": "Operating Systems",
+    "topic": "Operating System Fundamentals",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_fund_16",
+    "question": "What is an interrupt vector table (IVT)?",
+    "options": [
+      "A table in memory containing the starting addresses (pointers) of Interrupt Service Routines (ISRs)",
+      "A listing of all compiled user programs",
+      "A disk partition table",
+      "A hardware lookup table for graphics shaders"
+    ],
+    "correctAnswer": 0,
+    "explanation": "The Interrupt Vector Table maps each interrupt number/signal to the memory address of its corresponding handler (Interrupt Service Routine).",
+    "subject": "Operating Systems",
+    "topic": "Operating System Fundamentals",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_fund_17",
+    "question": "Which system call retrieves status information about child process termination in Unix?",
+    "options": [
+      "kill()",
+      "wait() / waitpid()",
+      "signal()",
+      "exit()"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The wait() or waitpid() system call suspends the parent process until one of its child processes terminates and collects its exit status.",
+    "subject": "Operating Systems",
+    "topic": "Operating System Fundamentals",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_fund_18",
+    "question": "What is an operating system \"shell\"?",
+    "options": [
+      "The inner hardware layer of the CPU",
+      "A command interpreter program that exposes an interface for users to execute commands and scripts",
+      "The firmware chip on the motherboard",
+      "The graphics driver in kernel space"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The shell (e.g., bash, zsh, sh) is a user-level program that reads commands from the user and invokes the appropriate system calls.",
+    "subject": "Operating Systems",
+    "topic": "Operating System Fundamentals",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_fund_19",
+    "question": "What is distributed operating system transparency?",
+    "options": [
+      "Making the internal code open source",
+      "Presenting a collection of independent networked computers as a single unified computing system to users",
+      "Allowing users to see all background kernel threads",
+      "Removing passwords from all user accounts"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Transparency in distributed OS hides the physical distribution of resources, making remote resources appear local to applications.",
+    "subject": "Operating Systems",
+    "topic": "Operating System Fundamentals",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_fund_20",
+    "question": "Which privileged instruction can ONLY be executed in kernel mode?",
+    "options": [
+      "ADD R1, R2",
+      "Disable / Enable hardware interrupts (CLI / STI)",
+      "MOV R0, 5",
+      "JMP label"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Modifying interrupt enable flags, altering base/limit registers, and accessing I/O ports are privileged operations restricted to kernel mode.",
+    "subject": "Operating Systems",
+    "topic": "Operating System Fundamentals",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_proc_01",
+    "question": "What data structure does the operating system maintain to store all state information about an active process?",
+    "options": [
+      "File Control Block (FCB)",
+      "Process Control Block (PCB)",
+      "Device Control Block",
+      "Page Table Entry"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The PCB (Task Struct in Linux) stores PID, process state, program counter, CPU registers, scheduling priority, and open file descriptors.",
+    "subject": "Operating Systems",
+    "topic": "Process Management & CPU Scheduling",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_proc_02",
+    "question": "Which state transition in a process lifecycle is triggered when an I/O operation finishes?",
+    "options": [
+      "Running to Ready",
+      "Waiting (Blocked) to Ready",
+      "Running to Terminated",
+      "New to Blocked"
+    ],
+    "correctAnswer": 1,
+    "explanation": "When a requested I/O operation completes, the I/O device generates an interrupt, and the OS moves the waiting process to the Ready queue.",
+    "subject": "Operating Systems",
+    "topic": "Process Management & CPU Scheduling",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_proc_03",
+    "question": "What is a \"Zombie Process\" in Unix/Linux systems?",
+    "options": [
+      "A process that consumes 100% of CPU continuously",
+      "A process that has finished execution but still has an entry in the process table because its parent hasn’t called wait()",
+      "A process running without memory allocation",
+      "A thread stuck in an infinite recursion loop"
+    ],
+    "correctAnswer": 1,
+    "explanation": "A zombie process has exited, releasing its resources, but retains its PCB entry so the parent process can read its termination exit code.",
+    "subject": "Operating Systems",
+    "topic": "Process Management & CPU Scheduling",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_proc_04",
+    "question": "What is an \"Orphan Process\"?",
+    "options": [
+      "A process whose parent process terminated before calling wait(), subsequently adopted by init/systemd (PID 1)",
+      "A process without any threads",
+      "A process with no assigned PID",
+      "A process blocked on deadlocked resources"
+    ],
+    "correctAnswer": 0,
+    "explanation": "When a parent process terminates before its child, the child becomes an orphan and is immediately adopted by the system init daemon (PID 1).",
+    "subject": "Operating Systems",
+    "topic": "Process Management & CPU Scheduling",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_proc_05",
+    "question": "Which scheduling algorithm is non-preemptive and provably optimal for minimizing average waiting time?",
+    "options": [
+      "First-Come, First-Served (FCFS)",
+      "Shortest Job First (SJF)",
+      "Round Robin (RR)",
+      "Priority Scheduling"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Shortest Job First (SJF) minimizes average waiting time among all non-preemptive algorithms by scheduling the shortest burst time next.",
+    "subject": "Operating Systems",
+    "topic": "Process Management & CPU Scheduling",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_proc_06",
+    "question": "What phenomenon occurs in FCFS scheduling when long CPU-bound processes delay short I/O-bound processes?",
+    "options": [
+      "Starvation",
+      "Convoy Effect",
+      "Belady’s Anomaly",
+      "Thrashing"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The Convoy Effect occurs in FCFS when several short processes wait behind a long CPU-intensive process, resulting in lower CPU/device utilization.",
+    "subject": "Operating Systems",
+    "topic": "Process Management & CPU Scheduling",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_proc_07",
+    "question": "What is the preemptive version of Shortest Job First (SJF) scheduling called?",
+    "options": [
+      "Shortest Remaining Time First (SRTF)",
+      "Round Robin",
+      "Highest Response Ratio Next (HRRN)",
+      "Multilevel Feedback Queue"
+    ],
+    "correctAnswer": 0,
+    "explanation": "SRTF preempts the running process whenever a new process arrives whose remaining CPU burst time is strictly shorter than the current process.",
+    "subject": "Operating Systems",
+    "topic": "Process Management & CPU Scheduling",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_proc_08",
+    "question": "In Round Robin (RR) scheduling, what happens if the time quantum is chosen to be extremely large?",
+    "options": [
+      "It degenerates into First-Come First-Served (FCFS)",
+      "Context switching overhead becomes unbearable",
+      "Throughput reaches infinity",
+      "The system deadlocks"
+    ],
+    "correctAnswer": 0,
+    "explanation": "If the time quantum exceeds the longest CPU burst of any active process, no preemption occurs, behaving exactly like FCFS.",
+    "subject": "Operating Systems",
+    "topic": "Process Management & CPU Scheduling",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_proc_09",
+    "question": "What happens if the Round Robin time quantum is made extremely small (e.g., 1 microsecond)?",
+    "options": [
+      "CPU efficiency improves dramatically",
+      "Context switching overhead dominates, severely degrading overall system performance",
+      "Starvation occurs",
+      "No processes can execute"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Too small a time slice causes excessive context switches, consuming substantial CPU time saving and restoring registers rather than doing work.",
+    "subject": "Operating Systems",
+    "topic": "Process Management & CPU Scheduling",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_proc_10",
+    "question": "How does Highest Response Ratio Next (HRRN) scheduling prevent process starvation?",
+    "options": [
+      "By executing all short jobs first",
+      "By increasing process priority as its waiting time grows: Response Ratio = (Wait Time + Service Time) / Service Time",
+      "By eliminating context switches",
+      "By using multiple CPU cores exclusively"
+    ],
+    "correctAnswer": 1,
+    "explanation": "In HRRN, as a long process waits in the queue, its waiting time W increases, raising its Response Ratio (W + S)/S and eventually granting it the CPU.",
+    "subject": "Operating Systems",
+    "topic": "Process Management & CPU Scheduling",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_proc_11",
+    "question": "What is \"Context Switching\"?",
+    "options": [
+      "Swapping two physical hard drives",
+      "Saving the CPU register state of the currently executing process and restoring the state of the next scheduled process",
+      "Switching the user from terminal to GUI",
+      "Translating virtual addresses to physical addresses"
+    ],
+    "correctAnswer": 1,
+    "explanation": "A context switch saves the processor context (PC, registers, stack pointer) of the old process and loads the context of the newly scheduled process.",
+    "subject": "Operating Systems",
+    "topic": "Process Management & CPU Scheduling",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_proc_12",
+    "question": "Which CPU scheduling metric measures the total elapsed time from process submission to its complete termination?",
+    "options": [
+      "Response Time",
+      "Turnaround Time",
+      "Waiting Time",
+      "Throughput"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Turnaround Time = Completion Time - Arrival Time. It includes waiting time, execution time, and I/O time.",
+    "subject": "Operating Systems",
+    "topic": "Process Management & CPU Scheduling",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_proc_13",
+    "question": "What is the definition of \"Waiting Time\" in CPU scheduling?",
+    "options": [
+      "Total time spent in I/O execution",
+      "Total time spent waiting in the ready queue before getting CPU service",
+      "Time between job arrival and first CPU response",
+      "Time from submission to completion"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Waiting Time = Turnaround Time - Burst Time (total time spent residing in the ready queue waiting for CPU allocation).",
+    "subject": "Operating Systems",
+    "topic": "Process Management & CPU Scheduling",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_proc_14",
+    "question": "In a Multilevel Feedback Queue (MLFQ) scheduler, what prevents process starvation of CPU-intensive jobs?",
+    "options": [
+      "Aging: gradually promoting long-waiting processes to higher-priority queues",
+      "Terminating low priority jobs",
+      "Giving all queues the same quantum",
+      "Removing the lowest queue"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Aging gradually increases the priority of processes that sit in lower-priority queues for a long duration, guaranteeing eventual CPU service.",
+    "subject": "Operating Systems",
+    "topic": "Process Management & CPU Scheduling",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_proc_15",
+    "question": "What is the primary difference between a User-Level Thread (ULT) and a Kernel-Level Thread (KLT)?",
+    "options": [
+      "ULT creation and scheduling do not require kernel mode intervention, but if one ULT blocks, all peer threads in the process block",
+      "KLT cannot run on multi-core processors",
+      "ULT uses more memory than KLT",
+      "KLT cannot perform I/O operations"
+    ],
+    "correctAnswer": 0,
+    "explanation": "ULTs are managed in user space by thread libraries without kernel awareness; thus, a blocking system call by one ULT blocks the entire process.",
+    "subject": "Operating Systems",
+    "topic": "Process Management & CPU Scheduling",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_proc_16",
+    "question": "Consider 3 processes arriving at time 0 with burst times: P1=10, P2=5, P3=2. Using non-preemptive SJF, what is the average waiting time?",
+    "options": [
+      "3.0 ms",
+      "4.33 ms",
+      "5.67 ms",
+      "8.0 ms"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Execution order: P3 (0 to 2), P2 (2 to 7), P1 (7 to 17). Waiting times: P3=0, P2=2, P1=7. Average waiting time = (0 + 2 + 7) / 3 = 9 / 3 = 3.0 ms.",
+    "subject": "Operating Systems",
+    "topic": "Process Management & CPU Scheduling",
+    "difficulty": "hard",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_proc_17",
+    "question": "Which component of the OS is directly responsible for selecting which ready process to run on the CPU next?",
+    "options": [
+      "Long-term scheduler (Job scheduler)",
+      "Short-term scheduler (CPU scheduler)",
+      "Medium-term scheduler (Swapper)",
+      "Spooler"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The short-term (CPU) scheduler selects a process from the ready queue and allocates the CPU to it with high frequency (milliseconds).",
+    "subject": "Operating Systems",
+    "topic": "Process Management & CPU Scheduling",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_proc_18",
+    "question": "What is the role of the Dispatcher in the operating system?",
+    "options": [
+      "Decides which scheduling algorithm to employ",
+      "Gives control of the CPU to the process selected by the short-term scheduler (performs context switch and jumps to user code)",
+      "Sorts the ready queue",
+      "Checks process syntax"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The dispatcher switches context, switches to user mode, and jumps to the proper location in the program to restart it.",
+    "subject": "Operating Systems",
+    "topic": "Process Management & CPU Scheduling",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_proc_19",
+    "question": "What is the Degree of Multiprogramming controlled by?",
+    "options": [
+      "Short-term scheduler",
+      "Long-term scheduler",
+      "I/O device driver",
+      "CPU clock multiplier"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The long-term (job) scheduler determines how many programs are admitted into memory simultaneously (the degree of multiprogramming).",
+    "subject": "Operating Systems",
+    "topic": "Process Management & CPU Scheduling",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_proc_20",
+    "question": "Which memory segment of a process stores function local variables and return addresses?",
+    "options": [
+      "Heap Segment",
+      "Data Segment",
+      "Stack Segment",
+      "Text (Code) Segment"
+    ],
+    "correctAnswer": 2,
+    "explanation": "The Stack segment stores temporary data: function parameters, local variables, and return addresses during nested calls.",
+    "subject": "Operating Systems",
+    "topic": "Process Management & CPU Scheduling",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_sync_01",
+    "question": "What are the three mandatory requirements that any valid solution to the Critical Section Problem must satisfy?",
+    "options": [
+      "Mutual Exclusion, Progress, Bounded Waiting",
+      "Atomicity, Consistency, Durability",
+      "Deadlock, Starvation, Livelock",
+      "Paging, Segmentation, Swapping"
+    ],
+    "correctAnswer": 0,
+    "explanation": "A valid critical section solution must ensure: Mutual Exclusion (only one in CS), Progress (selection cannot be postponed indefinitely), and Bounded Waiting (no starvation).",
+    "subject": "Operating Systems",
+    "topic": "Process Synchronization & Deadlocks",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_sync_02",
+    "question": "What is a \"Race Condition\"?",
+    "options": [
+      "Two processes running on two separate physical processors",
+      "When the final outcome of multiple concurrent processes accessing shared data depends on the exact execution order",
+      "A hardware clock racing faster than bus speed",
+      "A network packet storm"
+    ],
+    "correctAnswer": 1,
+    "explanation": "A race condition occurs when concurrent threads access and manipulate shared state without proper synchronization, leaving data inconsistent.",
+    "subject": "Operating Systems",
+    "topic": "Process Synchronization & Deadlocks",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_sync_03",
+    "question": "Which atomic hardware instruction is commonly used to implement spinlocks and mutual exclusion primitives?",
+    "options": [
+      "Test-and-Set / Compare-and-Swap (CAS)",
+      "MOV and JMP",
+      "PUSH and POP",
+      "LOAD and STORE"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Test-and-Set and Compare-and-Swap (CAS) execute atomically in hardware, enabling lock acquisition without being interrupted.",
+    "subject": "Operating Systems",
+    "topic": "Process Synchronization & Deadlocks",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_sync_04",
+    "question": "What is a Counting Semaphore initialized to value N capable of controlling?",
+    "options": [
+      "Only binary 0 and 1 access",
+      "Access to a finite resource consisting of N identical available instances",
+      "Infinite concurrent threads",
+      "Deadlock recovery exclusively"
+    ],
+    "correctAnswer": 1,
+    "explanation": "A counting semaphore can range over an unrestricted domain, tracking the count of available identical shared resource units.",
+    "subject": "Operating Systems",
+    "topic": "Process Synchronization & Deadlocks",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_sync_05",
+    "question": "What are the classic atomic operations performed on a Semaphore called?",
+    "options": [
+      "read() and write()",
+      "wait() [or P()] and signal() [or V()]",
+      "lock() and unlock()",
+      "start() and stop()"
+    ],
+    "correctAnswer": 1,
+    "explanation": "wait() (P from Dutch \"proberen\" - test/decrement) and signal() (V from \"verhogen\" - increment) are atomic semaphore operations.",
+    "subject": "Operating Systems",
+    "topic": "Process Synchronization & Deadlocks",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_sync_06",
+    "question": "Which of the following are the four necessary and sufficient Coffman conditions for a Deadlock to occur?",
+    "options": [
+      "Mutual Exclusion, Hold and Wait, No Preemption, Circular Wait",
+      "Starvation, Livelock, Race Condition, Paging",
+      "Read-lock, Write-lock, Semaphore, Spinlock",
+      "Progress, Bounded Waiting, Fairness, Atomicity"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Coffman conditions: 1. Mutual Exclusion, 2. Hold and Wait, 3. No Preemption, and 4. Circular Wait must hold simultaneously for deadlock.",
+    "subject": "Operating Systems",
+    "topic": "Process Synchronization & Deadlocks",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_sync_07",
+    "question": "What is Banker’s Algorithm primarily used for in operating systems?",
+    "options": [
+      "Deadlock Detection and Recovery",
+      "Deadlock Avoidance",
+      "CPU Scheduling",
+      "Disk Defragmentation"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Dijkstra’s Banker’s Algorithm is a deadlock avoidance algorithm that checks if granting a request leaves the system in a safe state.",
+    "subject": "Operating Systems",
+    "topic": "Process Synchronization & Deadlocks",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_sync_08",
+    "question": "In the context of Banker’s Algorithm, what is a \"Safe State\"?",
+    "options": [
+      "A state with zero active processes",
+      "A state for which there exists a safe sequence of processes to complete without leading to deadlock",
+      "A state where memory is 100% free",
+      "A state where no interrupts can occur"
+    ],
+    "correctAnswer": 1,
+    "explanation": "A system is in a safe state if there exists at least one sequence <P1, P2, ..., Pn> where each process can obtain its maximum needed resources and finish.",
+    "subject": "Operating Systems",
+    "topic": "Process Synchronization & Deadlocks",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_sync_09",
+    "question": "How can the \"Circular Wait\" condition be prevented to eliminate deadlocks?",
+    "options": [
+      "By disallowing sharing of any files",
+      "By imposing a strict linear global ordering on all resource types and requiring processes to request resources only in increasing order",
+      "By granting all resources at once during compile time",
+      "By increasing physical RAM"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Resource ordering (Havender’s protocol) assigns unique integers to each resource; requiring requests in strictly increasing order prevents circular dependency cycles.",
+    "subject": "Operating Systems",
+    "topic": "Process Synchronization & Deadlocks",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_sync_10",
+    "question": "In a Resource Allocation Graph (RAG) with single instances of each resource type, what does the presence of a directed cycle indicate?",
+    "options": [
+      "Deadlock is possible but not guaranteed",
+      "A Deadlock definitively exists",
+      "The system is in a safe state",
+      "Starvation of I/O devices"
+    ],
+    "correctAnswer": 1,
+    "explanation": "For single-instance resource types, a cycle in the Resource Allocation Graph is both a necessary and sufficient condition for deadlock.",
+    "subject": "Operating Systems",
+    "topic": "Process Synchronization & Deadlocks",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_sync_11",
+    "question": "In a Resource Allocation Graph with multiple instances of each resource type, a cycle indicates:",
+    "options": [
+      "A deadlock definitely exists",
+      "A deadlock may exist (necessary but not sufficient condition)",
+      "No deadlock can ever occur",
+      "The system is 100% thrashing"
+    ],
+    "correctAnswer": 1,
+    "explanation": "With multiple instances, a cycle is a necessary condition for deadlock, but other non-cycle processes may release resources, breaking the deadlock.",
+    "subject": "Operating Systems",
+    "topic": "Process Synchronization & Deadlocks",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_sync_12",
+    "question": "What is the \"Ostrich Algorithm\" for deadlock handling?",
+    "options": [
+      "Detecting deadlocks every microsecond",
+      "Stick your head in the sand: ignore the problem assuming deadlocks occur so rarely that handling overhead isn’t worth it (used by most general-purpose OSs like Linux and Windows)",
+      "Restarting the computer whenever a mutex is locked",
+      "Banning multi-threaded applications"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The Ostrich approach ignores deadlock occurrence, balancing system performance and code simplicity over exhaustive deadlock prevention overhead.",
+    "subject": "Operating Systems",
+    "topic": "Process Synchronization & Deadlocks",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_sync_13",
+    "question": "What is \"Priority Inversion\"?",
+    "options": [
+      "When a lower-priority process runs faster than a higher-priority process",
+      "A scenario where a high-priority process is indirectly preempted by a medium-priority process because a low-priority process holds a required lock",
+      "Inverting the ready queue order",
+      "Giving CPU to batch jobs only"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Priority Inversion occurs when a low-priority task holds a mutex needed by a high-priority task, while an unrelated medium-priority task preempts the low-priority task.",
+    "subject": "Operating Systems",
+    "topic": "Process Synchronization & Deadlocks",
+    "difficulty": "hard",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_sync_14",
+    "question": "How is Priority Inversion resolved in modern real-time operating systems?",
+    "options": [
+      "Priority Inheritance Protocol",
+      "Killing all background tasks",
+      "Disabling interrupts permanently",
+      "Removing all locks from kernel code"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Under Priority Inheritance, the low-priority task holding the shared mutex temporarily inherits the higher priority of the blocked high-priority task until it releases the lock.",
+    "subject": "Operating Systems",
+    "topic": "Process Synchronization & Deadlocks",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_sync_15",
+    "question": "What is a \"Spinlock\"?",
+    "options": [
+      "A lock where a thread waiting to acquire the lock continuously loops (busy-waits) checking the condition",
+      "A lock that switches between read and write mode",
+      "A lock that never releases",
+      "A hardware key for encryption"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Spinlocks employ busy waiting; they are efficient for multi-core systems when the lock is expected to be held for very brief intervals.",
+    "subject": "Operating Systems",
+    "topic": "Process Synchronization & Deadlocks",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_sync_16",
+    "question": "What is a \"Monitor\" in concurrent programming?",
+    "options": [
+      "A hardware display screen",
+      "A high-level language synchronization construct that encapsulates shared data with procedures and guarantees automatic mutual exclusion",
+      "A process profiling tool",
+      "A network packet sniffer"
+    ],
+    "correctAnswer": 1,
+    "explanation": "A monitor is a module/class containing shared variables and procedures where only one thread can be active inside the monitor at any given moment.",
+    "subject": "Operating Systems",
+    "topic": "Process Synchronization & Deadlocks",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_sync_17",
+    "question": "In the Dining Philosophers Problem, how can deadlock be prevented?",
+    "options": [
+      "Allowing an odd philosopher to pick the left fork first and an even philosopher to pick the right fork first (asymmetric solution)",
+      "Letting all philosophers pick their left fork simultaneously",
+      "Removing forks completely",
+      "Increasing the number of philosophers to infinity"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Asymmetry (even philosophers pick right-first, odd pick left-first) breaks circular wait, guaranteeing that at least one philosopher can eat.",
+    "subject": "Operating Systems",
+    "topic": "Process Synchronization & Deadlocks",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_sync_18",
+    "question": "What is the difference between Deadlock and Starvation?",
+    "options": [
+      "Deadlock is temporary while starvation is permanent",
+      "In deadlock, processes are permanently blocked waiting for an event that only another blocked process can cause; in starvation, a process waits indefinitely due to unfair scheduling",
+      "They are synonymous terms in computer science",
+      "Starvation only happens in single-core processors"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Deadlock involves mutually blocked processes where none can proceed; starvation involves a runnable process being repeatedly bypassed by higher-priority tasks.",
+    "subject": "Operating Systems",
+    "topic": "Process Synchronization & Deadlocks",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_sync_19",
+    "question": "What is Peterson’s Algorithm?",
+    "options": [
+      "A memory allocation technique",
+      "A classic software-based dual-process mutual exclusion algorithm that satisfies mutual exclusion, progress, and bounded waiting",
+      "A disk scheduling algorithm",
+      "A network routing protocol"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Peterson’s algorithm uses two shared variables (turn and flag array) to achieve mutual exclusion for two concurrent processes without special hardware.",
+    "subject": "Operating Systems",
+    "topic": "Process Synchronization & Deadlocks",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_sync_20",
+    "question": "In Banker’s Algorithm, what is the formula to compute the Need matrix?",
+    "options": [
+      "Need = Max - Allocation",
+      "Need = Allocation + Available",
+      "Need = Available - Max",
+      "Need = Allocation - Max"
+    ],
+    "correctAnswer": 0,
+    "explanation": "For each process i and resource type j: Need[i][j] = Max[i][j] - Allocation[i][j].",
+    "subject": "Operating Systems",
+    "topic": "Process Synchronization & Deadlocks",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_mem_01",
+    "question": "What is the main purpose of Paging in memory management?",
+    "options": [
+      "To divide memory into unequal logical units like functions and objects",
+      "To allow physical address space of a process to be non-contiguous, eliminating external fragmentation",
+      "To speed up disk write operations",
+      "To compress text files on disk"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Paging maps fixed-size logical pages into fixed-size physical frames, completely eliminating external fragmentation.",
+    "subject": "Operating Systems",
+    "topic": "Memory Management & Virtual Memory",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_mem_02",
+    "question": "What is the difference between Internal Fragmentation and External Fragmentation?",
+    "options": [
+      "Internal occurs inside allocated blocks when fixed partitions exceed process need; external occurs between allocated blocks when free memory is scattered in small chunks",
+      "Internal happens on disk; external happens in cache",
+      "External happens only in paging; internal happens only in segmentation",
+      "There is no difference"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Internal fragmentation is wasted space inside an assigned page/block. External fragmentation is free memory between partitions that cannot satisfy requests due to scattering.",
+    "subject": "Operating Systems",
+    "topic": "Memory Management & Virtual Memory",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_mem_03",
+    "question": "What hardware component accelerates virtual-to-physical address translation by caching recent page table entries?",
+    "options": [
+      "Memory Controller",
+      "Translation Lookaside Buffer (TLB)",
+      "DMA Controller",
+      "Arithmetic Logic Unit"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The TLB is a high-speed associative hardware cache inside the MMU that stores recent page-to-frame mappings to avoid extra memory references.",
+    "subject": "Operating Systems",
+    "topic": "Memory Management & Virtual Memory",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_mem_04",
+    "question": "What is a \"Page Fault\"?",
+    "options": [
+      "A physical hardware failure in a RAM stick",
+      "An interrupt raised by hardware MMU when a process attempts to access a page that is marked invalid (not currently mapped in physical RAM)",
+      "An error in disk filesystem formatting",
+      "A buffer overflow attack in user code"
+    ],
+    "correctAnswer": 1,
+    "explanation": "A page fault occurs when the accessed virtual page has its valid/invalid bit set to 0 in the page table, triggering the OS to fetch the page from swap space.",
+    "subject": "Operating Systems",
+    "topic": "Memory Management & Virtual Memory",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_mem_05",
+    "question": "What is \"Thrashing\" in a virtual memory system?",
+    "options": [
+      "When hard drive sectors get corrupted",
+      "When a system spends more time servicing page faults and swapping pages in/out than executing user instructions",
+      "Overclocking the memory bus",
+      "Deleting temporary operating system files"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Thrashing occurs when the sum of working sets of active processes exceeds physical RAM capacity, causing continuous page swapping and near-zero CPU utilization.",
+    "subject": "Operating Systems",
+    "topic": "Memory Management & Virtual Memory",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_mem_06",
+    "question": "Which page replacement algorithm suffers from Belady’s Anomaly (increasing frame allocation can lead to more page faults)?",
+    "options": [
+      "Least Recently Used (LRU)",
+      "Optimal Page Replacement (OPT)",
+      "First-In, First-Out (FIFO)",
+      "Least Frequently Used (LFU)"
+    ],
+    "correctAnswer": 2,
+    "explanation": "Belady’s Anomaly is exhibited by FIFO because it is not a stack-based algorithm: giving more frames can paradoxically produce more page faults.",
+    "subject": "Operating Systems",
+    "topic": "Memory Management & Virtual Memory",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_mem_07",
+    "question": "Why is the Optimal Page Replacement Algorithm (OPT/MIN) impossible to implement in a general-purpose OS?",
+    "options": [
+      "It requires infinite RAM",
+      "It requires future knowledge of memory references (replaces the page that will not be used for the longest period in the future)",
+      "It causes deadlocks",
+      "It cannot run on multi-core chips"
+    ],
+    "correctAnswer": 1,
+    "explanation": "OPT requires omniscient knowledge of future page references; it serves as a theoretical benchmark to evaluate practical algorithms like LRU.",
+    "subject": "Operating Systems",
+    "topic": "Memory Management & Virtual Memory",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_mem_08",
+    "question": "What is the Working Set Model of a process?",
+    "options": [
+      "The list of open network sockets",
+      "The set of pages actively referenced by a process during the most recent window of time Δ",
+      "The complete binary file stored on disk",
+      "The registry keys loaded by the OS"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Peter Denning’s Working Set model approximates a process’s locality of reference by monitoring pages accessed in the past Δ time units.",
+    "subject": "Operating Systems",
+    "topic": "Memory Management & Virtual Memory",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_mem_09",
+    "question": "In an inverted page table, how is the table structured?",
+    "options": [
+      "One entry per process page table",
+      "One entry for each physical frame of memory, regardless of the number of processes",
+      "One entry per cache block",
+      "A linked list of virtual addresses"
+    ],
+    "correctAnswer": 1,
+    "explanation": "An inverted page table has one entry per physical frame (indexed by frame number), dramatically reducing table size on 64-bit systems.",
+    "subject": "Operating Systems",
+    "topic": "Memory Management & Virtual Memory",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_mem_10",
+    "question": "If a virtual address space is 32 bits and the page size is 4 KB (2^12 bytes), how many pages are in the virtual address space?",
+    "options": [
+      "2^20 (1,048,576 pages)",
+      "2^12 (4,096 pages)",
+      "2^32 pages",
+      "2^16 (65,536 pages)"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Number of pages = Total Address Space / Page Size = 2^32 / 2^12 = 2^(32 - 12) = 2^20 = 1,048,576 pages.",
+    "subject": "Operating Systems",
+    "topic": "Memory Management & Virtual Memory",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_mem_11",
+    "question": "What is the purpose of the Dirty Bit (Modified Bit) in a page table entry?",
+    "options": [
+      "To detect viral tampering",
+      "To indicate whether the page has been modified since it was loaded into RAM, determining if it must be written back to disk on eviction",
+      "To mark the page as read-only",
+      "To clear the page from cache"
+    ],
+    "correctAnswer": 1,
+    "explanation": "If the dirty bit is 0, the page in memory matches the swap copy on disk and can be overwritten without disk write I/O.",
+    "subject": "Operating Systems",
+    "topic": "Memory Management & Virtual Memory",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_mem_12",
+    "question": "What is Demand Paging?",
+    "options": [
+      "Loading all pages of a program into RAM before starting execution",
+      "Loading a page into physical memory only when a reference is made to a location within that page (lazy loading)",
+      "Swapping the entire process to disk permanently",
+      "Allocating memory only to background daemons"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Demand paging brings pages into physical RAM lazily on-demand when referenced, saving memory and decreasing application startup latency.",
+    "subject": "Operating Systems",
+    "topic": "Memory Management & Virtual Memory",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_mem_13",
+    "question": "How does Segmentation differ fundamentally from Paging?",
+    "options": [
+      "Segmentation uses fixed-size chunks; paging uses variable-size chunks",
+      "Segmentation divides memory into variable-sized logical units (code, stack, heap, functions); paging divides memory into fixed-size physical blocks",
+      "Segmentation is handled by hardware only; paging by software only",
+      "Segmentation has no internal fragmentation"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Segmentation reflects the programmer’s view of memory using variable-size segments (code, data, stack), whereas paging uses fixed-size uniform pages.",
+    "subject": "Operating Systems",
+    "topic": "Memory Management & Virtual Memory",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_mem_14",
+    "question": "Which dynamic storage allocation strategy allocates the smallest free hole that is large enough to satisfy the request?",
+    "options": [
+      "First-Fit",
+      "Best-Fit",
+      "Worst-Fit",
+      "Next-Fit"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Best-Fit searches the entire list of free partitions and allocates the smallest block that accommodates the request, leaving the smallest leftover fragment.",
+    "subject": "Operating Systems",
+    "topic": "Memory Management & Virtual Memory",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_mem_15",
+    "question": "Which memory allocation strategy allocates the largest available hole, aiming to leave a usable large fragment behind?",
+    "options": [
+      "First-Fit",
+      "Best-Fit",
+      "Worst-Fit",
+      "Buddy Allocation"
+    ],
+    "correctAnswer": 2,
+    "explanation": "Worst-Fit chooses the largest free partition so that the remaining space is as large as possible, though it often fragments memory worse in practice.",
+    "subject": "Operating Systems",
+    "topic": "Memory Management & Virtual Memory",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_mem_16",
+    "question": "What technique is used to combat external fragmentation in variable-partition memory systems?",
+    "options": [
+      "Compaction (defragmentation / memory relocation)",
+      "Increasing page size to 1 GB",
+      "Disabling virtual memory",
+      "Using FIFO page replacement"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Compaction shuffles memory contents to place all free memory together in one large continuous block (requires dynamic relocation support).",
+    "subject": "Operating Systems",
+    "topic": "Memory Management & Virtual Memory",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_mem_17",
+    "question": "In a 2-level paging scheme on a 32-bit system with 4 KB pages, if each page table entry is 4 bytes, why is hierarchical paging beneficial?",
+    "options": [
+      "It speeds up memory access compared to 1-level paging",
+      "It avoids allocating memory for unused page tables in sparse address spaces",
+      "It eliminates TLB misses",
+      "It removes all page faults"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Hierarchical paging allows non-contiguous and lazy allocation of page tables; tables for unallocated address regions need not be kept in memory.",
+    "subject": "Operating Systems",
+    "topic": "Memory Management & Virtual Memory",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_mem_18",
+    "question": "If TLB hit ratio is 95%, TLB lookup takes 20 ns, and main memory access takes 100 ns, what is Effective Memory Access Time (EMAT)?",
+    "options": [
+      "105 ns",
+      "125 ns",
+      "120 ns",
+      "110 ns"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Hit: 20 + 100 = 120 ns. Miss: 20 + 100 (page table) + 100 (data) = 220 ns. EMAT = 0.95 * 120 + 0.05 * 220 = 114 + 11 = 125 ns.",
+    "subject": "Operating Systems",
+    "topic": "Memory Management & Virtual Memory",
+    "difficulty": "hard",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_mem_19",
+    "question": "What is the Second-Chance (Clock) page replacement algorithm?",
+    "options": [
+      "An approximation of LRU that uses a reference bit and circular queue to give recently accessed pages another chance before eviction",
+      "An algorithm that runs every 60 seconds",
+      "A method that checks two different disks",
+      "A two-stage FIFO without reference bits"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Clock replacement examines pages circularly; if reference bit is 1, it resets it to 0 and advances; if 0, it selects that page for replacement.",
+    "subject": "Operating Systems",
+    "topic": "Memory Management & Virtual Memory",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_mem_20",
+    "question": "What is the function of the Memory Management Unit (MMU)?",
+    "options": [
+      "Hardware that translates virtual addresses generated by CPU into physical addresses in RAM",
+      "A software program that defragments hard drives",
+      "A cache that holds hard disk sectors",
+      "A bus controller for USB devices"
+    ],
+    "correctAnswer": 0,
+    "explanation": "The MMU is the hardware module that maps virtual addresses to physical addresses at runtime using page tables and the TLB.",
+    "subject": "Operating Systems",
+    "topic": "Memory Management & Virtual Memory",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_file_01",
+    "question": "In a Unix/Linux file system, what information is stored inside an \"inode\"?",
+    "options": [
+      "File name and file content",
+      "File metadata (permissions, ownership, size, timestamps, block pointers) excluding the file name",
+      "Only the file extension",
+      "The root directory password"
+    ],
+    "correctAnswer": 1,
+    "explanation": "An inode stores all file metadata (mode, size, timestamps, pointers to disk data blocks), but the file name is stored inside directory entries.",
+    "subject": "Operating Systems",
+    "topic": "File Systems & Disk Scheduling",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_file_02",
+    "question": "What is the difference between a Hard Link and a Soft Link (Symbolic Link)?",
+    "options": [
+      "Hard links can span across different physical file systems; soft links cannot",
+      "A hard link points directly to the inode number; a soft link is a distinct file that stores the path string to the target file",
+      "Soft links cannot be deleted",
+      "Hard links always point to directories only"
+    ],
+    "correctAnswer": 1,
+    "explanation": "A hard link is another directory entry referencing the same inode (shares reference count). A soft link is a small pointer file containing a path string.",
+    "subject": "Operating Systems",
+    "topic": "File Systems & Disk Scheduling",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_file_03",
+    "question": "Which disk scheduling algorithm services I/O requests by always choosing the request closest to the current head position?",
+    "options": [
+      "First-Come, First-Served (FCFS)",
+      "Shortest Seek Time First (SSTF)",
+      "SCAN (Elevator)",
+      "LOOK"
+    ],
+    "correctAnswer": 1,
+    "explanation": "SSTF selects the disk request requiring the least head movement from the current position, minimizing seek time but risking starvation for distant tracks.",
+    "subject": "Operating Systems",
+    "topic": "File Systems & Disk Scheduling",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_file_04",
+    "question": "How does the SCAN (Elevator) disk scheduling algorithm operate?",
+    "options": [
+      "Jumps randomly to seek tracks",
+      "The head moves in one direction servicing all requests until reaching the disk end, then reverses direction servicing requests on the way back",
+      "Always returns to track 0 after each service",
+      "Services only odd track numbers first"
+    ],
+    "correctAnswer": 1,
+    "explanation": "SCAN behaves like an elevator, sweeping from one end of the disk to the other servicing requests in that direction, then sweeping back.",
+    "subject": "Operating Systems",
+    "topic": "File Systems & Disk Scheduling",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_file_05",
+    "question": "What is the primary difference between SCAN and C-SCAN (Circular SCAN) disk scheduling?",
+    "options": [
+      "C-SCAN only services requests in one direction; when it reaches the end, it immediately returns to the start without servicing requests on the return trip",
+      "C-SCAN moves at double the speed",
+      "C-SCAN does not use magnetic heads",
+      "C-SCAN is non-preemptive"
+    ],
+    "correctAnswer": 0,
+    "explanation": "C-SCAN provides more uniform wait times by sweeping in one direction only, then resetting to the opposite cylinder without servicing intermediate requests.",
+    "subject": "Operating Systems",
+    "topic": "File Systems & Disk Scheduling",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_file_06",
+    "question": "Which disk scheduling algorithm behaves like SCAN but only travels as far as the furthest request in each direction rather than going all the way to the disk edge?",
+    "options": [
+      "LOOK algorithm",
+      "FCFS algorithm",
+      "SSTF algorithm",
+      "C-LOOK algorithm"
+    ],
+    "correctAnswer": 0,
+    "explanation": "LOOK (and C-LOOK) inspects pending requests and reverses direction as soon as the last request in that direction is serviced, avoiding unnecessary edge travel.",
+    "subject": "Operating Systems",
+    "topic": "File Systems & Disk Scheduling",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_file_07",
+    "question": "In File Allocation Table (FAT) file systems, how are file blocks linked?",
+    "options": [
+      "Contiguous allocation",
+      "A central linked table stored in memory/disk that maps each block to the next block number of the file",
+      "Single-level indexed allocation",
+      "Hash tables only"
+    ],
+    "correctAnswer": 1,
+    "explanation": "FAT maintains a table with an entry for each disk block containing the index of the next block in the file (or an EOF marker).",
+    "subject": "Operating Systems",
+    "topic": "File Systems & Disk Scheduling",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_file_08",
+    "question": "What is the primary drawback of Contiguous File Allocation?",
+    "options": [
+      "Slow sequential read access",
+      "External fragmentation and difficulty in dynamically expanding file size",
+      "Inability to support direct/random access",
+      "Requires large index blocks"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Contiguous allocation suffers from external fragmentation (finding large contiguous free extents) and pre-allocation limits when files grow.",
+    "subject": "Operating Systems",
+    "topic": "File Systems & Disk Scheduling",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_file_09",
+    "question": "What is Indexed Allocation in file systems (as used in Unix inodes)?",
+    "options": [
+      "Storing each file on a dedicated track",
+      "Bringing all block pointers of a file into a centralized index block (or multi-level index)",
+      "Searching files linearly from block 0",
+      "Compressing all files into zip format"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Indexed allocation solves fragmentation and supports direct random access by aggregating pointers to all file blocks inside index blocks (direct, indirect, double-indirect).",
+    "subject": "Operating Systems",
+    "topic": "File Systems & Disk Scheduling",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_file_10",
+    "question": "In standard Unix inodes with direct and indirect pointers, what is a \"Double Indirect Block\"?",
+    "options": [
+      "A block containing duplicate copies of user data",
+      "A block containing pointers to indirect blocks, which in turn contain pointers to actual data blocks",
+      "A block that stores file passwords",
+      "A backup of the superblock"
+    ],
+    "correctAnswer": 1,
+    "explanation": "A double-indirect block points to single-indirect blocks, enabling the file system to reference large file sizes exceeding single-block pointer tables.",
+    "subject": "Operating Systems",
+    "topic": "File Systems & Disk Scheduling",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_file_11",
+    "question": "What is RAID level 0 known for?",
+    "options": [
+      "Disk Mirroring for high fault tolerance",
+      "Disk Striping without parity or redundancy (high performance, zero fault tolerance)",
+      "Bit-interleaved parity",
+      "Block-interleaved distributed parity"
+    ],
+    "correctAnswer": 1,
+    "explanation": "RAID 0 stripes data across multiple drives for maximum throughput, but if any single drive fails, all data on the array is lost.",
+    "subject": "Operating Systems",
+    "topic": "File Systems & Disk Scheduling",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_file_12",
+    "question": "What is RAID level 1?",
+    "options": [
+      "Disk Striping",
+      "Disk Mirroring (exact copy of data maintained on two or more drives for 100% redundancy)",
+      "Distributed Parity",
+      "Hamming Code Error Correction"
+    ],
+    "correctAnswer": 1,
+    "explanation": "RAID 1 mirrors data across pairs of drives, providing full fault tolerance against single-drive failure at the expense of 50% storage capacity.",
+    "subject": "Operating Systems",
+    "topic": "File Systems & Disk Scheduling",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_file_13",
+    "question": "Which RAID level uses block-level striping with distributed parity across all disks (requiring at least 3 drives)?",
+    "options": [
+      "RAID 0",
+      "RAID 1",
+      "RAID 5",
+      "RAID 6"
+    ],
+    "correctAnswer": 2,
+    "explanation": "RAID 5 distributes parity across all drives, allowing the array to survive any single drive failure with efficient storage utilization (N-1 drives usable).",
+    "subject": "Operating Systems",
+    "topic": "File Systems & Disk Scheduling",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_file_14",
+    "question": "What distinguishes RAID 6 from RAID 5?",
+    "options": [
+      "RAID 6 uses dual distributed parity (can tolerate the simultaneous failure of 2 drives)",
+      "RAID 6 does not use striping",
+      "RAID 6 requires exactly 2 disks",
+      "RAID 6 has no redundancy"
+    ],
+    "correctAnswer": 0,
+    "explanation": "RAID 6 extends RAID 5 with two separate parity calculations (e.g., Reed-Solomon), withstanding the concurrent loss of up to 2 disks.",
+    "subject": "Operating Systems",
+    "topic": "File Systems & Disk Scheduling",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_file_15",
+    "question": "What is the function of the \"Superblock\" in Unix/ext file systems?",
+    "options": [
+      "Stores the root user password",
+      "Stores file system-wide metadata (total blocks, free blocks, block size, inode counts, mount state)",
+      "Stores the display resolution",
+      "Stores network routing tables"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The superblock holds foundational metadata describing the entire filesystem geometry, state, and free space allocations.",
+    "subject": "Operating Systems",
+    "topic": "File Systems & Disk Scheduling",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_file_16",
+    "question": "What is Journaling in modern file systems (such as ext4, NTFS, XFS)?",
+    "options": [
+      "Writing diary entries for users",
+      "Logging intended metadata and data updates to a circular log (journal) before committing them to disk to ensure consistency after crashes",
+      "Encrypting filenames with AES",
+      "Automatically creating PDF backups"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Journaling records structural filesystem changes into an on-disk transaction log first, enabling near-instant consistency repair without full fsck after an unexpected shutdown.",
+    "subject": "Operating Systems",
+    "topic": "File Systems & Disk Scheduling",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_file_17",
+    "question": "What component of disk access latency represents the time required for the magnetic disk platter to rotate the desired sector under the read/write head?",
+    "options": [
+      "Seek Time",
+      "Rotational Latency",
+      "Transfer Time",
+      "Controller Overhead"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Rotational latency (or rotational delay) is the time waiting for the target sector to rotate underneath the read/write head (average = 1/2 revolution).",
+    "subject": "Operating Systems",
+    "topic": "File Systems & Disk Scheduling",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_file_18",
+    "question": "What is Seek Time in disk storage?",
+    "options": [
+      "Time to transfer bits over the SATA bus",
+      "Time taken by the mechanical disk arm to position the read/write head over the target cylinder/track",
+      "Time to spin down the drive",
+      "Time to decrypt disk sectors"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Seek time is the physical movement duration of the actuator arm moving to the correct track, typically the largest component of mechanical disk latency.",
+    "subject": "Operating Systems",
+    "topic": "File Systems & Disk Scheduling",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_file_19",
+    "question": "How does a Virtual File System (VFS) benefit an operating system?",
+    "options": [
+      "It creates fake files for testing",
+      "It provides an abstract, unified object-oriented interface allowing user applications to access different physical file systems (ext4, NTFS, NFS) via standard system calls",
+      "It eliminates disk formatting",
+      "It prevents all file deletion"
+    ],
+    "correctAnswer": 1,
+    "explanation": "VFS sits above physical filesystem implementations, defining standard abstractions (inode, dentry, file) so open/read/write work transparently across all media.",
+    "subject": "Operating Systems",
+    "topic": "File Systems & Disk Scheduling",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "os_file_20",
+    "question": "What is the purpose of the Bit Vector (Bitmap) method in disk free space management?",
+    "options": [
+      "Encrypting free sectors",
+      "Using a bit array where each bit represents 1 disk block (0 = allocated, 1 = free) for fast hardware-accelerated block allocation",
+      "Storing file names in binary",
+      "Tracking user access logs"
+    ],
+    "correctAnswer": 1,
+    "explanation": "A free-space bitmap uses 1 bit per disk block, allowing modern CPU bit-search instructions (like find-first-set) to locate free clusters with extreme speed.",
+    "subject": "Operating Systems",
+    "topic": "File Systems & Disk Scheduling",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  }
+]

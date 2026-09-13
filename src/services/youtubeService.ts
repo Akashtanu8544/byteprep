@@ -70,6 +70,7 @@ export class YouTubeService {
     description: string;
     tags?: string[];
     privacyStatus?: 'public' | 'unlisted' | 'private';
+    publishAt?: string;
     onProgress?: (percent: number) => void;
     accessToken?: string;
   }): Promise<YouTubeUploadResult> {
@@ -103,7 +104,8 @@ export class YouTubeService {
         categoryId: '27', // Education Category ID on YouTube
       },
       status: {
-        privacyStatus: params.privacyStatus || 'public',
+        privacyStatus: params.publishAt ? 'private' : (params.privacyStatus || 'public'),
+        publishAt: params.publishAt || undefined,
         selfDeclaredMadeForKids: false,
       },
     };

@@ -1,0 +1,1282 @@
+[
+  {
+    "id": "coa_01",
+    "question": "In the Von Neumann architecture, which register holds the address of the next instruction to be fetched from memory?",
+    "options": [
+      "Instruction Register (IR)",
+      "Program Counter (PC)",
+      "Memory Buffer Register (MBR)",
+      "Accumulator (AC)"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The Program Counter (PC) stores the memory address of the next machine instruction to be executed by the CPU.",
+    "subject": "Computer Architecture",
+    "topic": "Computer System Architecture & Organization",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "coa_02",
+    "question": "Which type of cache mapping allows a memory block to be placed anywhere in the cache?",
+    "options": [
+      "Direct Mapping",
+      "Associative Mapping",
+      "Set-Associative Mapping",
+      "Sector Mapping"
+    ],
+    "correctAnswer": 1,
+    "explanation": "In fully associative mapping, any block of main memory can be placed in any cache slot, minimizing conflict misses.",
+    "subject": "Computer Architecture",
+    "topic": "Computer System Architecture & Organization",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "coa_03",
+    "question": "What is the main purpose of the Memory Address Register (MAR)?",
+    "options": [
+      "Holds the instruction currently being executed",
+      "Holds the memory address of data/instruction to be accessed",
+      "Holds temporary ALU calculation results",
+      "Holds the status flags of the processor"
+    ],
+    "correctAnswer": 1,
+    "explanation": "MAR (Memory Address Register) holds the address of the memory location currently being read from or written to.",
+    "subject": "Computer Architecture",
+    "topic": "Computer System Architecture & Organization",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "coa_04",
+    "question": "In a 5-stage instruction pipeline (IF, ID, EX, MEM, WB), what hazard occurs when an instruction depends on the result of a previous instruction still in the pipeline?",
+    "options": [
+      "Structural Hazard",
+      "Data Hazard",
+      "Control Hazard",
+      "Branch Hazard"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Data hazards (RAW, WAR, WAW) occur when instructions exhibit data dependencies and their operands are not yet available.",
+    "subject": "Computer Architecture",
+    "topic": "Computer System Architecture & Organization",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "coa_05",
+    "question": "Which bus in a computer system is unidirectional?",
+    "options": [
+      "Data Bus",
+      "Control Bus",
+      "Address Bus",
+      "System Bus"
+    ],
+    "correctAnswer": 2,
+    "explanation": "The Address Bus is unidirectional; the CPU sends memory or I/O addresses outward to select devices or memory cells.",
+    "subject": "Computer Architecture",
+    "topic": "Computer System Architecture & Organization",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "coa_06",
+    "question": "What technique allows an I/O device to transfer data directly to/from main memory without continuous CPU intervention?",
+    "options": [
+      "Programmed I/O",
+      "Interrupt-driven I/O",
+      "Direct Memory Access (DMA)",
+      "Polling"
+    ],
+    "correctAnswer": 2,
+    "explanation": "DMA (Direct Memory Access) allows high-speed peripheral devices to transfer blocks of data directly to memory, freeing the CPU.",
+    "subject": "Computer Architecture",
+    "topic": "Computer System Architecture & Organization",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "coa_07",
+    "question": "In RISC (Reduced Instruction Set Computer) architecture, which characteristic is typically observed?",
+    "options": [
+      "Variable instruction length",
+      "Heavy use of microprogrammed control units",
+      "Fixed instruction format and single-cycle execution",
+      "Complex multi-operand memory-to-memory instructions"
+    ],
+    "correctAnswer": 2,
+    "explanation": "RISC processors use fixed-length instructions, load/store architecture, hardwired control, and mostly single-cycle execution.",
+    "subject": "Computer Architecture",
+    "topic": "Computer System Architecture & Organization",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "coa_08",
+    "question": "What is the write policy where data is updated simultaneously in both cache and main memory?",
+    "options": [
+      "Write-back",
+      "Write-through",
+      "Write-allocate",
+      "No-write-allocate"
+    ],
+    "correctAnswer": 1,
+    "explanation": "In Write-Through policy, every cache write updates both the cache block and the corresponding main memory location.",
+    "subject": "Computer Architecture",
+    "topic": "Computer System Architecture & Organization",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "coa_09",
+    "question": "Which addressing mode specifies the operand directly within the instruction itself?",
+    "options": [
+      "Immediate Addressing",
+      "Direct Addressing",
+      "Register Indirect Addressing",
+      "Indexed Addressing"
+    ],
+    "correctAnswer": 0,
+    "explanation": "In Immediate Addressing Mode, the operand value is part of the instruction itself (e.g., MOV R1, #25).",
+    "subject": "Computer Architecture",
+    "topic": "Computer System Architecture & Organization",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "coa_10",
+    "question": "Booth’s algorithm is specifically designed for which arithmetic operation?",
+    "options": [
+      "Division of unsigned numbers",
+      "Multiplication of signed 2’s complement binary numbers",
+      "Floating-point normalization",
+      "BCD addition"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Booth’s multiplication algorithm efficiently multiplies two signed binary numbers in 2’s complement representation.",
+    "subject": "Computer Architecture",
+    "topic": "Computer System Architecture & Organization",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "coa_11",
+    "question": "Which component generates clock signals and control signals to sequence all CPU operations?",
+    "options": [
+      "Arithmetic Logic Unit (ALU)",
+      "Control Unit (CU)",
+      "Bus Interface Unit",
+      "Cache Controller"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The Control Unit (CU) coordinates and directs the operations of all processor units by generating timing and control signals.",
+    "subject": "Computer Architecture",
+    "topic": "Computer System Architecture & Organization",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "coa_12",
+    "question": "What is the primary trade-off of a microprogrammed control unit compared to a hardwired control unit?",
+    "options": [
+      "Higher speed but higher hardware cost",
+      "Flexibility and ease of modification at the cost of slower execution speed",
+      "Inability to execute complex CISC instructions",
+      "Requires no ROM or memory space"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Microprogrammed control units are flexible and easier to update via microcode, but are slower than hardwired logic.",
+    "subject": "Computer Architecture",
+    "topic": "Computer System Architecture & Organization",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "coa_13",
+    "question": "If a cache hit ratio is 0.9, cache access time is 2 ns, and main memory miss penalty is 50 ns, what is average memory access time?",
+    "options": [
+      "5.2 ns",
+      "7.0 ns",
+      "6.8 ns",
+      "52 ns"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Average Access Time = Hit Time + Miss Rate * Miss Penalty = 2 + (0.10 * 50) = 7.0 ns.",
+    "subject": "Computer Architecture",
+    "topic": "Computer System Architecture & Organization",
+    "difficulty": "hard",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "coa_14",
+    "question": "What is the function of the Instruction Register (IR)?",
+    "options": [
+      "Points to the next memory address",
+      "Stores the instruction currently being decoded and executed",
+      "Stores arithmetic carry flag",
+      "Stores the base address of the stack"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The Instruction Register (IR) holds the binary opcode and operands of the instruction fetched from memory.",
+    "subject": "Computer Architecture",
+    "topic": "Computer System Architecture & Organization",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "coa_15",
+    "question": "In Harvard architecture, what distinguishes it from Von Neumann architecture?",
+    "options": [
+      "Separate physical memories and buses for instructions and data",
+      "Unified memory for instructions and data",
+      "Absence of ALU",
+      "Use of only serial data transfer"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Harvard architecture provides physically separate memory storage and signal pathways for instructions and data.",
+    "subject": "Computer Architecture",
+    "topic": "Computer System Architecture & Organization",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "coa_16",
+    "question": "Which interrupt has the highest priority and cannot be ignored by the processor?",
+    "options": [
+      "Maskable Interrupt",
+      "Non-Maskable Interrupt (NMI)",
+      "Software Interrupt",
+      "Timer Interrupt"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Non-Maskable Interrupts (NMI) are reserved for critical hardware events (like power failure or parity error) and cannot be masked.",
+    "subject": "Computer Architecture",
+    "topic": "Computer System Architecture & Organization",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "coa_17",
+    "question": "What is the principle of Locality of Reference in memory systems?",
+    "options": [
+      "Tendency of processors to access memory uniformly across the entire address space",
+      "Tendency of processors to access instructions and data close in time or memory location",
+      "Writing data only to primary storage",
+      "Using virtual addresses exclusively"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Locality of reference includes temporal locality (recently accessed items accessed again soon) and spatial locality (nearby addresses accessed soon).",
+    "subject": "Computer Architecture",
+    "topic": "Computer System Architecture & Organization",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "coa_18",
+    "question": "Which unit in the CPU performs bitwise AND, OR, and arithmetic additions?",
+    "options": [
+      "MMU",
+      "ALU",
+      "FPU",
+      "Control Unit"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The Arithmetic Logic Unit (ALU) performs fundamental arithmetic operations (add, sub) and bitwise logic operations (AND, OR, NOT).",
+    "subject": "Computer Architecture",
+    "topic": "Computer System Architecture & Organization",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "coa_19",
+    "question": "What is pipelining throughput in an ideal k-stage pipeline operating on n tasks?",
+    "options": [
+      "Each task completes in k clock cycles always",
+      "Approximately one task completes per clock cycle after the pipeline fills",
+      "Requires n*k clock cycles total",
+      "Cannot overlap instruction phases"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Once an ideal pipeline is filled, one instruction finishes per clock cycle, yielding an ideal speedup of k.",
+    "subject": "Computer Architecture",
+    "topic": "Computer System Architecture & Organization",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "coa_20",
+    "question": "Which register contains the condition codes (Zero flag, Carry flag, Sign flag, Overflow flag)?",
+    "options": [
+      "Accumulator",
+      "Program Status Word (PSW) / Flags Register",
+      "Instruction Register",
+      "Base Register"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The Program Status Word (PSW) or Flags register holds status indicators reflecting ALU operation outcomes.",
+    "subject": "Computer Architecture",
+    "topic": "Computer System Architecture & Organization",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "dl_01",
+    "question": "Which logic gate produces a HIGH (1) output only when an odd number of inputs are HIGH (1)?",
+    "options": [
+      "AND Gate",
+      "NAND Gate",
+      "XOR Gate",
+      "XNOR Gate"
+    ],
+    "correctAnswer": 2,
+    "explanation": "The Exclusive-OR (XOR) gate outputs 1 if and only if an odd number of its inputs are 1 (parity detector).",
+    "subject": "Digital Electronics",
+    "topic": "Digital Logic & Boolean Algebra",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "dl_02",
+    "question": "According to De Morgan’s theorem, (A + B)’ is equal to:",
+    "options": [
+      "A’ + B’",
+      "A’ · B’",
+      "(A · B)’",
+      "A + B’"
+    ],
+    "correctAnswer": 1,
+    "explanation": "De Morgan’s first theorem states that the complement of a sum is equal to the product of the complements: (A + B)’ = A’ · B’.",
+    "subject": "Digital Electronics",
+    "topic": "Digital Logic & Boolean Algebra",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "dl_03",
+    "question": "Which of the following gates are known as Universal Gates because any Boolean function can be implemented using only them?",
+    "options": [
+      "AND and OR",
+      "NAND and NOR",
+      "XOR and XNOR",
+      "NOT and AND"
+    ],
+    "correctAnswer": 1,
+    "explanation": "NAND and NOR gates are universal gates; any combinational logic circuit can be designed solely with either NAND or NOR gates.",
+    "subject": "Digital Electronics",
+    "topic": "Digital Logic & Boolean Algebra",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "dl_04",
+    "question": "In a 4-variable Karnaugh Map (K-map), how many cells are present?",
+    "options": [
+      "8",
+      "16",
+      "32",
+      "64"
+    ],
+    "correctAnswer": 1,
+    "explanation": "A K-map with n variables contains 2^n cells. For 4 variables (e.g., A, B, C, D), there are 2^4 = 16 cells.",
+    "subject": "Digital Electronics",
+    "topic": "Digital Logic & Boolean Algebra",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "dl_05",
+    "question": "Why is Gray code used in labeling adjacent cells of a Karnaugh Map?",
+    "options": [
+      "It is an alphanumeric code",
+      "Adjacent cells differ by only one binary bit",
+      "It is a weighted binary code",
+      "It represents negative numbers in 2’s complement"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Gray code is a unit-distance code where adjacent codes differ in only a single bit position, enabling visual grouping of terms.",
+    "subject": "Digital Electronics",
+    "topic": "Digital Logic & Boolean Algebra",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "dl_06",
+    "question": "What is the dual of the Boolean expression: A + B · C = (A + B) · (A + C)?",
+    "options": [
+      "A · (B + C) = A · B + A · C",
+      "A’ · (B’ + C’) = (A’ · B’) + (A’ · C’)",
+      "A + B + C = A · B · C",
+      "A · B · C = A + B + C"
+    ],
+    "correctAnswer": 0,
+    "explanation": "The principle of duality swaps AND with OR, and 0 with 1: A + B · C becomes A · (B + C) = A · B + A · C.",
+    "subject": "Digital Electronics",
+    "topic": "Digital Logic & Boolean Algebra",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "dl_07",
+    "question": "In Boolean algebra, what does the consensus theorem state for AB + A’C + BC?",
+    "options": [
+      "AB + BC",
+      "AB + A’C",
+      "A’C + BC",
+      "A + B + C"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The consensus theorem states that AB + A’C + BC = AB + A’C. Here, BC is redundant (the consensus term) and can be eliminated.",
+    "subject": "Digital Electronics",
+    "topic": "Digital Logic & Boolean Algebra",
+    "difficulty": "hard",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "dl_08",
+    "question": "What is the output of an XNOR gate when both inputs are identical (both 0 or both 1)?",
+    "options": [
+      "0",
+      "1",
+      "High Impedance (Z)",
+      "Undefined"
+    ],
+    "correctAnswer": 1,
+    "explanation": "An XNOR gate is an equivalence gate; it outputs 1 when both inputs have the same logic level (0,0 or 1,1).",
+    "subject": "Digital Electronics",
+    "topic": "Digital Logic & Boolean Algebra",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "dl_09",
+    "question": "A group of 8 adjacent 1s (an octet) in a 4-variable K-map eliminates how many variables?",
+    "options": [
+      "1 variable",
+      "2 variables",
+      "3 variables",
+      "4 variables"
+    ],
+    "correctAnswer": 2,
+    "explanation": "Each grouping of 2^k cells in a K-map eliminates k variables. An octet has 2^3 = 8 cells, eliminating 3 variables.",
+    "subject": "Digital Electronics",
+    "topic": "Digital Logic & Boolean Algebra",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "dl_10",
+    "question": "What are \"Don’t Care\" conditions (marked as X or d) in a Karnaugh Map?",
+    "options": [
+      "Input combinations that must always produce a 0 output",
+      "Input combinations that never occur or whose outputs do not matter",
+      "Faulty hardware states",
+      "Signals with floating voltages"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Don’t Care conditions represent unused input states; they can be treated as 1 or 0 to form larger groups and simplify the circuit.",
+    "subject": "Digital Electronics",
+    "topic": "Digital Logic & Boolean Algebra",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "dl_11",
+    "question": "Simplify the Boolean expression: F = A + A’B.",
+    "options": [
+      "A",
+      "B",
+      "A + B",
+      "A · B"
+    ],
+    "correctAnswer": 2,
+    "explanation": "By distributive law: A + A’B = (A + A’)(A + B) = 1 · (A + B) = A + B.",
+    "subject": "Digital Electronics",
+    "topic": "Digital Logic & Boolean Algebra",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "dl_12",
+    "question": "How many 2-input NAND gates are required to implement a 2-input XOR gate?",
+    "options": [
+      "3",
+      "4",
+      "5",
+      "6"
+    ],
+    "correctAnswer": 1,
+    "explanation": "A 2-input XOR gate can be synthesized using exactly 4 NAND gates.",
+    "subject": "Digital Electronics",
+    "topic": "Digital Logic & Boolean Algebra",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "dl_13",
+    "question": "Which law states that A · (B · C) = (A · B) · C and A + (B + C) = (A + B) + C?",
+    "options": [
+      "Commutative Law",
+      "Associative Law",
+      "Distributive Law",
+      "Absorption Law"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The Associative Law allows grouping of terms in consecutive AND or OR operations without changing the result.",
+    "subject": "Digital Electronics",
+    "topic": "Digital Logic & Boolean Algebra",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "dl_14",
+    "question": "In Sum-of-Products (SOP) form, what is a minterm?",
+    "options": [
+      "A sum term containing all variables in either complemented or uncomplemented form",
+      "A product term containing all variables in either complemented or uncomplemented form",
+      "Any sum of literals",
+      "A term with don’t care conditions"
+    ],
+    "correctAnswer": 1,
+    "explanation": "A minterm (canonical product term) is an AND combination of all system variables in true or complemented form.",
+    "subject": "Digital Electronics",
+    "topic": "Digital Logic & Boolean Algebra",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "dl_15",
+    "question": "What is the canonical Product-of-Sums (POS) representation designation for terms?",
+    "options": [
+      "Minterms (m)",
+      "Maxterms (M)",
+      "Prime Implicants (PI)",
+      "Essential Prime Implicants (EPI)"
+    ],
+    "correctAnswer": 1,
+    "explanation": "In POS form, canonical sum terms are called Maxterms, designated by M_i.",
+    "subject": "Digital Electronics",
+    "topic": "Digital Logic & Boolean Algebra",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "dl_16",
+    "question": "A Boolean function has an Essential Prime Implicant (EPI) if:",
+    "options": [
+      "It contains all minterms",
+      "It is the largest possible group in the K-map",
+      "It covers at least one minterm that is not covered by any other prime implicant",
+      "It contains only don’t care cells"
+    ],
+    "correctAnswer": 2,
+    "explanation": "An Essential Prime Implicant covers at least one 1-cell that cannot be grouped into any other prime implicant.",
+    "subject": "Digital Electronics",
+    "topic": "Digital Logic & Boolean Algebra",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "dl_17",
+    "question": "What is the complement of the function F(A, B) = A · B + A’ · B’?",
+    "options": [
+      "A ⊕ B",
+      "A ⊙ B",
+      "A + B",
+      "A’ + B’"
+    ],
+    "correctAnswer": 0,
+    "explanation": "F is the XNOR function (A ⊙ B). The complement of XNOR is the XOR function: (A ⊙ B)’ = A ⊕ B.",
+    "subject": "Digital Electronics",
+    "topic": "Digital Logic & Boolean Algebra",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "dl_18",
+    "question": "What is the value of Boolean expression A · (A + B)?",
+    "options": [
+      "B",
+      "A",
+      "A · B",
+      "A + B"
+    ],
+    "correctAnswer": 1,
+    "explanation": "By the Absorption Law of Boolean algebra: A · (A + B) = A · A + A · B = A + A · B = A · (1 + B) = A.",
+    "subject": "Digital Electronics",
+    "topic": "Digital Logic & Boolean Algebra",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "dl_19",
+    "question": "How many 2-input NOR gates are required to implement a 2-input AND gate?",
+    "options": [
+      "2",
+      "3",
+      "4",
+      "5"
+    ],
+    "correctAnswer": 1,
+    "explanation": "By De Morgan’s laws: A · B = ((A · B)’)’ = (A’ + B’)’. Inverting A requires 1 NOR, inverting B requires 1 NOR, and NORing A’ and B’ requires 1 NOR = 3 NOR gates.",
+    "subject": "Digital Electronics",
+    "topic": "Digital Logic & Boolean Algebra",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "dl_20",
+    "question": "Which logic gate is equivalent to a negative-AND gate (AND gate with inverted inputs)?",
+    "options": [
+      "NAND Gate",
+      "NOR Gate",
+      "XOR Gate",
+      "OR Gate"
+    ],
+    "correctAnswer": 1,
+    "explanation": "By De Morgan’s theorem: A’ · B’ = (A + B)’, which is the operation of a NOR gate.",
+    "subject": "Digital Electronics",
+    "topic": "Digital Logic & Boolean Algebra",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "circ_01",
+    "question": "A Half Adder circuit can add how many binary bits at a time?",
+    "options": [
+      "Three 1-bit binary inputs",
+      "Two 1-bit binary inputs",
+      "Four binary bits",
+      "One 8-bit byte"
+    ],
+    "correctAnswer": 1,
+    "explanation": "A Half Adder adds two 1-bit binary inputs (A and B) and produces two outputs: Sum (A ⊕ B) and Carry (A · B).",
+    "subject": "Digital Electronics",
+    "topic": "Combinational & Sequential Circuits",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "circ_02",
+    "question": "How many select lines are required for a 16-to-1 Multiplexer (MUX)?",
+    "options": [
+      "2",
+      "3",
+      "4",
+      "8"
+    ],
+    "correctAnswer": 2,
+    "explanation": "For a 2^n to 1 multiplexer, n select lines are required. For 16-to-1: 16 = 2^4, so 4 select lines are needed.",
+    "subject": "Digital Electronics",
+    "topic": "Combinational & Sequential Circuits",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "circ_03",
+    "question": "What is the main difference between combinational logic and sequential logic circuits?",
+    "options": [
+      "Combinational circuits use clock pulses; sequential circuits do not",
+      "Sequential circuits have memory elements (feedback) whose outputs depend on past inputs",
+      "Combinational circuits are made only of flip-flops",
+      "Sequential circuits cannot use NAND gates"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Sequential circuits contain storage elements (latches/flip-flops) and feedback loops, so output depends on present inputs and past history.",
+    "subject": "Digital Electronics",
+    "topic": "Combinational & Sequential Circuits",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "circ_04",
+    "question": "In an SR flip-flop using NOR gates, which input condition is invalid / forbidden?",
+    "options": [
+      "S = 0, R = 0",
+      "S = 0, R = 1",
+      "S = 1, R = 0",
+      "S = 1, R = 1"
+    ],
+    "correctAnswer": 3,
+    "explanation": "When S = 1 and R = 1 simultaneously, both outputs Q and Q’ try to become 0, leading to a race condition / forbidden state.",
+    "subject": "Digital Electronics",
+    "topic": "Combinational & Sequential Circuits",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "circ_05",
+    "question": "What problem in an SR flip-flop is resolved by a JK flip-flop?",
+    "options": [
+      "Slow propagation delay",
+      "Invalid state when both inputs are HIGH",
+      "Lack of set capability",
+      "High power consumption"
+    ],
+    "correctAnswer": 1,
+    "explanation": "A JK flip-flop resolves the S=1, R=1 ambiguity by causing the output to toggle when J = 1 and K = 1.",
+    "subject": "Digital Electronics",
+    "topic": "Combinational & Sequential Circuits",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "circ_06",
+    "question": "What condition causes Race-Around in a level-triggered JK flip-flop?",
+    "options": [
+      "J = 0, K = 0 with clock pulse width smaller than propagation delay",
+      "J = 1, K = 1 when clock pulse width (tp) is greater than flip-flop propagation delay (Δt)",
+      "J = 1, K = 0 with inverted clock",
+      "Clock frequency is zero"
+    ],
+    "correctAnswer": 1,
+    "explanation": "When J=1, K=1 and clock width tp > Δt, the output toggles repeatedly during a single clock pulse, producing an unpredictable state.",
+    "subject": "Digital Electronics",
+    "topic": "Combinational & Sequential Circuits",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "circ_07",
+    "question": "How is the Race-Around condition eliminated in flip-flop design?",
+    "options": [
+      "Using Master-Slave JK flip-flop or edge-triggering",
+      "Increasing the clock pulse duration",
+      "Removing the feedback loop",
+      "Using only OR gates"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Race-around is resolved by using edge-triggered flip-flops or a Master-Slave configuration where changes occur strictly at clock transitions.",
+    "subject": "Digital Electronics",
+    "topic": "Combinational & Sequential Circuits",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "circ_08",
+    "question": "Which flip-flop has only one input and reproduces its input at the output after a clock transition?",
+    "options": [
+      "T Flip-Flop",
+      "D Flip-Flop (Delay Flip-Flop)",
+      "SR Flip-Flop",
+      "JK Flip-Flop"
+    ],
+    "correctAnswer": 1,
+    "explanation": "A D (Data / Delay) flip-flop passes the input D to output Q on the clock active edge: Q(next) = D.",
+    "subject": "Digital Electronics",
+    "topic": "Combinational & Sequential Circuits",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "circ_09",
+    "question": "A 4-bit synchronous binary counter has a MOD number (modulus) of:",
+    "options": [
+      "4",
+      "8",
+      "16",
+      "32"
+    ],
+    "correctAnswer": 2,
+    "explanation": "An n-bit binary counter has 2^n unique counting states (from 0 to 2^n - 1). For 4 bits, MOD = 2^4 = 16.",
+    "subject": "Digital Electronics",
+    "topic": "Combinational & Sequential Circuits",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "circ_10",
+    "question": "A Johnson counter (twisted ring counter) constructed with 4 flip-flops has how many distinct states?",
+    "options": [
+      "4",
+      "8",
+      "16",
+      "32"
+    ],
+    "correctAnswer": 1,
+    "explanation": "An n-stage Johnson counter has 2n distinct states. For 4 flip-flops, the number of states is 2 * 4 = 8.",
+    "subject": "Digital Electronics",
+    "topic": "Combinational & Sequential Circuits",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "circ_11",
+    "question": "A standard Ring counter constructed with 5 flip-flops has how many distinct states?",
+    "options": [
+      "5",
+      "10",
+      "25",
+      "32"
+    ],
+    "correctAnswer": 0,
+    "explanation": "An n-stage standard ring counter circulates a single 1 through n flip-flops, having exactly n distinct states (here, 5).",
+    "subject": "Digital Electronics",
+    "topic": "Combinational & Sequential Circuits",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "circ_12",
+    "question": "What is the function of a Demultiplexer (DEMUX)?",
+    "options": [
+      "Converts multiple inputs into a single output",
+      "Takes a single input data line and routes it to one of 2^n output lines",
+      "Adds two binary numbers",
+      "Stores multi-bit data"
+    ],
+    "correctAnswer": 1,
+    "explanation": "A Demultiplexer takes a single input data line and directs it to one of many destination outputs based on select line values.",
+    "subject": "Digital Electronics",
+    "topic": "Combinational & Sequential Circuits",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "circ_13",
+    "question": "How many Full Adders and Half Adders are required to construct a 4-bit parallel binary adder?",
+    "options": [
+      "4 Full Adders (or 3 Full Adders and 1 Half Adder)",
+      "2 Full Adders and 2 Half Adders",
+      "4 Half Adders only",
+      "1 Full Adder and 3 Half Adders"
+    ],
+    "correctAnswer": 0,
+    "explanation": "A 4-bit ripple carry adder can be built using 1 Half Adder (for LSB if no carry-in) and 3 Full Adders, or 4 Full Adders.",
+    "subject": "Digital Electronics",
+    "topic": "Combinational & Sequential Circuits",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "circ_14",
+    "question": "What circuit converts a 3-bit binary code into one of 8 active output lines?",
+    "options": [
+      "3-to-8 Decoder",
+      "8-to-3 Priority Encoder",
+      "3-to-1 Multiplexer",
+      "Binary Comparator"
+    ],
+    "correctAnswer": 0,
+    "explanation": "A 3-to-8 line decoder decodes 3 binary input lines into 2^3 = 8 mutually exclusive output lines.",
+    "subject": "Digital Electronics",
+    "topic": "Combinational & Sequential Circuits",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "circ_15",
+    "question": "What is a Priority Encoder?",
+    "options": [
+      "An encoder that gives output only when all inputs are 1",
+      "An encoder that produces the code corresponding to the highest-order active input",
+      "A circuit that counts clock cycles in priority order",
+      "An adder with priority carry"
+    ],
+    "correctAnswer": 1,
+    "explanation": "In a priority encoder, if two or more inputs arrive simultaneously, the input with the highest designated priority takes precedence.",
+    "subject": "Digital Electronics",
+    "topic": "Combinational & Sequential Circuits",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "circ_16",
+    "question": "In a T flip-flop, what is the next state Q(next) when T = 1?",
+    "options": [
+      "0",
+      "1",
+      "Q’ (toggle previous state)",
+      "No change"
+    ],
+    "correctAnswer": 2,
+    "explanation": "The characteristic equation of a T flip-flop is Q(next) = T ⊕ Q. When T = 1, Q(next) = Q’ (it toggles).",
+    "subject": "Digital Electronics",
+    "topic": "Combinational & Sequential Circuits",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "circ_17",
+    "question": "Which register configuration allows data to be entered bit-by-bit sequentially and read out bit-by-bit sequentially?",
+    "options": [
+      "SISO (Serial-In Serial-Out)",
+      "SIPO (Serial-In Parallel-Out)",
+      "PISO (Parallel-In Serial-Out)",
+      "PIPO (Parallel-In Parallel-Out)"
+    ],
+    "correctAnswer": 0,
+    "explanation": "A SISO (Serial-In Serial-Out) shift register receives data serially and shifts it out one bit per clock cycle.",
+    "subject": "Digital Electronics",
+    "topic": "Combinational & Sequential Circuits",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "circ_18",
+    "question": "What is the characteristic equation of a JK flip-flop?",
+    "options": [
+      "Q(next) = J + K’Q",
+      "Q(next) = JQ’ + K’Q",
+      "Q(next) = J’Q + KQ’",
+      "Q(next) = J · K"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The characteristic equation for a JK flip-flop is Q(next) = J · Q’ + K’ · Q.",
+    "subject": "Digital Electronics",
+    "topic": "Combinational & Sequential Circuits",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "circ_19",
+    "question": "What type of hazard in combinational circuits causes a momentary unwanted glitch due to different path delays?",
+    "options": [
+      "Static-1 Hazard",
+      "Dynamic Hazard",
+      "Both Static and Dynamic Hazards",
+      "Propagation Skew"
+    ],
+    "correctAnswer": 2,
+    "explanation": "Static hazards (output momentarily changes when it should remain steady) and dynamic hazards (multiple transitions during one change) are caused by propagation delays.",
+    "subject": "Digital Electronics",
+    "topic": "Combinational & Sequential Circuits",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "circ_20",
+    "question": "In an asynchronous (ripple) counter, how are the clock inputs of flip-flops connected?",
+    "options": [
+      "All flip-flops receive the same master clock simultaneously",
+      "The output of each flip-flop serves as the clock input for the next flip-flop",
+      "Flip-flops are clocked randomly",
+      "No clock is used in ripple counters"
+    ],
+    "correctAnswer": 1,
+    "explanation": "In an asynchronous/ripple counter, only the first flip-flop is clocked by the external pulse; each subsequent flip-flop is clocked by the preceding flip-flop’s output.",
+    "subject": "Digital Electronics",
+    "topic": "Combinational & Sequential Circuits",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "num_01",
+    "question": "What is the 2’s complement representation of the decimal number -13 in an 8-bit system?",
+    "options": [
+      "11110011",
+      "11110010",
+      "00001101",
+      "11110001"
+    ],
+    "correctAnswer": 0,
+    "explanation": "+13 in 8-bit binary = 00001101. 1’s complement = 11110010. Add 1 = 11110011.",
+    "subject": "Digital Electronics",
+    "topic": "Number Systems & Computer Arithmetic",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "num_02",
+    "question": "Convert the hexadecimal number (2F)₁₆ to its decimal equivalent:",
+    "options": [
+      "45",
+      "47",
+      "52",
+      "37"
+    ],
+    "correctAnswer": 1,
+    "explanation": "(2F)₁₆ = 2 * 16¹ + 15 * 16⁰ = 32 + 15 = 47.",
+    "subject": "Digital Electronics",
+    "topic": "Number Systems & Computer Arithmetic",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "num_03",
+    "question": "What is the range of signed integers that can be represented using n-bit 2’s complement notation?",
+    "options": [
+      "-2^(n-1) to +2^(n-1)",
+      "-2^(n-1) to +(2^(n-1) - 1)",
+      "-(2^(n-1) - 1) to +(2^(n-1) - 1)",
+      "0 to 2^n - 1"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The range of an n-bit 2’s complement number is from -2^(n-1) to +(2^(n-1) - 1). For example, with 8 bits: -128 to +127.",
+    "subject": "Digital Electronics",
+    "topic": "Number Systems & Computer Arithmetic",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "num_04",
+    "question": "Why is 2’s complement widely preferred over 1’s complement in modern ALU architectures?",
+    "options": [
+      "It is easier for humans to read",
+      "It eliminates the ambiguity of having two representations for zero (+0 and -0)",
+      "It requires fewer bits to store",
+      "It cannot overflow"
+    ],
+    "correctAnswer": 1,
+    "explanation": "1’s complement has two representations for zero (+0 = 0000, -0 = 1111). 2’s complement has a unique zero (0000) and simpler addition hardware.",
+    "subject": "Digital Electronics",
+    "topic": "Number Systems & Computer Arithmetic",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "num_05",
+    "question": "In IEEE 754 Single-Precision Floating-Point standard (32 bits), how many bits are allocated for sign, exponent, and mantissa (fraction) respectively?",
+    "options": [
+      "1 bit sign, 8 bits exponent, 23 bits mantissa",
+      "1 bit sign, 11 bits exponent, 20 bits mantissa",
+      "2 bits sign, 8 bits exponent, 22 bits mantissa",
+      "1 bit sign, 7 bits exponent, 24 bits mantissa"
+    ],
+    "correctAnswer": 0,
+    "explanation": "IEEE 754 single-precision (32-bit) uses: 1 sign bit, 8 exponent bits (with bias 127), and 23 fraction/mantissa bits.",
+    "subject": "Digital Electronics",
+    "topic": "Number Systems & Computer Arithmetic",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "num_06",
+    "question": "What is the excess (bias) value used in the 8-bit exponent of IEEE 754 single-precision floating-point numbers?",
+    "options": [
+      "64",
+      "127",
+      "128",
+      "255"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The bias for IEEE 754 single precision is 2^(8-1) - 1 = 127. Stored Exponent = Actual Exponent + 127.",
+    "subject": "Digital Electronics",
+    "topic": "Number Systems & Computer Arithmetic",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "num_07",
+    "question": "Convert the binary number (110101.11)₂ to decimal:",
+    "options": [
+      "53.75",
+      "53.5",
+      "51.75",
+      "55.25"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Integer part: 32 + 16 + 0 + 4 + 0 + 1 = 53. Fractional part: 1 * 2⁻¹ + 1 * 2⁻² = 0.5 + 0.25 = 0.75. Result = 53.75.",
+    "subject": "Digital Electronics",
+    "topic": "Number Systems & Computer Arithmetic",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "num_08",
+    "question": "What is the BCD (Binary-Coded Decimal) representation of the decimal number 89?",
+    "options": [
+      "01011001",
+      "10001001",
+      "10001000",
+      "10011000"
+    ],
+    "correctAnswer": 1,
+    "explanation": "In 8421 BCD, each decimal digit is encoded as a 4-bit nibble. 8 = 1000, 9 = 1001. So 89 = 1000 1001.",
+    "subject": "Digital Electronics",
+    "topic": "Number Systems & Computer Arithmetic",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "num_09",
+    "question": "When adding two BCD numbers, if the sum of a 4-bit nibble exceeds 9 or produces a carry, what correction must be added?",
+    "options": [
+      "Add 0011 (3)",
+      "Add 0110 (6)",
+      "Add 1001 (9)",
+      "Subtract 0110 (6)"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Since 4 bits can represent 0-15 while BCD is only valid for 0-9, adding binary 6 (0110) skips the 6 invalid states.",
+    "subject": "Digital Electronics",
+    "topic": "Number Systems & Computer Arithmetic",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "num_10",
+    "question": "What is the octal equivalent of the binary number (101111010)₂?",
+    "options": [
+      "(572)₈",
+      "(562)₈",
+      "(574)₈",
+      "(672)₈"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Group bits in threes from the right: 101 | 111 | 010 = 5 | 7 | 2 = (572)₈.",
+    "subject": "Digital Electronics",
+    "topic": "Number Systems & Computer Arithmetic",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "num_11",
+    "question": "In signed arithmetic, when does an overflow condition occur when adding two signed binary numbers?",
+    "options": [
+      "When adding two numbers of opposite signs",
+      "When adding two positive numbers yields a negative result, or adding two negative numbers yields a positive result",
+      "Whenever a carry out of the MSB occurs",
+      "When the result is zero"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Overflow in signed 2’s complement occurs if the carry into the sign bit differs from the carry out of the sign bit (C_in ⊕ C_out = 1).",
+    "subject": "Digital Electronics",
+    "topic": "Number Systems & Computer Arithmetic",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "num_12",
+    "question": "What is the 1’s complement of the binary number 10101100?",
+    "options": [
+      "01010011",
+      "01010100",
+      "10101101",
+      "01010010"
+    ],
+    "correctAnswer": 0,
+    "explanation": "To find the 1’s complement, invert each bit (replace 1 with 0 and 0 with 1): 10101100 becomes 01010011.",
+    "subject": "Digital Electronics",
+    "topic": "Number Systems & Computer Arithmetic",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "num_13",
+    "question": "Which property makes Gray code safe for rotary shaft encoders and analog-to-digital converters?",
+    "options": [
+      "Only a single bit changes between any two consecutive values",
+      "It has weighted positional values",
+      "It has an odd parity bit",
+      "It supports direct floating-point multiplication"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Because only one bit changes between successive positions, timing skew cannot produce erroneous intermediate values.",
+    "subject": "Digital Electronics",
+    "topic": "Number Systems & Computer Arithmetic",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "num_14",
+    "question": "What is the decimal value of the Excess-3 code 1001?",
+    "options": [
+      "9",
+      "6",
+      "12",
+      "3"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Excess-3 code is formed by adding 3 to the decimal digit. 1001₂ = 9. Subtracting 3 gives 9 - 3 = 6.",
+    "subject": "Digital Electronics",
+    "topic": "Number Systems & Computer Arithmetic",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "num_15",
+    "question": "Perform binary subtraction using 2’s complement: 7 - 4 in 4-bit representation. What is the result?",
+    "options": [
+      "0011",
+      "0100",
+      "1100",
+      "1111"
+    ],
+    "correctAnswer": 0,
+    "explanation": "7 = 0111. 4 = 0100 -> -4 in 2’s complement = 1011 + 1 = 1100. 0111 + 1100 = (1)0011 (discard end-around carry) = 0011 (which is +3).",
+    "subject": "Digital Electronics",
+    "topic": "Number Systems & Computer Arithmetic",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "num_16",
+    "question": "What is the base (radix) of a number system where 12 + 15 = 30?",
+    "options": [
+      "6",
+      "7",
+      "8",
+      "9"
+    ],
+    "correctAnswer": 1,
+    "explanation": "In base r: (1*r + 2) + (1*r + 5) = (3*r + 0) => 2r + 7 = 3r => r = 7.",
+    "subject": "Digital Electronics",
+    "topic": "Number Systems & Computer Arithmetic",
+    "difficulty": "hard",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "num_17",
+    "question": "Convert the Gray code 1011 to standard binary code:",
+    "options": [
+      "1101",
+      "1110",
+      "1001",
+      "1111"
+    ],
+    "correctAnswer": 1,
+    "explanation": "B3 = G3 = 1. B2 = B3 ⊕ G2 = 1 ⊕ 0 = 1. B1 = B2 ⊕ G1 = 1 ⊕ 1 = 0. B0 = B1 ⊕ G0 = 0 ⊕ 1 = 1. Wait: 1101! Let us re-verify: G=1011: B3=1, B2=1⊕0=1, B1=1⊕1=0, B0=0⊕1=1 -> 1101.",
+    "subject": "Digital Electronics",
+    "topic": "Number Systems & Computer Arithmetic",
+    "difficulty": "hard",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "num_18",
+    "question": "What is the maximum positive integer that can be stored in an unsigned 16-bit binary integer?",
+    "options": [
+      "32,767",
+      "65,535",
+      "65,536",
+      "131,072"
+    ],
+    "correctAnswer": 1,
+    "explanation": "An n-bit unsigned integer can store values from 0 to 2^n - 1. For 16 bits: 2^16 - 1 = 65,535.",
+    "subject": "Digital Electronics",
+    "topic": "Number Systems & Computer Arithmetic",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "num_19",
+    "question": "What is the ASCII value of the uppercase character \"A\" in decimal?",
+    "options": [
+      "48",
+      "65",
+      "97",
+      "128"
+    ],
+    "correctAnswer": 1,
+    "explanation": "In ASCII encoding, \"A\" is 65, \"B\" is 66, ..., \"Z\" is 90. Lowercase \"a\" starts at 97, and \"0\" is 48.",
+    "subject": "Digital Electronics",
+    "topic": "Number Systems & Computer Arithmetic",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "num_20",
+    "question": "In IEEE 754 standard, what do all exponent bits = 1 with a non-zero fraction represent?",
+    "options": [
+      "Positive Infinity",
+      "Negative Infinity",
+      "NaN (Not a Number)",
+      "Denormalized Number"
+    ],
+    "correctAnswer": 2,
+    "explanation": "When exponent is all 1s and fraction ≠ 0, it represents NaN (Not a Number), used for invalid operations like 0/0 or √(-1).",
+    "subject": "Digital Electronics",
+    "topic": "Number Systems & Computer Arithmetic",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  }
+]

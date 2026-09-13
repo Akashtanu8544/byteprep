@@ -3,9 +3,165 @@ import { SHORTS_THEMES } from './themes';
 import { drawCanvasBytePrepLogo } from '../../components/BytePrepLogo';
 import { Muxer, ArrayBufferTarget } from 'mp4-muxer';
 import ysFixWebmDuration from 'fix-webm-duration';
+import { BrandKitService } from '../../services/brandKitService';
 
 export const CANVAS_WIDTH = 1080;
 export const CANVAS_HEIGHT = 1920;
+
+export interface StudyBgmTrack {
+  id: string;
+  name: string;
+  tag: string;
+  tempo: number;
+  description: string;
+  durationLabel: string;
+  chords: number[];
+  bassNote: number;
+  type: 'lofi' | 'alpha' | 'exam' | 'cyber';
+}
+
+export const STUDY_BGM_TRACKS: StudyBgmTrack[] = [
+  {
+    id: 'lofi-study',
+    name: '🎧 Lo-Fi Study Chill',
+    tag: 'Relaxed Focus',
+    tempo: 84,
+    description: 'Warm 7th chords & relaxed chill beats for deep study sessions',
+    durationLabel: '24.0s (Auto-Sync)',
+    chords: [130.81, 164.81, 196.00, 246.94], // Cmaj7
+    bassNote: 65.41,
+    type: 'lofi',
+  },
+  {
+    id: 'alpha-focus',
+    name: '🧠 Alpha Wave Concentration',
+    tag: 'Deep Focus',
+    tempo: 96,
+    description: 'Calm ambient sine harmonies for peak cognitive retention',
+    durationLabel: '20.0s (Auto-Sync)',
+    chords: [146.83, 174.61, 220.00, 261.63], // Dm7
+    bassNote: 73.42,
+    type: 'alpha',
+  },
+  {
+    id: 'exam-groove',
+    name: '⏱️ Exam Countdown Groove',
+    tag: 'Rhythmic Pace',
+    tempo: 118,
+    description: 'Encouraging rhythmic study pace with clock-synced pulses',
+    durationLabel: '15.0s (Auto-Sync)',
+    chords: [110.00, 130.81, 164.81, 196.00], // Am7
+    bassNote: 55.00,
+    type: 'exam',
+  },
+  {
+    id: 'cyber-logic',
+    name: '⚡ Cyber CS Logic Drive',
+    tag: 'Tech & Code',
+    tempo: 128,
+    description: 'Futuristic electronic study tune for Computer Science MCQs',
+    durationLabel: '18.0s (Auto-Sync)',
+    chords: [164.81, 196.00, 246.94, 293.66], // Em7
+    bassNote: 82.41,
+    type: 'cyber',
+  },
+];
+
+let activeSampleAudioCtx: AudioContext | null = null;
+
+export function stopBgmAudioSample() {
+  if (activeSampleAudioCtx) {
+    try {
+      activeSampleAudioCtx.close();
+    } catch {}
+    activeSampleAudioCtx = null;
+  }
+}
+
+export function playBgmAudioSample(trackId: string, customAudioDataUrl?: string): () => void {
+  stopBgmAudioSample();
+  try {
+    const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+    if (!AudioContextClass) return () => {};
+    const ctx = new AudioContextClass();
+    activeSampleAudioCtx = ctx;
+    if (ctx.state === 'suspended') {
+      ctx.resume().catch(() => {});
+    }
+
+    if (customAudioDataUrl) {
+      fetch(customAudioDataUrl)
+        .then(res => res.arrayBuffer())
+        .then(buf => ctx.decodeAudioData(buf))
+        .then(audioBuf => {
+          if (activeSampleAudioCtx !== ctx) return;
+          const src = ctx.createBufferSource();
+          src.buffer = audioBuf;
+          src.loop = false;
+          const gain = ctx.createGain();
+          gain.gain.setValueAtTime(0.4, ctx.currentTime);
+          src.connect(gain);
+          gain.connect(ctx.destination);
+          src.start();
+        })
+        .catch(() => {});
+      return stopBgmAudioSample;
+    }
+
+    const selectedPreset = STUDY_BGM_TRACKS.find(t => t.id === trackId || trackId.includes(t.id)) || STUDY_BGM_TRACKS[0];
+    const beatInterval = 60 / selectedPreset.tempo;
+    const totalBeats = Math.floor(4.5 / beatInterval);
+
+    for (let b = 0; b < totalBeats; b++) {
+      const noteTime = ctx.currentTime + 0.05 + b * beatInterval;
+      const note = selectedPreset.chords[b % selectedPreset.chords.length];
+
+      try {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        const filter = ctx.createBiquadFilter();
+
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(
+          selectedPreset.type === 'cyber' ? 1200 : selectedPreset.type === 'lofi' ? 450 : 700,
+          noteTime
+        );
+
+        osc.type = selectedPreset.type === 'alpha' ? 'sine' : selectedPreset.type === 'cyber' ? 'sawtooth' : 'triangle';
+        osc.frequency.setValueAtTime(note, noteTime);
+
+        gain.gain.setValueAtTime(0, noteTime);
+        gain.gain.linearRampToValueAtTime(0.08, noteTime + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, noteTime + beatInterval * 0.9);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(noteTime);
+        osc.stop(noteTime + beatInterval);
+
+        if (b % 4 === 0) {
+          const bassOsc = ctx.createOscillator();
+          const bassGain = ctx.createGain();
+          bassOsc.type = 'sine';
+          bassOsc.frequency.setValueAtTime(selectedPreset.bassNote, noteTime);
+          bassGain.gain.setValueAtTime(0, noteTime);
+          bassGain.gain.linearRampToValueAtTime(0.12, noteTime + 0.03);
+          bassGain.gain.exponentialRampToValueAtTime(0.001, noteTime + beatInterval * 1.8);
+          bassOsc.connect(bassGain);
+          bassGain.connect(ctx.destination);
+          bassOsc.start(noteTime);
+          bassOsc.stop(noteTime + beatInterval * 2);
+        }
+      } catch {}
+    }
+
+    return stopBgmAudioSample;
+  } catch {
+    return () => {};
+  }
+}
 
 export interface RenderCallbacks {
   onProgress: (progress: number, stage: string, currentFrame?: number, totalFrames?: number) => void;
@@ -281,11 +437,12 @@ export function drawShortFrame(
 
   // 2. Safe Header Brand Tag (Standardized across all frames)
   ctx.save();
+  const brandKit = BrandKitService.getBrandKit();
   ctx.fillStyle = theme.accentColor;
   ctx.font = '900 40px sans-serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'top';
-  ctx.fillText('BytePrep TGT PGT CS', width / 2, 120);
+  ctx.fillText(brandKit?.brandName || 'BytePrep TGT PGT CS', width / 2, 120);
 
   ctx.fillStyle = '#f8fafc';
   ctx.font = '800 24px sans-serif';
@@ -359,14 +516,14 @@ export function drawShortFrame(
   ctx.font = '900 22px sans-serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText('Search BytePrep TGT PGT CS on Play Store', width / 2, footerY + 32);
+  ctx.fillText(`Search ${brandKit?.brandName || 'BytePrep TGT PGT CS'} on Play Store`, width / 2, footerY + 32);
 
   // Center Text Line 2
   ctx.fillStyle = '#38bdf8';
   ctx.font = '800 20px sans-serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText('Visit Website : dsssbpyq.online', width / 2, footerY + 65);
+  ctx.fillText(`Visit Website : ${brandKit?.websiteUrl || 'dsssbpyq.online'}`, width / 2, footerY + 65);
 
   // Logo Right
   drawCanvasBytePrepLogo(ctx, footerX + footerW - 56, footerY + footerH / 2, 64);
@@ -386,16 +543,25 @@ export function drawWatermarkOverlay(
   height: number,
   config: ShortConfig
 ) {
-  const {
-    watermarkType,
-    watermarkLogoUrl,
-    watermarkText,
-    watermarkPosition = 'bottom-right',
-    watermarkOpacity = 0.85,
-    watermarkScale = 1.0,
-  } = config;
+  const brandKit = BrandKitService.getBrandKit();
+
+  const watermarkType =
+    config.watermarkType ??
+    (brandKit.showWatermark
+      ? brandKit.logoDataUrl
+        ? 'logo'
+        : 'text'
+      : 'none');
 
   if (!watermarkType || watermarkType === 'none') return;
+
+  const watermarkLogoUrl = config.watermarkLogoUrl ?? (brandKit.logoDataUrl || undefined);
+  const watermarkText =
+    config.watermarkText ??
+    (brandKit.brandName ? `@${brandKit.brandName.replace(/\s+/g, '')}` : '@BytePrepCS');
+  const watermarkPosition = config.watermarkPosition ?? (brandKit.watermarkPosition as any) ?? 'bottom-right';
+  const watermarkOpacity = config.watermarkOpacity ?? 0.85;
+  const watermarkScale = config.watermarkScale ?? 1.0;
 
   ctx.save();
   ctx.globalAlpha = Math.max(0.1, Math.min(1.0, watermarkOpacity));
@@ -469,6 +635,19 @@ export function drawWatermarkOverlay(
   ctx.restore();
 }
 
+const customBgCache = new Map<string, HTMLImageElement>();
+
+function getCustomBgImage(url: string): HTMLImageElement | null {
+  if (!url) return null;
+  let img = customBgCache.get(url);
+  if (!img) {
+    img = new Image();
+    img.src = url;
+    customBgCache.set(url, img);
+  }
+  return img;
+}
+
 /**
  * Renders dynamic animated backgrounds
  */
@@ -481,12 +660,49 @@ function drawLiveBackground(
   theme: any,
   style: 'auto' | 'stars' | 'matrix' | 'sql' | 'network' | 'os' | 'grid' | 'terminal' | 'cyber'
 ) {
-  const grad = ctx.createLinearGradient(0, 0, 0, height);
-  grad.addColorStop(0, theme.bgGradient[0]);
-  grad.addColorStop(0.5, theme.bgGradient[1] || theme.bgGradient[0]);
-  grad.addColorStop(1, theme.bgGradient[2] || theme.bgGradient[0]);
-  ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, width, height);
+  const brandKit = BrandKitService.getBrandKit();
+  let backgroundDrawn = false;
+
+  // 1. Check for Live Image to Video first (as a moving motion backdrop!)
+  if (brandKit?.liveImageToVideoUrl) {
+    const img = getCustomBgImage(brandKit.liveImageToVideoUrl);
+    if (img && (img.complete || img.naturalWidth > 0)) {
+      ctx.save();
+      // "live image to video" motion synthesis: subtle scale and rotation over time
+      const scaleFactor = 1.05 + 0.04 * Math.sin(time * 0.5); // subtle pulsing zoom
+      const rotateFactor = 0.008 * Math.cos(time * 0.4); // subtle swaying rotation
+      
+      ctx.translate(width / 2, height / 2);
+      ctx.scale(scaleFactor, scaleFactor);
+      ctx.rotate(rotateFactor);
+      ctx.drawImage(img, -width / 2, -height / 2, width, height);
+      ctx.restore();
+      backgroundDrawn = true;
+    }
+  }
+
+  // 2. Fallback/Check for Custom Static Background Image
+  if (!backgroundDrawn && brandKit?.backgroundImageUrl) {
+    const img = getCustomBgImage(brandKit.backgroundImageUrl);
+    if (img && (img.complete || img.naturalWidth > 0)) {
+      ctx.drawImage(img, 0, 0, width, height);
+      backgroundDrawn = true;
+    }
+  }
+
+  // 3. Brand Kit Color Override fallback
+  if (!backgroundDrawn) {
+    const color1 = brandKit?.primaryColor || theme.bgGradient[0];
+    const color2 = brandKit?.secondaryColor || theme.bgGradient[1] || theme.bgGradient[0];
+    const color3 = theme.bgGradient[2] || theme.bgGradient[0];
+
+    const grad = ctx.createLinearGradient(0, 0, 0, height);
+    grad.addColorStop(0, color1);
+    grad.addColorStop(0.5, color2);
+    grad.addColorStop(1, color3);
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, width, height);
+  }
 
   ctx.save();
 
@@ -604,11 +820,12 @@ function drawIntroPhase(
   drawCanvasBytePrepLogo(ctx, width / 2, boxY + 120, 140);
 
   // Title
+  const brandKit = BrandKitService.getBrandKit();
   ctx.fillStyle = theme.textColor;
   ctx.font = '900 46px sans-serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText('BytePrep TGT PGT CS', width / 2, boxY + 230);
+  ctx.fillText(brandKit?.brandName || 'BytePrep TGT PGT CS', width / 2, boxY + 230);
 
   ctx.fillStyle = theme.accentColor;
   ctx.font = '900 32px sans-serif';
@@ -1109,25 +1326,40 @@ function drawCtaPhase(
 function getPreferredMimeType(hasAudio: boolean): string {
   if (typeof MediaRecorder === 'undefined') return '';
 
-  const mimePreferences = hasAudio
+  const isApple = typeof navigator !== 'undefined' && /Macintosh|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+  const applePreferences = [
+    'video/mp4;codecs=avc1.42E01E,mp4a.40.2',
+    'video/mp4;codecs=avc1,mp4a.40.2',
+    'video/mp4;codecs=avc1',
+    'video/mp4',
+    'video/webm;codecs=vp9,opus',
+    'video/webm;codecs=vp8,opus',
+    'video/webm;codecs=h264,opus',
+    'video/webm',
+  ];
+
+  const standardPreferences = hasAudio
     ? [
         'video/webm;codecs=vp9,opus',
         'video/webm;codecs=vp8,opus',
         'video/webm;codecs=h264,opus',
-        'video/webm;codecs=vp9',
-        'video/webm;codecs=vp8',
-        'video/webm',
+        'video/mp4;codecs=avc1,mp4a.40.2',
         'video/mp4',
+        'video/webm',
       ]
     : [
         'video/webm;codecs=vp9',
         'video/webm;codecs=vp8',
         'video/webm;codecs=h264',
-        'video/webm',
+        'video/mp4;codecs=avc1',
         'video/mp4',
+        'video/webm',
       ];
 
-  for (const mime of mimePreferences) {
+  const listToTry = isApple ? applePreferences : standardPreferences;
+
+  for (const mime of listToTry) {
     try {
       if (MediaRecorder.isTypeSupported(mime)) {
         return mime;
@@ -1135,6 +1367,13 @@ function getPreferredMimeType(hasAudio: boolean): string {
     } catch {
       // Continue searching
     }
+  }
+
+  try {
+    if (MediaRecorder.isTypeSupported('video/mp4')) return 'video/mp4';
+    if (MediaRecorder.isTypeSupported('video/webm')) return 'video/webm';
+  } catch {
+    // ignore
   }
 
   return '';
@@ -1163,9 +1402,10 @@ function createAudioTrack(
 
     const { intro, hook, question, total } = durations;
     const startTime = audioCtx.currentTime + 0.05;
+    const bgmVol = config?.bgmVolume ?? 0.6;
 
     // 1. Procedural Background Music / Rhythm Synthesizer (if audio track is chosen or custom audio)
-    const trackId = config?.audioTrackId || 'cyber-pulse';
+    const trackId = config?.audioTrackId || 'lofi-study';
     
     if (config?.customAudioDataUrl) {
       try {
@@ -1177,7 +1417,7 @@ function createAudioTrack(
             src.buffer = audioBuf;
             src.loop = true;
             const bgGain = audioCtx.createGain();
-            bgGain.gain.setValueAtTime(0.35, startTime);
+            bgGain.gain.setValueAtTime(0.35 * bgmVol, startTime);
             src.connect(bgGain);
             bgGain.connect(dest);
             src.start(startTime);
@@ -1187,20 +1427,15 @@ function createAudioTrack(
         console.warn('Audio fetch error:', err);
       }
     } else {
-      // Procedural Background Pulse to enhance video engagement
-      const tempo = trackId === 'synth-rush' ? 138 : trackId === 'quiz-intense' ? 126 : trackId === 'lofi-focus' ? 95 : 118;
+      // Find matching study BGM track or fallback
+      const selectedPreset = STUDY_BGM_TRACKS.find(t => t.id === trackId || trackId.includes(t.id)) || STUDY_BGM_TRACKS[0];
+      const tempo = selectedPreset.tempo;
       const beatInterval = 60 / tempo;
       const totalBeats = Math.floor(total / beatInterval);
 
-      const chordNotes = trackId === 'quiz-intense'
-        ? [110, 123.47, 130.81, 146.83]
-        : trackId === 'lofi-focus'
-        ? [130.81, 146.83, 164.81, 196.00]
-        : [130.81, 164.81, 196.00, 220.00];
-
       for (let b = 0; b < totalBeats; b++) {
         const noteTime = startTime + b * beatInterval;
-        const note = chordNotes[b % chordNotes.length];
+        const note = selectedPreset.chords[b % selectedPreset.chords.length];
 
         try {
           const osc = audioCtx.createOscillator();
@@ -1208,14 +1443,17 @@ function createAudioTrack(
           const filter = audioCtx.createBiquadFilter();
 
           filter.type = 'lowpass';
-          filter.frequency.setValueAtTime(500, noteTime);
+          filter.frequency.setValueAtTime(
+            selectedPreset.type === 'cyber' ? 1400 : selectedPreset.type === 'lofi' ? 480 : 750,
+            noteTime
+          );
 
-          osc.type = b % 2 === 0 ? 'triangle' : 'sine';
+          osc.type = selectedPreset.type === 'alpha' ? 'sine' : selectedPreset.type === 'cyber' ? 'sawtooth' : 'triangle';
           osc.frequency.setValueAtTime(note, noteTime);
 
           gain.gain.setValueAtTime(0, noteTime);
-          gain.gain.linearRampToValueAtTime(0.035, noteTime + 0.02);
-          gain.gain.exponentialRampToValueAtTime(0.001, noteTime + beatInterval * 0.85);
+          gain.gain.linearRampToValueAtTime(0.045 * bgmVol, noteTime + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, noteTime + beatInterval * 0.88);
 
           osc.connect(filter);
           filter.connect(gain);
@@ -1223,35 +1461,84 @@ function createAudioTrack(
 
           osc.start(noteTime);
           osc.stop(noteTime + beatInterval);
+
+          // Deep Bassline Pulse (Every 4 beats)
+          if (b % 4 === 0) {
+            const bassOsc = audioCtx.createOscillator();
+            const bassGain = audioCtx.createGain();
+            bassOsc.type = 'sine';
+            bassOsc.frequency.setValueAtTime(selectedPreset.bassNote, noteTime);
+            bassGain.gain.setValueAtTime(0, noteTime);
+            bassGain.gain.linearRampToValueAtTime(0.06 * bgmVol, noteTime + 0.03);
+            bassGain.gain.exponentialRampToValueAtTime(0.001, noteTime + beatInterval * 1.8);
+            bassOsc.connect(bassGain);
+            bassGain.connect(dest);
+            bassOsc.start(noteTime);
+            bassOsc.stop(noteTime + beatInterval * 2);
+          }
         } catch {
           // ignore single beat note error
         }
       }
     }
 
-    // 2. Question Countdown Beeps (Every second of question phase)
+    // 2. Question Countdown Mechanical Tick-Tock Sounds (Every second & half second of question phase)
     const qStartTime = startTime + intro + hook;
     for (let sec = 0; sec < question; sec++) {
-      const beepTime = qStartTime + sec;
+      const tickTime = qStartTime + sec;
+      const tockTime = qStartTime + sec + 0.5;
+
+      // Real Mechanical TICK (on the second)
       try {
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
 
+        // Standard countdown beep or intense countdown beep for the last 3 seconds
         const isLast3 = sec >= question - 3;
-        osc.type = isLast3 ? 'square' : 'sine';
-        osc.frequency.setValueAtTime(isLast3 ? 1200 : 800, beepTime);
-
-        gain.gain.setValueAtTime(0, beepTime);
-        gain.gain.linearRampToValueAtTime(0.12, beepTime + 0.02);
-        gain.gain.exponentialRampToValueAtTime(0.001, beepTime + 0.12);
+        if (isLast3) {
+          // Play intense warning beep for maximum psychological pressure
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(1200, tickTime);
+          gain.gain.setValueAtTime(0, tickTime);
+          gain.gain.linearRampToValueAtTime(0.12, tickTime + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, tickTime + 0.15);
+        } else {
+          // Authentic clean high-pitched mechanical clock TICK
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(2400, tickTime);
+          gain.gain.setValueAtTime(0, tickTime);
+          gain.gain.linearRampToValueAtTime(0.18, tickTime + 0.003);
+          gain.gain.exponentialRampToValueAtTime(0.0001, tickTime + 0.025);
+        }
 
         osc.connect(gain);
         gain.connect(dest);
-
-        osc.start(beepTime);
-        osc.stop(beepTime + 0.15);
+        osc.start(tickTime);
+        osc.stop(tickTime + 0.2);
       } catch {
         // ignore
+      }
+
+      // Real Mechanical TOCK (on the half-second, only if not in the last 3 final rush beeps)
+      const isLast3Tock = sec >= question - 3;
+      if (!isLast3Tock && tockTime < qStartTime + question) {
+        try {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(1800, tockTime); // lower pitch "Tock"
+          gain.gain.setValueAtTime(0, tockTime);
+          gain.gain.linearRampToValueAtTime(0.14, tockTime + 0.003);
+          gain.gain.exponentialRampToValueAtTime(0.0001, tockTime + 0.025);
+
+          osc.connect(gain);
+          gain.connect(dest);
+          osc.start(tockTime);
+          osc.stop(tockTime + 0.2);
+        } catch {
+          // ignore
+        }
       }
     }
 
@@ -1298,17 +1585,28 @@ function createAudioTrack(
  * Patch WebM duration in EBML header to fix YouTube Shorts & media player processing errors
  */
 async function patchWebmDuration(rawBlob: Blob, durationMs: number): Promise<Blob> {
+  // Only patch WebM blobs; MP4 blobs should not be parsed as EBML
+  if (!rawBlob.type.includes('webm')) {
+    return rawBlob;
+  }
+
   return new Promise(resolve => {
+    // 1.5s timeout watchdog so mobile browsers never hang at 97%
+    const timer = setTimeout(() => resolve(rawBlob), 1500);
+
     try {
       const fixFn = (ysFixWebmDuration as any).default || ysFixWebmDuration;
       if (typeof fixFn === 'function') {
         fixFn(rawBlob, durationMs, (fixedBlob: Blob) => {
+          clearTimeout(timer);
           resolve(fixedBlob || rawBlob);
         });
       } else {
+        clearTimeout(timer);
         resolve(rawBlob);
       }
     } catch (err) {
+      clearTimeout(timer);
       console.warn('Could not patch WebM duration:', err);
       resolve(rawBlob);
     }
@@ -1473,12 +1771,27 @@ export function exportShortVideo(
   let watchdogTimeout: any = null;
   let animFrameId: any = null;
   let intervalTimer: any = null;
+  let canvasElement: HTMLCanvasElement | null = null;
+
+  const cleanupCanvas = () => {
+    if (canvasElement) {
+      try {
+        if (canvasElement.parentNode) {
+          canvasElement.parentNode.removeChild(canvasElement);
+        }
+      } catch {
+        // ignore
+      }
+      canvasElement = null;
+    }
+  };
 
   const cancel = () => {
     isCancelledRef.current = true;
     if (animFrameId) cancelAnimationFrame(animFrameId);
     if (intervalTimer) clearInterval(intervalTimer);
     if (watchdogTimeout) clearTimeout(watchdogTimeout);
+    cleanupCanvas();
     try {
       if (mediaRecorder && mediaRecorder.state !== 'inactive') {
         mediaRecorder.stop();
@@ -1497,24 +1810,48 @@ export function exportShortVideo(
     try {
       callbacks.onProgress(2, 'Initializing Precision Video Engine...');
 
-      const quality = config.renderQuality || '1080p';
-      const is720p = quality === '720p' || quality === 'fast';
+      // Robust mobile detection (iOS, Android, mobile touch screens, small viewports)
+      const isMobileDevice = typeof navigator !== 'undefined' && (
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+        (Boolean((navigator as any).userAgentData?.mobile)) ||
+        (typeof navigator.maxTouchPoints === 'number' && navigator.maxTouchPoints > 1 && window.innerWidth < 1024) ||
+        (typeof window !== 'undefined' && window.innerWidth < 768)
+      );
+
+      // On mobile devices, 720p (720x1280) and 30fps prevents mobile browser GPU crash & tab termination
+      const quality = config.renderQuality || (isMobileDevice ? '720p' : '1080p');
+      const is720p = quality === '720p' || quality === 'fast' || isMobileDevice;
       const targetW = is720p ? 720 : CANVAS_WIDTH;
       const targetH = is720p ? 1280 : CANVAS_HEIGHT;
       const scaleFactor = targetW / CANVAS_WIDTH;
+      const fps = isMobileDevice ? Math.min(30, config.fps || 30) : (config.fps || 30);
 
       const canvas = document.createElement('canvas');
       canvas.width = targetW;
       canvas.height = targetH;
+      canvasElement = canvas;
+
+      // Off-viewport DOM attachment: Essential for mobile Safari & Android WebKit
+      // Mobile browsers aggressively pause rendering on off-screen/detached canvases during captureStream
+      canvas.style.position = 'fixed';
+      canvas.style.top = '-9999px';
+      canvas.style.left = '-9999px';
+      canvas.style.width = '1px';
+      canvas.style.height = '1px';
+      canvas.style.opacity = '0.01';
+      canvas.style.pointerEvents = 'none';
+      canvas.style.zIndex = '-9999';
+      document.body.appendChild(canvas);
+
       const ctx = canvas.getContext('2d', { alpha: false });
 
       if (!ctx) {
+        cleanupCanvas();
         throw new Error('Canvas 2D Context not available');
       }
 
       const durations = getTimelineDurations(config);
       const totalDuration = durations.total;
-      const fps = config.fps || 30;
       const totalFrames = Math.max(1, Math.floor(totalDuration * fps));
 
       // Build Layout Cache ONCE for maximum performance
@@ -1526,9 +1863,9 @@ export function exportShortVideo(
       const layoutCache = buildLayoutCache(ctx, CANVAS_WIDTH, config);
       ctx.restore();
 
-      // 1. FAST PATH: Attempt WebCodecs H.264 MP4 Export if not explicitly requesting WebM
-      const preferMp4 = config.exportFormat !== 'webm';
-      if (preferMp4) {
+      // 1. FAST PATH: Attempt WebCodecs H.264 MP4 Export ONLY on desktop if audio is muted
+      const preferMp4WithoutAudio = config.exportFormat === 'mp4' && !config.includeAudio && !isMobileDevice;
+      if (preferMp4WithoutAudio) {
         const mp4Result = await renderWithWebCodecsMp4(
           canvas,
           ctx,
@@ -1540,14 +1877,18 @@ export function exportShortVideo(
           isCancelledRef
         );
         if (mp4Result) {
+          cleanupCanvas();
           return;
         }
       }
 
-      if (isCancelledRef.current) return;
+      if (isCancelledRef.current) {
+        cleanupCanvas();
+        return;
+      }
 
-      // 2. FALLBACK PATH: MediaRecorder with Duration-Fixed Container
-      callbacks.onProgress(6, 'Initializing Real-Time Stream Recorder...');
+      // 2. REAL-TIME STREAM RECORDER with Multi-Tier Mobile Fallbacks
+      callbacks.onProgress(6, isMobileDevice ? 'Preparing Mobile Video Stream...' : 'Initializing Real-Time Stream Recorder...');
 
       // Audio setup (ticks, background music & chime synthesized via Web Audio)
       const audio = createAudioTrack(durations, config.includeAudio, config);
@@ -1561,9 +1902,25 @@ export function exportShortVideo(
       drawShortFrame(ctx, CANVAS_WIDTH, CANVAS_HEIGHT, 0, config, layoutCache);
       ctx.restore();
 
-      const canvasStream = canvas.captureStream(fps);
-      const combinedTracks: MediaStreamTrack[] = [...canvasStream.getVideoTracks()];
+      const captureMethod = canvas.captureStream
+        ? canvas.captureStream.bind(canvas)
+        : (canvas as any).webkitCaptureStream
+        ? (canvas as any).webkitCaptureStream.bind(canvas)
+        : null;
 
+      if (!captureMethod) {
+        cleanupCanvas();
+        throw new Error('Canvas video capture stream is not supported on this device/browser.');
+      }
+
+      const canvasStream = captureMethod(fps);
+      const videoTracks = canvasStream.getVideoTracks();
+      if (!videoTracks || videoTracks.length === 0) {
+        cleanupCanvas();
+        throw new Error('Canvas produced no video tracks for recording.');
+      }
+
+      let combinedTracks: MediaStreamTrack[] = [...videoTracks];
       if (audio.stream && audio.stream.getAudioTracks().length > 0) {
         combinedTracks.push(...audio.stream.getAudioTracks());
       }
@@ -1571,23 +1928,49 @@ export function exportShortVideo(
       streamTracks = combinedTracks;
       let stream = new MediaStream(combinedTracks);
 
-      const bitrate = is720p ? 3500000 : 7000000;
+      const bitrate = is720p ? 2800000 : 6500000;
       let mimeType = getPreferredMimeType(combinedTracks.length > 1);
 
-      try {
-        mediaRecorder = new MediaRecorder(stream, {
-          ...(mimeType ? { mimeType } : {}),
-          videoBitsPerSecond: bitrate,
-        });
-      } catch (initErr) {
-        console.warn('Initial MediaRecorder failed with audio, falling back to video-only stream:', initErr);
-        stream = new MediaStream(canvasStream.getVideoTracks());
-        streamTracks = [...canvasStream.getVideoTracks()];
-        mimeType = getPreferredMimeType(false);
-        mediaRecorder = new MediaRecorder(stream, {
-          ...(mimeType ? { mimeType } : {}),
-          videoBitsPerSecond: bitrate,
-        });
+      // Multi-tier MediaRecorder instantiation for mobile stability
+      const tryCreateRecorder = (s: MediaStream, opts?: MediaRecorderOptions): MediaRecorder | null => {
+        try {
+          return opts ? new MediaRecorder(s, opts) : new MediaRecorder(s);
+        } catch (e) {
+          console.warn('Recorder init attempt failed:', e);
+          return null;
+        }
+      };
+
+      // Tier 1: Try combined audio/video with selected mimeType and bitrate
+      if (mimeType) {
+        mediaRecorder = tryCreateRecorder(stream, { mimeType, videoBitsPerSecond: bitrate });
+      }
+
+      // Tier 2: Try combined audio/video with mimeType only (without bitrate constraint)
+      if (!mediaRecorder && mimeType) {
+        mediaRecorder = tryCreateRecorder(stream, { mimeType });
+      }
+
+      // Tier 3: If combined audio/video threw (very common on iOS WebKit), fallback to video-only stream
+      if (!mediaRecorder) {
+        console.warn('Combined audio/video recorder failed, testing video-only stream fallback...');
+        stream = new MediaStream(videoTracks);
+        streamTracks = [...videoTracks];
+        const videoMime = getPreferredMimeType(false);
+        if (videoMime) {
+          mediaRecorder = tryCreateRecorder(stream, { mimeType: videoMime, videoBitsPerSecond: bitrate })
+            || tryCreateRecorder(stream, { mimeType: videoMime });
+        }
+      }
+
+      // Tier 4: Fallback to browser's native default options
+      if (!mediaRecorder) {
+        mediaRecorder = tryCreateRecorder(stream);
+      }
+
+      if (!mediaRecorder) {
+        cleanupCanvas();
+        throw new Error('MediaRecorder could not be initialized on this mobile device.');
       }
 
       const chunks: Blob[] = [];
@@ -1603,6 +1986,7 @@ export function exportShortVideo(
         if (chunks.length > 0) {
           finalizeExport();
         } else {
+          cleanupCanvas();
           callbacks.onError(err.message || 'MediaRecorder error during video generation');
         }
       };
@@ -1611,18 +1995,24 @@ export function exportShortVideo(
         if (isCancelledRef.current) return;
         if (watchdogTimeout) clearTimeout(watchdogTimeout);
 
-        callbacks.onProgress(97, 'Patching video headers for Instagram & YouTube compatibility...');
+        callbacks.onProgress(97, 'Packaging video for Instagram & YouTube...');
 
         if (chunks.length === 0) {
+          cleanupCanvas();
           callbacks.onError('Video encoding produced no frames. Please retry with standard settings.');
           return;
         }
 
-        let rawBlob = new Blob(chunks, { type: mimeType || 'video/webm' });
+        const effectiveMime = mediaRecorder?.mimeType || mimeType || 'video/webm';
+        let rawBlob = new Blob(chunks, { type: effectiveMime });
 
-        // Apply EBML duration patch so YouTube and media players recognize the duration and cues
-        if (!mimeType.includes('mp4')) {
-          rawBlob = await patchWebmDuration(rawBlob, totalDuration * 1000);
+        // Apply EBML duration patch only if it's WebM (MP4 does not use EBML)
+        if (effectiveMime.includes('webm')) {
+          try {
+            rawBlob = await patchWebmDuration(rawBlob, totalDuration * 1000);
+          } catch {
+            // ignore patch error
+          }
         }
 
         const videoUrl = URL.createObjectURL(rawBlob);
@@ -1631,6 +2021,7 @@ export function exportShortVideo(
           try { t.stop(); } catch { /* ignore */ }
         });
         if (audioCleanup) audioCleanup();
+        cleanupCanvas();
 
         callbacks.onProgress(100, `Video Ready (${totalDuration.toFixed(1)}s)!`);
         callbacks.onComplete(rawBlob, videoUrl);
@@ -1640,9 +2031,9 @@ export function exportShortVideo(
         finalizeExport();
       };
 
-      // Start recording chunks
-      mediaRecorder.start(100);
-      callbacks.onProgress(10, `Recording short: 0.0s / ${totalDuration.toFixed(1)}s (0%)`, 0, totalFrames);
+      // Start recording with safe timeslice
+      mediaRecorder.start(250);
+      callbacks.onProgress(10, `Recording: 0.0s / ${totalDuration.toFixed(1)}s (0%)`, 0, totalFrames);
 
       const renderStartTime = performance.now();
       let lastReportedTenth = -1;
@@ -1654,7 +2045,7 @@ export function exportShortVideo(
         if (animFrameId) cancelAnimationFrame(animFrameId);
         if (intervalTimer) clearInterval(intervalTimer);
 
-        callbacks.onProgress(95, `Encoding ${totalDuration.toFixed(1)}s video stream...`, totalFrames, totalFrames);
+        callbacks.onProgress(95, `Finalizing ${totalDuration.toFixed(1)}s stream...`, totalFrames, totalFrames);
 
         if (mediaRecorder && mediaRecorder.state !== 'inactive') {
           try {
@@ -1673,6 +2064,7 @@ export function exportShortVideo(
             if (chunks.length > 0) {
               finalizeExport();
             } else {
+              cleanupCanvas();
               callbacks.onError('Video encoding timed out. Please retry rendering.');
             }
           }, 3500);
@@ -1703,7 +2095,7 @@ export function exportShortVideo(
           const pct = Math.min(94, Math.floor(10 + (currentSec / totalDuration) * 84));
           callbacks.onProgress(
             pct,
-            `Recording video: ${currentSec.toFixed(1)}s / ${totalDuration.toFixed(1)}s (${pct}%)`,
+            `Recording: ${currentSec.toFixed(1)}s / ${totalDuration.toFixed(1)}s (${pct}%)`,
             currentFrameIndex,
             totalFrames
           );
@@ -1714,23 +2106,39 @@ export function exportShortVideo(
         }
       };
 
-      const runRaf = () => {
+      // Single disciplined frame loop (prevents mobile CPU/GPU thermal overload)
+      const targetFrameInterval = 1000 / fps;
+      let lastFrameTimestamp = performance.now();
+
+      const runLoop = () => {
         if (isCancelledRef.current || hasCompleted) return;
-        tick();
-        if (!hasCompleted) {
-          animFrameId = requestAnimationFrame(runRaf);
+        const now = performance.now();
+        const delta = now - lastFrameTimestamp;
+
+        if (delta >= targetFrameInterval * 0.75) {
+          lastFrameTimestamp = now - (delta % targetFrameInterval);
+          tick();
+        }
+
+        if (!hasCompleted && !isCancelledRef.current) {
+          animFrameId = requestAnimationFrame(runLoop);
         }
       };
-      animFrameId = requestAnimationFrame(runRaf);
+      animFrameId = requestAnimationFrame(runLoop);
 
+      // Lightweight background-only ticker if the tab is inactive/hidden
       intervalTimer = setInterval(() => {
         if (isCancelledRef.current || hasCompleted) {
           clearInterval(intervalTimer);
           return;
         }
-        tick();
-      }, 30);
+        if (typeof document !== 'undefined' && document.hidden) {
+          tick();
+        }
+      }, 60);
+
     } catch (err: any) {
+      cleanupCanvas();
       if (!isCancelledRef.current) {
         callbacks.onError(err.message || 'Failed to render short video');
       }

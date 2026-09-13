@@ -1,0 +1,1602 @@
+[
+  {
+    "id": "net_mod_01",
+    "question": "How many layers are defined in the standard ISO/OSI Reference Model, and what is their order from Layer 1 to Layer 7?",
+    "options": [
+      "7 layers: Physical, Data Link, Network, Transport, Session, Presentation, Application",
+      "5 layers: Physical, Data Link, Network, Transport, Application",
+      "4 layers: Link, Internet, Transport, Application",
+      "7 layers: Application, Presentation, Session, Transport, Network, Data Link, Physical (Layer 1 is Application)"
+    ],
+    "correctAnswer": 0,
+    "explanation": "The OSI model specifies 7 hierarchical layers: 1-Physical, 2-Data Link, 3-Network, 4-Transport, 5-Session, 6-Presentation, 7-Application.",
+    "subject": "Computer Networks",
+    "topic": "Computer Networks: OSI & TCP/IP Models",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_mod_02",
+    "question": "Which OSI layer is responsible for data format translation, character code conversion (e.g., EBCDIC to ASCII), compression, and encryption/decryption?",
+    "options": [
+      "Application Layer",
+      "Presentation Layer (Layer 6)",
+      "Session Layer (Layer 5)",
+      "Transport Layer (Layer 4)"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The Presentation Layer ensures interoperability by handling syntax and semantics of transferred data (encryption, compression, formatting).",
+    "subject": "Computer Networks",
+    "topic": "Computer Networks: OSI & TCP/IP Models",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_mod_03",
+    "question": "Which OSI layer establishes, manages, synchronizes, and terminates dialogs and sessions between communication applications using checkpoints?",
+    "options": [
+      "Transport Layer",
+      "Network Layer",
+      "Session Layer (Layer 5)",
+      "Data Link Layer"
+    ],
+    "correctAnswer": 2,
+    "explanation": "The Session Layer controls dialogs (half-duplex/full-duplex) and inserts synchronization checkpoints to resume transmission after failures.",
+    "subject": "Computer Networks",
+    "topic": "Computer Networks: OSI & TCP/IP Models",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_mod_04",
+    "question": "In the TCP/IP model, how many layers are standardly defined according to RFC 1122?",
+    "options": [
+      "4 layers (Link/Network Access, Internet, Transport, Application)",
+      "7 layers",
+      "3 layers",
+      "6 layers"
+    ],
+    "correctAnswer": 0,
+    "explanation": "The original TCP/IP architectural suite defines 4 layers: Link, Internet, Transport, and Application.",
+    "subject": "Computer Networks",
+    "topic": "Computer Networks: OSI & TCP/IP Models",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_mod_05",
+    "question": "What is the Protocol Data Unit (PDU) at the Physical, Data Link, Network, and Transport layers respectively?",
+    "options": [
+      "Bits, Frames, Packets, Segments",
+      "Packets, Frames, Bits, Segments",
+      "Segments, Packets, Frames, Bits",
+      "Bytes, Words, Packets, Streams"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Layer PDUs: Layer 1 = Bits, Layer 2 = Frames, Layer 3 = Packets (or Datagrams), Layer 4 = Segments (TCP) / Datagrams (UDP).",
+    "subject": "Computer Networks",
+    "topic": "Computer Networks: OSI & TCP/IP Models",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_mod_06",
+    "question": "Which OSI layer is responsible for end-to-end process-to-process delivery of the entire message, segment sequencing, and flow/error control?",
+    "options": [
+      "Network Layer",
+      "Transport Layer (Layer 4)",
+      "Data Link Layer",
+      "Session Layer"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The Transport Layer provides transparent, reliable, end-to-end process-to-process communication using port numbers.",
+    "subject": "Computer Networks",
+    "topic": "Computer Networks: OSI & TCP/IP Models",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_mod_07",
+    "question": "Which OSI layer provides host-to-host packet delivery, logical addressing (IP addresses), and routing across intermediate networks?",
+    "options": [
+      "Data Link Layer",
+      "Network Layer (Layer 3)",
+      "Transport Layer",
+      "Physical Layer"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The Network Layer handles logical IP addressing, routing path determination, packet forwarding, and fragmentation across heterogeneous networks.",
+    "subject": "Computer Networks",
+    "topic": "Computer Networks: OSI & TCP/IP Models",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_mod_08",
+    "question": "What is \"Encapsulation\" in layered computer networking?",
+    "options": [
+      "Stripping headers as data moves up",
+      "Adding protocol control information (headers and trailers) to data as it moves down through the protocol stack",
+      "Encrypting passwords on disk",
+      "Compressing audio files"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Encapsulation wraps payload data with protocol-specific headers (and trailer at Layer 2) as it traverses from Application to Physical layer.",
+    "subject": "Computer Networks",
+    "topic": "Computer Networks: OSI & TCP/IP Models",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_mod_09",
+    "question": "What is \"Decapsulation\"?",
+    "options": [
+      "Removing protocol headers and parsing data as it ascends the protocol stack on the receiving end",
+      "Adding checksums to frames",
+      "Connecting two routers",
+      "Broadcasting ARP queries"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Decapsulation is the reverse process: each layer strips its header, interprets control fields, and passes the remaining payload upward.",
+    "subject": "Computer Networks",
+    "topic": "Computer Networks: OSI & TCP/IP Models",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_mod_10",
+    "question": "At which layer of the OSI model does a standard Network Interface Card (NIC) and Ethernet MAC switch operate?",
+    "options": [
+      "Physical Layer",
+      "Data Link Layer (Layer 2)",
+      "Network Layer",
+      "Transport Layer"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Switches and NICs operate predominantly at Layer 2 (Data Link Layer), using physical MAC addresses to filter and forward frames.",
+    "subject": "Computer Networks",
+    "topic": "Computer Networks: OSI & TCP/IP Models",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_mod_11",
+    "question": "At which layer of the OSI model does a Router operate?",
+    "options": [
+      "Physical Layer",
+      "Data Link Layer",
+      "Network Layer (Layer 3)",
+      "Transport Layer"
+    ],
+    "correctAnswer": 2,
+    "explanation": "Routers inspect Layer 3 IP headers in network packets to make intelligent routing decisions across distinct subnets.",
+    "subject": "Computer Networks",
+    "topic": "Computer Networks: OSI & TCP/IP Models",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_mod_12",
+    "question": "At which layer of the OSI model does a simple Repeater or passive Hub operate?",
+    "options": [
+      "Physical Layer (Layer 1)",
+      "Data Link Layer",
+      "Network Layer",
+      "Application Layer"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Hubs and repeaters operate at the Physical layer (Layer 1), simply amplifying or regenerating electrical/optical bit signals blindly across all ports.",
+    "subject": "Computer Networks",
+    "topic": "Computer Networks: OSI & TCP/IP Models",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_mod_13",
+    "question": "Which OSI layer provides node-to-node (hop-to-hop) framing, physical addressing (MAC), and media access control over a single local link?",
+    "options": [
+      "Physical Layer",
+      "Data Link Layer (Layer 2)",
+      "Network Layer",
+      "Transport Layer"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The Data Link Layer guarantees error-free node-to-node hop transmission across a shared or point-to-point physical medium.",
+    "subject": "Computer Networks",
+    "topic": "Computer Networks: OSI & TCP/IP Models",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_mod_14",
+    "question": "What device operates at all 7 layers of the OSI model and translates between different application protocols (e.g., email to SMS)?",
+    "options": [
+      "Hub",
+      "Switch",
+      "Gateway (Application Gateway)",
+      "Router"
+    ],
+    "correctAnswer": 2,
+    "explanation": "An Application Gateway translates protocols across all 7 layers of the OSI reference stack.",
+    "subject": "Computer Networks",
+    "topic": "Computer Networks: OSI & TCP/IP Models",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_mod_15",
+    "question": "What is the primary difference between Connection-Oriented and Connectionless services?",
+    "options": [
+      "Connection-oriented requires a handshake connection setup and teardown phase (e.g., TCP); connectionless sends packets independently without setup (e.g., UDP)",
+      "Connection-oriented cannot transmit audio",
+      "Connectionless is always slower",
+      "Connection-oriented requires satellite links"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Connection-oriented communication establishes a logical connection state before data transfer; connectionless treats each datagram independently.",
+    "subject": "Computer Networks",
+    "topic": "Computer Networks: OSI & TCP/IP Models",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_mod_16",
+    "question": "Which TCP/IP layer merges the functionality of OSI’s Application, Presentation, and Session layers?",
+    "options": [
+      "Transport Layer",
+      "Application Layer",
+      "Internet Layer",
+      "Network Interface Layer"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The TCP/IP Application layer encompasses user interface, data formatting, encryption, and session dialog management in application software.",
+    "subject": "Computer Networks",
+    "topic": "Computer Networks: OSI & TCP/IP Models",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_mod_17",
+    "question": "What addressing scheme is used at the Transport Layer to identify specific destination processes or applications?",
+    "options": [
+      "MAC Address",
+      "IP Address",
+      "Port Number",
+      "URL"
+    ],
+    "correctAnswer": 2,
+    "explanation": "Port numbers (16-bit values, 0-65535) multiplex communication streams to specific application processes running on a host.",
+    "subject": "Computer Networks",
+    "topic": "Computer Networks: OSI & TCP/IP Models",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_mod_18",
+    "question": "What is the transmission mode where communication is strictly one-directional at all times (like a TV broadcast or keyboard to CPU)?",
+    "options": [
+      "Simplex",
+      "Half-Duplex",
+      "Full-Duplex",
+      "Multiplex"
+    ],
+    "correctAnswer": 0,
+    "explanation": "In Simplex mode, data flows in one predetermined direction only; the receiver can never transmit data back to the sender.",
+    "subject": "Computer Networks",
+    "topic": "Computer Networks: OSI & TCP/IP Models",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_mod_19",
+    "question": "What is the transmission mode where both stations can transmit and receive, but only one at a time (like a Walkie-Talkie)?",
+    "options": [
+      "Simplex",
+      "Half-Duplex",
+      "Full-Duplex",
+      "Asynchronous"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Half-duplex enables bidirectional communication, but sender and receiver must alternate turns; simultaneous transmission is not supported.",
+    "subject": "Computer Networks",
+    "topic": "Computer Networks: OSI & TCP/IP Models",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_mod_20",
+    "question": "In Full-Duplex communication (like modern telephone networks or switched Ethernet):",
+    "options": [
+      "Signals travel in one direction only",
+      "Both stations can transmit and receive simultaneously at the exact same time",
+      "Only one computer can speak per hour",
+      "Packets are sent without headers"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Full-duplex allows concurrent bidirectional transmission, doubling channel utilization without collision.",
+    "subject": "Computer Networks",
+    "topic": "Computer Networks: OSI & TCP/IP Models",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_pdl_01",
+    "question": "What is the maximum theoretical channel data rate given bandwidth B and signal-to-noise ratio SNR, according to Shannon’s Capacity Theorem?",
+    "options": [
+      "C = 2 * B * log2(M)",
+      "C = B * log2(1 + SNR)",
+      "C = B * SNR",
+      "C = B / log2(SNR)"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Shannon’s capacity formula C = B · log2(1 + SNR) defines the upper limit on error-free bit rate across a noisy channel.",
+    "subject": "Computer Networks",
+    "topic": "Physical & Data Link Layers",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_pdl_02",
+    "question": "According to Nyquist’s Theorem for a noiseless channel with bandwidth B and M discrete signal levels, what is the maximum bit rate?",
+    "options": [
+      "C = 2 * B * log2(M)",
+      "C = B * log2(1 + M)",
+      "C = B / M",
+      "C = 2 * B * M"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Nyquist’s bit rate formula for noiseless channels is BitRate = 2 · B · log2(M) bits per second.",
+    "subject": "Computer Networks",
+    "topic": "Physical & Data Link Layers",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_pdl_03",
+    "question": "What is the size in bits and bytes of a standard Ethernet MAC address (hardware address)?",
+    "options": [
+      "32 bits (4 bytes)",
+      "48 bits (6 bytes)",
+      "64 bits (8 bytes)",
+      "128 bits (16 bytes)"
+    ],
+    "correctAnswer": 1,
+    "explanation": "An Ethernet MAC address is a 48-bit (6-byte) physical identifier, usually written in hexadecimal (e.g., 00:1A:2B:3C:4D:5E).",
+    "subject": "Computer Networks",
+    "topic": "Physical & Data Link Layers",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_pdl_04",
+    "question": "In an Ethernet MAC address, what do the first 24 bits (3 bytes) represent?",
+    "options": [
+      "Serial number of the card",
+      "Organizationally Unique Identifier (OUI) assigned to the manufacturer by IEEE",
+      "IP subnet mask",
+      "Checksum CRC"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The first 3 bytes (24 bits) identify the vendor/manufacturer (OUI), while the remaining 24 bits are assigned by the vendor as the device serial.",
+    "subject": "Computer Networks",
+    "topic": "Physical & Data Link Layers",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_pdl_05",
+    "question": "What is the maximum efficiency (throughput) of Pure ALOHA protocol?",
+    "options": [
+      "18.4% (1 / 2e)",
+      "36.8% (1 / e)",
+      "50%",
+      "100%"
+    ],
+    "correctAnswer": 0,
+    "explanation": "In Pure ALOHA, frames are sent at any time; vulnerability period is 2 * T_fr, yielding a maximum channel utilization of G * e^(-2G) = 1/(2e) ≈ 18.4%.",
+    "subject": "Computer Networks",
+    "topic": "Physical & Data Link Layers",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_pdl_06",
+    "question": "What is the maximum efficiency of Slotted ALOHA protocol?",
+    "options": [
+      "18.4%",
+      "36.8% (1 / e)",
+      "73.6%",
+      "50%"
+    ],
+    "correctAnswer": 1,
+    "explanation": "In Slotted ALOHA, transmissions are synchronized to discrete time slot boundaries; vulnerability period is halved to T_fr, doubling efficiency to 1/e ≈ 36.8%.",
+    "subject": "Computer Networks",
+    "topic": "Physical & Data Link Layers",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_pdl_07",
+    "question": "In CSMA/CD (Carrier Sense Multiple Access with Collision Detection) used in traditional Ethernet, what is the minimum frame size requirement?",
+    "options": [
+      "Frame transmission time (T_t) must be at least twice the maximum propagation delay (T_t >= 2 * T_p)",
+      "Frame size must be 1024 bytes",
+      "Transmission time must equal propagation delay",
+      "Frame size must be 0"
+    ],
+    "correctAnswer": 0,
+    "explanation": "To guarantee that a transmitting host detects a collision before completing its frame transmission, the condition T_t ≥ 2 · T_p must hold.",
+    "subject": "Computer Networks",
+    "topic": "Physical & Data Link Layers",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_pdl_08",
+    "question": "What is the minimum frame size in standard 10 Mbps Ethernet (802.3)?",
+    "options": [
+      "32 bytes",
+      "64 bytes (512 bits)",
+      "128 bytes",
+      "1500 bytes"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The standard Ethernet minimum frame size is 64 bytes (512 bits), ensuring collision detection over the maximum 2.5 km network span.",
+    "subject": "Computer Networks",
+    "topic": "Physical & Data Link Layers",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_pdl_09",
+    "question": "What is the Maximum Transmission Unit (MTU) payload size for standard Ethernet?",
+    "options": [
+      "512 bytes",
+      "1500 bytes",
+      "4096 bytes",
+      "65535 bytes"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The standard Ethernet MTU is 1500 bytes (the maximum size of the IP packet carried in the data field of an Ethernet frame).",
+    "subject": "Computer Networks",
+    "topic": "Physical & Data Link Layers",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_pdl_10",
+    "question": "In the Stop-and-Wait ARQ flow control protocol, what is the sender window size and receiver window size?",
+    "options": [
+      "Sender = 1, Receiver = 1",
+      "Sender = N, Receiver = 1",
+      "Sender = N, Receiver = N",
+      "Sender = 2, Receiver = 1"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Stop-and-Wait allows the sender to transmit only 1 frame at a time, awaiting an ACK before transmitting the next frame (Window = 1).",
+    "subject": "Computer Networks",
+    "topic": "Physical & Data Link Layers",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_pdl_11",
+    "question": "In Go-Back-N ARQ protocol with an n-bit sequence number, what is the maximum sender window size (W_s) and receiver window size (W_r)?",
+    "options": [
+      "W_s = 2^n - 1, W_r = 1",
+      "W_s = 2^(n-1), W_r = 2^(n-1)",
+      "W_s = 2^n, W_r = 2^n",
+      "W_s = 1, W_r = 2^n - 1"
+    ],
+    "correctAnswer": 0,
+    "explanation": "In Go-Back-N, the receiver only accepts in-order frames (W_r = 1); to prevent sequence ambiguity, sender window W_s ≤ 2^n - 1.",
+    "subject": "Computer Networks",
+    "topic": "Physical & Data Link Layers",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_pdl_12",
+    "question": "In Selective Repeat ARQ protocol with an n-bit sequence number, what is the maximum sender window size and receiver window size?",
+    "options": [
+      "W_s = 2^n - 1, W_r = 1",
+      "W_s = 2^(n-1), W_r = 2^(n-1)",
+      "W_s = 2^n, W_r = 2^n",
+      "W_s = n, W_r = n"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Selective Repeat buffers out-of-order frames at the receiver. To avoid overlap between new and old sequence spaces, W_s = W_r ≤ 2^(n-1).",
+    "subject": "Computer Networks",
+    "topic": "Physical & Data Link Layers",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_pdl_13",
+    "question": "What is Cyclic Redundancy Check (CRC) in data communications?",
+    "options": [
+      "A symmetric encryption cipher",
+      "An error-detection code based on polynomial binary division using XOR operations",
+      "A compression algorithm",
+      "A routing protocol"
+    ],
+    "correctAnswer": 1,
+    "explanation": "CRC divides the data bitstream by a predetermined generator polynomial; the remainder is appended as the frame check sequence (FCS).",
+    "subject": "Computer Networks",
+    "topic": "Physical & Data Link Layers",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_pdl_14",
+    "question": "In bit stuffing (framing used in HDLC), what is inserted after every sequence of five consecutive 1s?",
+    "options": [
+      "A 0 bit is stuffed by the sender",
+      "A 1 bit is stuffed",
+      "A flag byte 01111110",
+      "A parity bit"
+    ],
+    "correctAnswer": 0,
+    "explanation": "To ensure the flag pattern 01111110 never appears inside the data stream, a 0 is automatically stuffed after every five consecutive 1s.",
+    "subject": "Computer Networks",
+    "topic": "Physical & Data Link Layers",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_pdl_15",
+    "question": "What is the purpose of the Spanning Tree Protocol (STP - IEEE 802.1D) in switched Ethernet LANs?",
+    "options": [
+      "To speed up Wi-Fi encryption",
+      "To prevent broadcast storms and bridge loops by disabling redundant links to form a loop-free logical tree topology",
+      "To assign IP addresses",
+      "To route packets across the Internet"
+    ],
+    "correctAnswer": 1,
+    "explanation": "STP blocks redundant physical switch ports to eliminate layer-2 loops and broadcast radiation, failing over if active links drop.",
+    "subject": "Computer Networks",
+    "topic": "Physical & Data Link Layers",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_pdl_16",
+    "question": "What is Manchester Encoding used in 10Base-T Ethernet?",
+    "options": [
+      "A line coding technique where each bit period has a transition in the middle (High-to-Low for 0, Low-to-High for 1) providing self-synchronization",
+      "Inverting all bits",
+      "Converting binary to analog sine wave",
+      "A lossy compression"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Manchester encoding embeds a mid-bit transition in every bit interval, enabling receiver clock recovery without a dedicated clock wire.",
+    "subject": "Computer Networks",
+    "topic": "Physical & Data Link Layers",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_pdl_17",
+    "question": "Why does Wi-Fi (IEEE 802.11) use CSMA/CA (Collision Avoidance) instead of CSMA/CD?",
+    "options": [
+      "Wi-Fi cards cannot transmit data",
+      "Because radio transceivers cannot transmit and listen for collisions simultaneously due to huge signal attenuation, and hidden terminal problems exist",
+      "Collisions never occur over radio frequencies",
+      "CSMA/CD is patented"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Wireless nodes cannot detect collisions while transmitting because their outgoing signal overwhelms incoming signals; hence they use RTS/CTS and random backoff.",
+    "subject": "Computer Networks",
+    "topic": "Physical & Data Link Layers",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_pdl_18",
+    "question": "What is the Hidden Terminal Problem in wireless 802.11 networks, and how is it mitigated?",
+    "options": [
+      "Terminals hidden inside buildings; mitigated with GPS",
+      "Two nodes out of radio range of each other transmit simultaneously to a mutual intermediate station causing collisions; mitigated using RTS/CTS (Request-to-Send / Clear-to-Send)",
+      "Passwords hidden in packets",
+      "Routers hiding SSIDs"
+    ],
+    "correctAnswer": 1,
+    "explanation": "RTS/CTS reservation handshakes broadcast virtual carrier sense duration to surrounding nodes, preventing hidden nodes from transmitting.",
+    "subject": "Computer Networks",
+    "topic": "Physical & Data Link Layers",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_pdl_19",
+    "question": "What is a Collision Domain versus a Broadcast Domain in networking hardware?",
+    "options": [
+      "Each port on a switch is a separate collision domain, but all ports belong to one broadcast domain (unless partitioned by VLANs)",
+      "Hubs create separate collision domains",
+      "Routers forward all broadcasts",
+      "Switches merge all collision domains"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Switches microsegment networks: every switch port is an isolated collision domain, whereas routers break broadcast domains.",
+    "subject": "Computer Networks",
+    "topic": "Physical & Data Link Layers",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_pdl_20",
+    "question": "What is a Virtual LAN (VLAN - IEEE 802.1Q)?",
+    "options": [
+      "A fake network simulation",
+      "A logical grouping of switch ports that behave as if on separate physical switches, partitioning broadcast domains at Layer 2",
+      "A VPN tunnel over the internet",
+      "A high-speed fiber cable"
+    ],
+    "correctAnswer": 1,
+    "explanation": "VLANs partition a physical switch into multiple isolated logical broadcast domains; the 802.1Q standard inserts a 4-byte tag into Ethernet frames.",
+    "subject": "Computer Networks",
+    "topic": "Physical & Data Link Layers",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_ip_01",
+    "question": "What is the length in bits of an IPv4 address and an IPv6 address respectively?",
+    "options": [
+      "IPv4: 32 bits (4 bytes), IPv6: 128 bits (16 bytes)",
+      "IPv4: 48 bits, IPv6: 64 bits",
+      "IPv4: 64 bits, IPv6: 128 bits",
+      "IPv4: 16 bits, IPv6: 32 bits"
+    ],
+    "correctAnswer": 0,
+    "explanation": "IPv4 addresses are 32-bit (4-byte) numerical identifiers; IPv6 expands address space to 128 bits (16 bytes / 2^128 addresses).",
+    "subject": "Computer Networks",
+    "topic": "Network Layer & IP Addressing (IPv4/IPv6)",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_ip_02",
+    "question": "In Classful IPv4 addressing, what is the default subnet mask for Class A, Class B, and Class C networks?",
+    "options": [
+      "Class A: 255.0.0.0 (/8), Class B: 255.255.0.0 (/16), Class C: 255.255.255.0 (/24)",
+      "Class A: 255.255.0.0, Class B: 255.0.0.0, Class C: 255.255.255.0",
+      "Class A: /24, Class B: /16, Class C: /8",
+      "All classes use 255.255.255.255"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Class A reserves 8 bits for network (default /8), Class B reserves 16 bits (/16), and Class C reserves 24 bits (/24).",
+    "subject": "Computer Networks",
+    "topic": "Network Layer & IP Addressing (IPv4/IPv6)",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_ip_03",
+    "question": "What is the range of first octet decimal values for Class A, B, C, D, and E in IPv4?",
+    "options": [
+      "A: 1-126, B: 128-191, C: 192-223, D: 224-239 (Multicast), E: 240-255 (Experimental)",
+      "A: 0-255, B: 0-255, C: 0-255, D: 0-255, E: 0-255",
+      "A: 1-100, B: 101-200, C: 201-250",
+      "A: 128-255, B: 64-127, C: 32-63"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Leading bits identify classes: Class A starts with 0 (1-126; 127 is loopback), B starts with 10 (128-191), C with 110 (192-223), D with 1110 (224-239), E with 1111 (240-255).",
+    "subject": "Computer Networks",
+    "topic": "Network Layer & IP Addressing (IPv4/IPv6)",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_ip_04",
+    "question": "Which IPv4 address block is reserved for loopback testing on the local computer?",
+    "options": [
+      "10.0.0.0/8",
+      "127.0.0.0/8 (commonly 127.0.0.1 - localhost)",
+      "192.168.1.1",
+      "169.254.0.0/16"
+    ],
+    "correctAnswer": 1,
+    "explanation": "127.0.0.0/8 is reserved for software loopback; packets sent to 127.0.0.1 cycle directly back inside the local OS IP stack without hitting the network wire.",
+    "subject": "Computer Networks",
+    "topic": "Network Layer & IP Addressing (IPv4/IPv6)",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_ip_05",
+    "question": "What is the purpose of CIDR (Classless Inter-Domain Routing)?",
+    "options": [
+      "To encrypt routing tables",
+      "To replace rigid classful boundaries (A, B, C) with arbitrary prefix lengths (/n), slowing IPv4 address exhaustion and route table growth (supernetting)",
+      "To eliminate IP addresses",
+      "To speed up Ethernet cables"
+    ],
+    "correctAnswer": 1,
+    "explanation": "CIDR uses variable-length subnet masks (/prefix) and route aggregation (supernetting) to prevent global BGP routing table explosion.",
+    "subject": "Computer Networks",
+    "topic": "Network Layer & IP Addressing (IPv4/IPv6)",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_ip_06",
+    "question": "For the IP address 192.168.10.75 with subnet mask 255.255.255.224 (/27), what is the Network ID (Subnet Address)?",
+    "options": [
+      "192.168.10.0",
+      "192.168.10.64",
+      "192.168.10.32",
+      "192.168.10.96"
+    ],
+    "correctAnswer": 1,
+    "explanation": "255.255.255.224 has block size 256 - 224 = 32. Subnets: 0, 32, 64, 96... 75 falls in subnet 64 (range 64-95). Network ID = 192.168.10.64.",
+    "subject": "Computer Networks",
+    "topic": "Network Layer & IP Addressing (IPv4/IPv6)",
+    "difficulty": "hard",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_ip_07",
+    "question": "How many usable host IP addresses can be assigned in a /28 subnet?",
+    "options": [
+      "16",
+      "14",
+      "30",
+      "6"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Host bits = 32 - 28 = 4 bits. Total IPs = 2^4 = 16. Usable host IPs = 2^4 - 2 = 14 (subtracting Network ID and Directed Broadcast address).",
+    "subject": "Computer Networks",
+    "topic": "Network Layer & IP Addressing (IPv4/IPv6)",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_ip_08",
+    "question": "Which protocol maps a known logical IP address to a physical MAC address on a local area network?",
+    "options": [
+      "DNS (Domain Name System)",
+      "ARP (Address Resolution Protocol)",
+      "RARP (Reverse ARP)",
+      "DHCP"
+    ],
+    "correctAnswer": 1,
+    "explanation": "ARP broadcasts an Ethernet request asking \"Who has IP X.X.X.X? Send your MAC\", mapping Layer 3 IP to Layer 2 MAC addresses.",
+    "subject": "Computer Networks",
+    "topic": "Network Layer & IP Addressing (IPv4/IPv6)",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_ip_09",
+    "question": "What protocol dynamically and automatically assigns IP addresses, subnet masks, default gateways, and DNS servers to client devices?",
+    "options": [
+      "ARP",
+      "DHCP (Dynamic Host Configuration Protocol)",
+      "ICMP",
+      "SNMP"
+    ],
+    "correctAnswer": 1,
+    "explanation": "DHCP operates over UDP ports 67/68 using the DORA handshake (Discover, Offer, Request, Acknowledge) to lease IP parameters automatically.",
+    "subject": "Computer Networks",
+    "topic": "Network Layer & IP Addressing (IPv4/IPv6)",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_ip_10",
+    "question": "What is the function of ICMP (Internet Control Message Protocol)?",
+    "options": [
+      "Transferring web pages",
+      "Reporting network errors (e.g., Destination Unreachable, Time Exceeded) and performing diagnostics (ping, traceroute)",
+      "Encrypting email",
+      "Allocating domain names"
+    ],
+    "correctAnswer": 1,
+    "explanation": "ICMP is used by network devices to send error messages and operational information (echo request/reply for ping, TTL expired for traceroute).",
+    "subject": "Computer Networks",
+    "topic": "Network Layer & IP Addressing (IPv4/IPv6)",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_ip_11",
+    "question": "What happens when an IPv4 packet’s Time-to-Live (TTL) field reaches 0 at an intermediate router?",
+    "options": [
+      "The router doubles the TTL",
+      "The router drops the packet and transmits an ICMP \"Time Exceeded\" (Type 11) message back to the source",
+      "The packet is routed to root DNS",
+      "The router writes it to disk"
+    ],
+    "correctAnswer": 1,
+    "explanation": "TTL prevents packets from circulating forever in routing loops; each hop decrements TTL by 1, discarding it and sending ICMP Type 11 when TTL = 0.",
+    "subject": "Computer Networks",
+    "topic": "Network Layer & IP Addressing (IPv4/IPv6)",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_ip_12",
+    "question": "How does the traceroute (or tracert in Windows) utility determine the path of routers to a destination host?",
+    "options": [
+      "By sending successive packets with increasing TTL values (TTL=1, 2, 3...) and recording the IP addresses of routers sending ICMP Time Exceeded responses",
+      "By asking the DNS server",
+      "By reading the client router table",
+      "By broadcasting ARP queries across the continent"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Traceroute exploits TTL expiration: TTL=1 causes the first hop to drop the packet and reply with ICMP; TTL=2 reveals the second hop, and so on.",
+    "subject": "Computer Networks",
+    "topic": "Network Layer & IP Addressing (IPv4/IPv6)",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_ip_13",
+    "question": "What is Network Address Translation (NAT) / Port Address Translation (PAT)?",
+    "options": [
+      "A method that maps multiple private IP addresses (RFC 1918) to a single public IP address using unique Layer 4 port numbers",
+      "A tool to generate domain names",
+      "An encryption key generator",
+      "A cable conversion protocol"
+    ],
+    "correctAnswer": 0,
+    "explanation": "NAT/PAT translates private non-routable IPs to a shared public IP, conserving IPv4 addresses and hiding internal network topology.",
+    "subject": "Computer Networks",
+    "topic": "Network Layer & IP Addressing (IPv4/IPv6)",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_ip_14",
+    "question": "Which of the following IP address blocks is designated as Private (non-routable on the public Internet) by RFC 1918?",
+    "options": [
+      "10.0.0.0/8, 172.16.0.0/12, and 192.168.0.0/16",
+      "128.0.0.0/16",
+      "8.8.8.8",
+      "200.1.1.0/24"
+    ],
+    "correctAnswer": 0,
+    "explanation": "RFC 1918 reserves three private ranges: 10.0.0.0 - 10.255.255.255 (Class A), 172.16.0.0 - 172.31.255.255 (Class B), and 192.168.0.0 - 192.168.255.255 (Class C).",
+    "subject": "Computer Networks",
+    "topic": "Network Layer & IP Addressing (IPv4/IPv6)",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_ip_15",
+    "question": "What is the routing protocol distance-vector metric used by RIP (Routing Information Protocol)?",
+    "options": [
+      "Link bandwidth",
+      "Hop Count (maximum 15 hops; 16 represents infinity/unreachable)",
+      "Delay in milliseconds",
+      "Cost based on reliability"
+    ],
+    "correctAnswer": 1,
+    "explanation": "RIP uses hop count as its sole routing metric; paths exceeding 15 hops are marked unreachable (16) to mitigate count-to-infinity problems.",
+    "subject": "Computer Networks",
+    "topic": "Network Layer & IP Addressing (IPv4/IPv6)",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_ip_16",
+    "question": "Which interior routing protocol is a Link-State protocol that uses Dijkstra’s algorithm to calculate shortest paths?",
+    "options": [
+      "RIP",
+      "OSPF (Open Shortest Path First)",
+      "BGP",
+      "EGP"
+    ],
+    "correctAnswer": 1,
+    "explanation": "OSPF floods link-state advertisements (LSAs) and runs Dijkstra’s Shortest Path First algorithm locally to build loop-free routing tables.",
+    "subject": "Computer Networks",
+    "topic": "Network Layer & IP Addressing (IPv4/IPv6)",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_ip_17",
+    "question": "Which exterior routing protocol manages routing decisions between different Autonomous Systems (AS) across the global Internet backbone?",
+    "options": [
+      "OSPF",
+      "IS-IS",
+      "BGP (Border Gateway Protocol)",
+      "RIPv2"
+    ],
+    "correctAnswer": 2,
+    "explanation": "BGP is a Path-Vector exterior gateway protocol that exchanges network reachability between distinct Autonomous Systems on the global Internet.",
+    "subject": "Computer Networks",
+    "topic": "Network Layer & IP Addressing (IPv4/IPv6)",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_ip_18",
+    "question": "Which of the following features is present in IPv6 but was permanently REMOVED from IPv4 to improve router processing speed?",
+    "options": [
+      "Hop Limit",
+      "Router-level packet fragmentation and header checksum",
+      "Flow Label",
+      "Unicast addressing"
+    ],
+    "correctAnswer": 1,
+    "explanation": "In IPv6, routers no longer fragment packets (end-hosts perform Path MTU Discovery) and the header checksum was eliminated to accelerate forwarding.",
+    "subject": "Computer Networks",
+    "topic": "Network Layer & IP Addressing (IPv4/IPv6)",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_ip_19",
+    "question": "What is an \"Anycast\" address in IPv6?",
+    "options": [
+      "An address assigned to all devices worldwide",
+      "An address assigned to multiple interfaces; packets sent to an anycast address are routed to the nearest interface according to routing distance",
+      "A broadcast address for Wi-Fi",
+      "A private address range"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Anycast allows multiple servers to share an IP address; BGP directs client requests to the topologically closest server instance (used heavily by DNS root servers and CDNs).",
+    "subject": "Computer Networks",
+    "topic": "Network Layer & IP Addressing (IPv4/IPv6)",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_ip_20",
+    "question": "In IPv4 header fragmentation fields, what is the Fragment Offset value measured in?",
+    "options": [
+      "Bytes",
+      "Units of 8 bytes (64-bit blocks)",
+      "Bits",
+      "Packets"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The 13-bit Fragment Offset field indicates the position of data relative to the original unfragmented packet in units of 8-byte blocks.",
+    "subject": "Computer Networks",
+    "topic": "Network Layer & IP Addressing (IPv4/IPv6)",
+    "difficulty": "hard",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_trans_01",
+    "question": "What are the main characteristics that distinguish TCP from UDP?",
+    "options": [
+      "TCP is connection-oriented, reliable (acknowledgments, retransmissions), byte-stream; UDP is connectionless, unreliable (best-effort), message-oriented",
+      "TCP is faster than UDP",
+      "UDP guarantees in-order delivery; TCP does not",
+      "TCP operates at layer 3; UDP operates at layer 4"
+    ],
+    "correctAnswer": 0,
+    "explanation": "TCP provides reliable in-order byte stream delivery with flow and congestion control; UDP provides lightweight, connectionless datagram transmission with low overhead.",
+    "subject": "Computer Networks",
+    "topic": "Transport Layer (TCP, UDP, Congestion Control)",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_trans_02",
+    "question": "What is the standard Three-Way Handshake used by TCP to establish a connection?",
+    "options": [
+      "SYN -> SYN-ACK -> ACK",
+      "ACK -> SYN -> DATA",
+      "SYN -> ACK -> SYN-ACK",
+      "FIN -> ACK -> FIN-ACK"
+    ],
+    "correctAnswer": 0,
+    "explanation": "TCP connection establishment uses a 3-way handshake: Client sends SYN, Server replies with SYN + ACK, and Client responds with ACK.",
+    "subject": "Computer Networks",
+    "topic": "Transport Layer (TCP, UDP, Congestion Control)",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_trans_03",
+    "question": "What is the purpose of the TIME_WAIT state during TCP connection termination?",
+    "options": [
+      "To wait for the CPU to cool down",
+      "To ensure that the final ACK was received by the remote peer and to allow lingering/delayed duplicate packets to expire in the network (2 * MSL)",
+      "To reboot the network interface",
+      "To negotiate port numbers"
+    ],
+    "correctAnswer": 1,
+    "explanation": "TIME_WAIT lasts for 2 * Maximum Segment Lifetime (2MSL), preventing delayed duplicate packets from a previous connection from corrupting a new connection.",
+    "subject": "Computer Networks",
+    "topic": "Transport Layer (TCP, UDP, Congestion Control)",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_trans_04",
+    "question": "What is the size of the minimum TCP header (without optional fields) and UDP header respectively?",
+    "options": [
+      "TCP: 20 bytes, UDP: 8 bytes",
+      "TCP: 40 bytes, UDP: 20 bytes",
+      "TCP: 8 bytes, UDP: 4 bytes",
+      "TCP: 32 bytes, UDP: 16 bytes"
+    ],
+    "correctAnswer": 0,
+    "explanation": "A base TCP header is 20 bytes (up to 60 bytes with options). The simple UDP header is fixed at exactly 8 bytes.",
+    "subject": "Computer Networks",
+    "topic": "Transport Layer (TCP, UDP, Congestion Control)",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_trans_05",
+    "question": "What is the primary mechanism TCP uses to achieve Flow Control?",
+    "options": [
+      "Sliding Window Protocol with Receiver Advertised Window (rwnd)",
+      "Dropping random packets",
+      "Decreasing link bandwidth",
+      "Sending ICMP quench messages"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Flow control prevents a fast sender from overwhelming a slow receiver; the receiver advertises its available buffer space via the TCP \"Window Size\" header field.",
+    "subject": "Computer Networks",
+    "topic": "Transport Layer (TCP, UDP, Congestion Control)",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_trans_06",
+    "question": "What is the difference between Flow Control and Congestion Control in TCP?",
+    "options": [
+      "Flow control prevents sender from overflowing the receiver buffer; congestion control prevents all senders from overloading the intermediate network routers/links",
+      "They are synonymous terms",
+      "Flow control is handled by UDP; congestion control by TCP",
+      "Congestion control runs only in LANs"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Flow control is an end-to-end agreement between two communicating endpoints. Congestion control handles global traffic loading across network routers.",
+    "subject": "Computer Networks",
+    "topic": "Transport Layer (TCP, UDP, Congestion Control)",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_trans_07",
+    "question": "What are the four core phases of TCP Congestion Control (Tahoe / Reno)?",
+    "options": [
+      "Slow Start, Congestion Avoidance, Fast Retransmit, Fast Recovery",
+      "Handshake, Data, ACK, Teardown",
+      "Listen, Syn, Est, Close",
+      "Ping, Trace, Route, Drop"
+    ],
+    "correctAnswer": 0,
+    "explanation": "TCP congestion control comprises Slow Start (exponential growth), Congestion Avoidance (linear growth - AIMD), Fast Retransmit (on 3 dup ACKs), and Fast Recovery.",
+    "subject": "Computer Networks",
+    "topic": "Transport Layer (TCP, UDP, Congestion Control)",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_trans_08",
+    "question": "In the TCP Slow Start phase, how does the Congestion Window (cwnd) grow upon receipt of successful ACKs?",
+    "options": [
+      "It increases linearly by 1 MSS per RTT",
+      "It increases exponentially: doubles every Round Trip Time (RTT) (increments by 1 MSS for each ACK received)",
+      "It remains constant",
+      "It decreases by half"
+    ],
+    "correctAnswer": 1,
+    "explanation": "During Slow Start, cwnd begins at 1 MSS and increments by 1 MSS for each received ACK, effectively doubling the congestion window every RTT.",
+    "subject": "Computer Networks",
+    "topic": "Transport Layer (TCP, UDP, Congestion Control)",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_trans_09",
+    "question": "When does TCP transition from the Slow Start phase to the Congestion Avoidance phase?",
+    "options": [
+      "When cwnd reaches the Slow Start Threshold (ssthresh)",
+      "When an error occurs",
+      "After 10 seconds",
+      "When receiver window reaches 0"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Once cwnd ≥ ssthresh, TCP switches from exponential Slow Start growth to linear Congestion Avoidance growth (Additive Increase Multiplicative Decrease - AIMD).",
+    "subject": "Computer Networks",
+    "topic": "Transport Layer (TCP, UDP, Congestion Control)",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_trans_010",
+    "question": "In TCP Congestion Avoidance (AIMD), how does cwnd increase?",
+    "options": [
+      "Doubles every RTT",
+      "Increases linearly by 1 MSS per RTT",
+      "Increases by 10 MSS per packet",
+      "Multiplies by 4"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Additive Increase: during congestion avoidance, cwnd increases by approximately 1 MSS per RTT to cautiously probe for available bandwidth.",
+    "subject": "Computer Networks",
+    "topic": "Transport Layer (TCP, UDP, Congestion Control)",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_trans_11",
+    "question": "What event triggers TCP Fast Retransmit in TCP Reno?",
+    "options": [
+      "A retransmission timeout (RTO) expiration",
+      "Receiving 3 duplicate ACKs for the same segment",
+      "A SYN packet received",
+      "A RST flag received"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Receiving 3 duplicate ACKs indicates that a single packet was dropped while subsequent packets arrived at the receiver, triggering immediate retransmission without waiting for timer timeout.",
+    "subject": "Computer Networks",
+    "topic": "Transport Layer (TCP, UDP, Congestion Control)",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_trans_12",
+    "question": "What is the \"Silly Window Syndrome\" in TCP?",
+    "options": [
+      "A software crash in socket code",
+      "When either sender generates data in tiny 1-byte increments or receiver advertises small 1-byte window increments, causing excessive header overhead",
+      "A joke protocol",
+      "An inverted checksum"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Silly Window Syndrome wastes network bandwidth transmitting tiny payloads wrapped in 40 bytes of TCP/IP headers.",
+    "subject": "Computer Networks",
+    "topic": "Transport Layer (TCP, UDP, Congestion Control)",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_trans_13",
+    "question": "Which algorithm prevents Silly Window Syndrome on the SENDER side by buffering small outgoing packets until a full MSS is accumulated or previous ACK arrives?",
+    "options": [
+      "Clark’s Algorithm",
+      "Nagle’s Algorithm",
+      "Dijkstra’s Algorithm",
+      "Karn’s Algorithm"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Nagle’s algorithm inhibits the sender from sending small segments if there is unacknowledged data outstanding, bundling data into full-sized segments.",
+    "subject": "Computer Networks",
+    "topic": "Transport Layer (TCP, UDP, Congestion Control)",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_trans_14",
+    "question": "Which solution prevents Silly Window Syndrome on the RECEIVER side by delaying window update advertisements until buffer space reaches at least MSS or half buffer size?",
+    "options": [
+      "Clark’s Solution",
+      "Nagle’s Algorithm",
+      "Jacobson’s Algorithm",
+      "Karn’s Algorithm"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Clark’s solution prevents the receiver from advertising small window increments: it advertises a window of 0 until a full-sized segment or half buffer is empty.",
+    "subject": "Computer Networks",
+    "topic": "Transport Layer (TCP, UDP, Congestion Control)",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_trans_15",
+    "question": "What does Karn’s Algorithm specify regarding Round Trip Time (RTT) estimation in TCP?",
+    "options": [
+      "Do not update RTT estimates based on retransmitted segments (ambiguity of whether ACK was for original or retransmitted segment)",
+      "Measure RTT using ping only",
+      "Set RTT equal to 1 ms always",
+      "Double RTT on every ACK"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Karn’s rule states that TCP must not measure sample RTT for segments that have been retransmitted, and must apply exponential timer backoff.",
+    "subject": "Computer Networks",
+    "topic": "Transport Layer (TCP, UDP, Congestion Control)",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_trans_16",
+    "question": "What is the TCP RST (Reset) flag used for?",
+    "options": [
+      "To reboot the computer",
+      "To abruptly reject an invalid segment, refuse an unauthorized connection request, or instantly abort an existing connection",
+      "To restart clock synchronization",
+      "To request encryption"
+    ],
+    "correctAnswer": 1,
+    "explanation": "A RST segment terminates a connection immediately without standard FIN handshake, used when ports are closed or fatal protocol errors occur.",
+    "subject": "Computer Networks",
+    "topic": "Transport Layer (TCP, UDP, Congestion Control)",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_trans_17",
+    "question": "Which applications standardly use UDP instead of TCP?",
+    "options": [
+      "File transfer (FTP) and Web browsing (HTTP/1.1)",
+      "Real-time voice (VoIP), video streaming, online multiplayer games, and DNS queries",
+      "SSH and Telnet remote terminals",
+      "Email transfer (SMTP)"
+    ],
+    "correctAnswer": 1,
+    "explanation": "UDP minimizes latency and avoids head-of-line blocking; real-time audio/video tolerates minor packet drops better than retransmission delays.",
+    "subject": "Computer Networks",
+    "topic": "Transport Layer (TCP, UDP, Congestion Control)",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_trans_18",
+    "question": "What is the range of Well-Known Port Numbers reserved by IANA for standard system services?",
+    "options": [
+      "0 to 1023",
+      "1024 to 49151",
+      "49152 to 65535",
+      "0 to 255"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Well-Known Ports (0-1023) are reserved for system services (e.g., HTTP 80, HTTPS 443, DNS 53, SSH 22). Registered ports: 1024-49151; Ephemeral: 49152-65535.",
+    "subject": "Computer Networks",
+    "topic": "Transport Layer (TCP, UDP, Congestion Control)",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_trans_19",
+    "question": "What is the Maximum Segment Size (MSS) in TCP?",
+    "options": [
+      "The maximum data payload a TCP segment can carry (excluding TCP and IP headers), typically 1460 bytes on standard Ethernet",
+      "Total frame size",
+      "Bandwidth of the link",
+      "Window size in bytes"
+    ],
+    "correctAnswer": 0,
+    "explanation": "MSS = MTU - (IP Header + TCP Header) = 1500 - (20 + 20) = 1460 bytes on standard Ethernet.",
+    "subject": "Computer Networks",
+    "topic": "Transport Layer (TCP, UDP, Congestion Control)",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_trans_20",
+    "question": "What is a TCP SYN Flood Attack?",
+    "options": [
+      "Flooding the router with UDP packets",
+      "A Denial-of-Service (DoS) attack where an attacker sends massive volumes of SYN requests with spoofed IPs, exhausting server connection backlog tables",
+      "A physical hardware surge",
+      "A DNS poisoning attack"
+    ],
+    "correctAnswer": 1,
+    "explanation": "SYN flood consumes server memory half-open connection queues (SYN_RECEIVED state); mitigated using SYN Cookies.",
+    "subject": "Computer Networks",
+    "topic": "Transport Layer (TCP, UDP, Congestion Control)",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_app_01",
+    "question": "Which port does DNS (Domain Name System) standardly use for client query lookups?",
+    "options": [
+      "Port 25 (TCP)",
+      "Port 53 (UDP for queries, TCP for zone transfers)",
+      "Port 80 (TCP)",
+      "Port 110 (UDP)"
+    ],
+    "correctAnswer": 1,
+    "explanation": "DNS uses UDP port 53 for fast client lookups, and TCP port 53 for reliable zone transfers between master/slave name servers.",
+    "subject": "Computer Networks",
+    "topic": "Application Layer & Network Security",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_app_02",
+    "question": "What is the difference between an Iterative DNS query and a Recursive DNS query?",
+    "options": [
+      "In recursive queries, the contacted DNS server takes full responsibility to return the final IP answer; in iterative queries, it returns referrals to other servers for the client to ask next",
+      "Recursive queries use TCP only",
+      "Iterative queries cannot resolve .com domains",
+      "There is no difference"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Clients typically issue recursive queries to their local resolver; the local resolver performs iterative queries down the root-TLD-authoritative hierarchy.",
+    "subject": "Computer Networks",
+    "topic": "Application Layer & Network Security",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_app_03",
+    "question": "Which standard ports are used by HTTP and HTTPS respectively?",
+    "options": [
+      "HTTP: Port 80, HTTPS: Port 443",
+      "HTTP: Port 8080, HTTPS: Port 80",
+      "HTTP: Port 21, HTTPS: Port 22",
+      "HTTP: Port 25, HTTPS: Port 110"
+    ],
+    "correctAnswer": 0,
+    "explanation": "HTTP defaults to TCP port 80; encrypted HTTPS runs over TLS/SSL on TCP port 443.",
+    "subject": "Computer Networks",
+    "topic": "Application Layer & Network Security",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_app_04",
+    "question": "What is the primary difference between Symmetric Key Cryptography and Asymmetric Key Cryptography?",
+    "options": [
+      "Symmetric uses the exact same secret key for both encryption and decryption; Asymmetric uses a mathematically paired public key and private key",
+      "Asymmetric is 1000x faster than symmetric",
+      "Symmetric does not need keys",
+      "Asymmetric cannot encrypt text"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Symmetric (AES, DES) shares one secret key. Asymmetric (RSA, ECC) uses a public key to encrypt and a matching private key to decrypt.",
+    "subject": "Computer Networks",
+    "topic": "Application Layer & Network Security",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_app_05",
+    "question": "Which cryptographic algorithm is a widely used Asymmetric Public Key encryption algorithm based on the difficulty of factoring large prime numbers?",
+    "options": [
+      "AES (Advanced Encryption Standard)",
+      "DES (Data Encryption Standard)",
+      "RSA (Rivest-Shamir-Adleman)",
+      "Blowfish"
+    ],
+    "correctAnswer": 2,
+    "explanation": "RSA is the preeminent asymmetric public-key cryptosystem whose security relies on the integer factorization problem of large primes.",
+    "subject": "Computer Networks",
+    "topic": "Application Layer & Network Security",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_app_06",
+    "question": "What is a Cryptographic Hash Function (e.g., SHA-256)?",
+    "options": [
+      "An encryption function that can be easily reversed with a key",
+      "A one-way mathematical function that converts arbitrary-sized input into a fixed-size digest, with collision resistance and avalanche effect",
+      "A random number generator",
+      "A password manager"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Cryptographic hashes are deterministic, preimage-resistant, collision-resistant one-way functions producing fixed-size digests (SHA-256 produces 256 bits).",
+    "subject": "Computer Networks",
+    "topic": "Application Layer & Network Security",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_app_07",
+    "question": "How does a Digital Signature provide Authenticity, Non-Repudiation, and Integrity for a digital message?",
+    "options": [
+      "The sender encrypts the hash of the message with their own Private Key; any receiver can verify it using the sender’s Public Key",
+      "The sender encrypts the document with the receiver’s public key",
+      "The sender signs their name with a stylus",
+      "The sender emails a scanned signature image"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Signing with the sender’s private key guarantees only the holder of that key could have produced it (authenticity & non-repudiation); hashing ensures integrity.",
+    "subject": "Computer Networks",
+    "topic": "Application Layer & Network Security",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_app_08",
+    "question": "What is the role of a Certificate Authority (CA) in Public Key Infrastructure (PKI)?",
+    "options": [
+      "To store all internet passwords",
+      "To act as a trusted third party that validates identities and issues digitally signed X.509 certificates binding public keys to identities",
+      "To encrypt hard disks",
+      "To sell domain names exclusively"
+    ],
+    "correctAnswer": 1,
+    "explanation": "CAs issue digital certificates containing an entity’s public key and identity, signed by the CA’s private key to establish trust.",
+    "subject": "Computer Networks",
+    "topic": "Application Layer & Network Security",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_app_09",
+    "question": "What protocol do email clients use to SEND outgoing email to mail servers?",
+    "options": [
+      "POP3 (Post Office Protocol)",
+      "IMAP (Internet Message Access Protocol)",
+      "SMTP (Simple Mail Transfer Protocol - Port 25/587)",
+      "HTTP"
+    ],
+    "correctAnswer": 2,
+    "explanation": "SMTP is a push protocol used by clients to send emails and by mail transfer agents (MTAs) to relay emails between servers.",
+    "subject": "Computer Networks",
+    "topic": "Application Layer & Network Security",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_app_10",
+    "question": "What is the fundamental difference between POP3 and IMAP for retrieving emails?",
+    "options": [
+      "POP3 downloads messages locally and typically deletes them from the server; IMAP synchronizes emails on the server, allowing access from multiple devices",
+      "IMAP can only be used on smartphones",
+      "POP3 is encrypted; IMAP is not",
+      "POP3 is used to send emails"
+    ],
+    "correctAnswer": 0,
+    "explanation": "POP3 downloads emails to a single client (offline model); IMAP keeps messages stored and synchronized across all user devices on the central mail server.",
+    "subject": "Computer Networks",
+    "topic": "Application Layer & Network Security",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_app_11",
+    "question": "In HTTP/1.1, what header enables multiple requests and responses over a single persistent TCP connection?",
+    "options": [
+      "Connection: keep-alive",
+      "Upgrade: websocket",
+      "Cache-Control: no-cache",
+      "Accept-Encoding: gzip"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Persistent HTTP connections (Connection: keep-alive) eliminate the latency of reopening a new TCP 3-way handshake for every individual web asset.",
+    "subject": "Computer Networks",
+    "topic": "Application Layer & Network Security",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_app_12",
+    "question": "What major performance advancement was introduced in HTTP/2 compared to HTTP/1.1?",
+    "options": [
+      "Binary framing, multiplexing multiple request/response streams concurrently over a single TCP connection, and HPACK header compression",
+      "Removal of TLS encryption",
+      "Using UDP instead of TCP",
+      "Text-based XML commands"
+    ],
+    "correctAnswer": 0,
+    "explanation": "HTTP/2 introduced binary framing, full bidirectional multiplexing (preventing head-of-line blocking on single connections), server push, and header compression.",
+    "subject": "Computer Networks",
+    "topic": "Application Layer & Network Security",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_app_13",
+    "question": "What underlying transport protocol is used by HTTP/3?",
+    "options": [
+      "TCP",
+      "QUIC (built on top of UDP with integrated TLS 1.3)",
+      "SCTP",
+      "Raw IP"
+    ],
+    "correctAnswer": 1,
+    "explanation": "HTTP/3 replaces TCP with QUIC over UDP, eliminating TCP head-of-line blocking and speeding up connection handshakes to 0-RTT.",
+    "subject": "Computer Networks",
+    "topic": "Application Layer & Network Security",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_app_14",
+    "question": "What is a \"Man-in-the-Middle\" (MITM) attack?",
+    "options": [
+      "An attacker cutting physical fiber cables",
+      "An attacker secretly intercepts and potentially alters communication between two parties who believe they are communicating directly with each other",
+      "A physical robbery",
+      "A server crash"
+    ],
+    "correctAnswer": 1,
+    "explanation": "In a MITM attack, the adversary eavesdrops, impersonates endpoints, or tampers with unencrypted traffic (prevented using TLS with authenticated certificates).",
+    "subject": "Computer Networks",
+    "topic": "Application Layer & Network Security",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_app_15",
+    "question": "What is the difference between a Packet Filtering Firewall and a Stateful Inspection Firewall?",
+    "options": [
+      "Packet filtering inspects individual packet headers (IP, port) in isolation; stateful firewalls track active connection states (TCP SYN, ESTABLISHED) across entire sessions",
+      "Packet filtering uses AI; stateful does not",
+      "Stateful firewalls block all UDP",
+      "There is no difference"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Stateful inspection monitors the context of connections in a state table, permitting return traffic for established sessions while blocking unsolicited inbound packets.",
+    "subject": "Computer Networks",
+    "topic": "Application Layer & Network Security",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_app_16",
+    "question": "What is IPsec (Internet Protocol Security), and at which OSI layer does it operate?",
+    "options": [
+      "Application layer encryption",
+      "A suite of cryptographic protocols (AH and ESP) providing confidentiality, integrity, and authentication at the Network Layer (Layer 3)",
+      "Data Link layer encryption",
+      "A Wi-Fi password generator"
+    ],
+    "correctAnswer": 1,
+    "explanation": "IPsec operates at Layer 3, protecting all application traffic transparently via Authentication Header (AH) and Encapsulating Security Payload (ESP).",
+    "subject": "Computer Networks",
+    "topic": "Application Layer & Network Security",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_app_17",
+    "question": "What is the purpose of Diffie-Hellman Key Exchange algorithm?",
+    "options": [
+      "To encrypt databases on disk",
+      "To allow two parties to establish a shared secret cryptographic key over an insecure public communication channel without transmitting the key itself",
+      "To sign digital documents",
+      "To replace passwords"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Diffie-Hellman allows two communication partners to generate a shared symmetrical key over an eavesdropped medium using modular exponentiation and discrete logarithms.",
+    "subject": "Computer Networks",
+    "topic": "Application Layer & Network Security",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_app_18",
+    "question": "What is Cross-Site Scripting (XSS)?",
+    "options": [
+      "Injecting SQL queries into backend databases",
+      "A security vulnerability where an attacker injects malicious client-side scripts (e.g., JavaScript) into web pages viewed by other users",
+      "A hardware router exploit",
+      "Stealing domain names"
+    ],
+    "correctAnswer": 1,
+    "explanation": "XSS occurs when unescaped user input is reflected or stored in web pages, executing arbitrary JavaScript in victim browsers to steal session cookies or credentials.",
+    "subject": "Computer Networks",
+    "topic": "Application Layer & Network Security",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_app_19",
+    "question": "What is SQL Injection (SQLi)?",
+    "options": [
+      "Injecting malware into graphics drivers",
+      "An attack where untrusted malicious SQL input is concatenated into database queries, allowing attackers to manipulate or bypass database logic",
+      "Cracking Wi-Fi WPA2 keys",
+      "A buffer overflow in C compilers"
+    ],
+    "correctAnswer": 1,
+    "explanation": "SQL Injection manipulates database commands by injecting SQL fragments (e.g., \"' OR '1'='1\"), prevented using Parameterized Prepared Statements.",
+    "subject": "Computer Networks",
+    "topic": "Application Layer & Network Security",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "net_app_20",
+    "question": "What is a Distributed Denial of Service (DDoS) attack?",
+    "options": [
+      "An attack using a single computer to ping a website",
+      "A coordinated cyberattack where multiple compromised computers (botnet) overwhelm a target server with massive traffic, rendering it unavailable to legitimate users",
+      "Deleting the master boot record",
+      "A physical cut of undersea cables"
+    ],
+    "correctAnswer": 1,
+    "explanation": "DDoS uses thousands of distributed compromised zombie devices (botnet) to flood network bandwidth or server compute resources.",
+    "subject": "Computer Networks",
+    "topic": "Application Layer & Network Security",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  }
+]

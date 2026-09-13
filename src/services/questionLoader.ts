@@ -2,29 +2,51 @@ import { NormalizedQuestion, Difficulty, ContentStatus } from '../types';
 import { normalizeQuestion } from './questionNormalizer';
 import { IndexedDbService } from './indexedDbService';
 
-// Import datasets statically so app works 100% offline without runtime network fetches
-import cnQuestions from '../data/questions/computer_networks.json';
-import dbmsQuestions from '../data/questions/dbms.json';
-import osQuestions from '../data/questions/operating_systems.json';
-import dsQuestions from '../data/questions/data_structures.json';
-import dlCyberQuestions from '../data/questions/digital_logic_cyber.json';
-import tgtMock01Questions from '../data/questions/tgt_cs_mock_01.json';
+// Import all 32 DSSSB TGT topics datasets covering complete exam syllabus
+import coaDigitalQuestions from '../data/questions/dsssb_coa_digital.json';
+import osQuestions from '../data/questions/dsssb_operating_systems.json';
+import dsaQuestions from '../data/questions/dsssb_data_structures_algorithms.json';
+import dbmsQuestions from '../data/questions/dsssb_dbms.json';
+import cnQuestions from '../data/questions/dsssb_computer_networks.json';
+import progSeQuestions from '../data/questions/dsssb_programming_software_eng.json';
 
 const rawDatasets: Array<{ fileName: string; data: any[] }> = [
-  { fileName: 'computer_networks.json', data: cnQuestions },
-  { fileName: 'dbms.json', data: dbmsQuestions },
-  { fileName: 'operating_systems.json', data: osQuestions },
-  { fileName: 'data_structures.json', data: dsQuestions },
-  { fileName: 'digital_logic_cyber.json', data: dlCyberQuestions },
-  { fileName: 'tgt_cs_mock_01.json', data: tgtMock01Questions },
+  { fileName: 'dsssb_coa_digital.json', data: coaDigitalQuestions },
+  { fileName: 'dsssb_operating_systems.json', data: osQuestions },
+  { fileName: 'dsssb_data_structures_algorithms.json', data: dsaQuestions },
+  { fileName: 'dsssb_dbms.json', data: dbmsQuestions },
+  { fileName: 'dsssb_computer_networks.json', data: cnQuestions },
+  { fileName: 'dsssb_programming_software_eng.json', data: progSeQuestions },
 ];
 
 const CUSTOM_QUESTIONS_STORAGE_KEY = 'BYTEPREP_CUSTOM_USER_QUESTIONS';
 const EDITED_QUESTIONS_STORAGE_KEY = 'BYTEPREP_EDITED_QUESTIONS_OVERRIDE';
+const POSTED_QUESTION_IDS_KEY = 'BYTEPREP_POSTED_QUESTION_IDS_SET';
+const POSTED_QUESTION_TEXTS_KEY = 'BYTEPREP_POSTED_QUESTION_TEXTS_SET';
 
 let cachedNormalizedQuestions: NormalizedQuestion[] | null = null;
 
 export class QuestionLoader {
+  private static normalizeTextKey(text: string): string {
+    return (text || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  }
+
+  private static getPostedIdsSet(): Set<string> {
+    try {
+      const raw = localStorage.getItem(POSTED_QUESTION_IDS_KEY);
+      if (raw) return new Set(JSON.parse(raw));
+    } catch {}
+    return new Set();
+  }
+
+  private static getPostedTextsSet(): Set<string> {
+    try {
+      const raw = localStorage.getItem(POSTED_QUESTION_TEXTS_KEY);
+      if (raw) return new Set(JSON.parse(raw));
+    } catch {}
+    return new Set();
+  }
+
   private static getCustomQuestionsFromStorage(): NormalizedQuestion[] {
     try {
       const data = localStorage.getItem(CUSTOM_QUESTIONS_STORAGE_KEY);
@@ -154,7 +176,30 @@ export class QuestionLoader {
     this.updateQuestion(q);
   }
 
-  public static markQuestionPosted(id: string): void {
+  public static markQuestionPosted(id: string, questionText?: string): void {
+    try {
+      const postedIds = this.getPostedIdsSet();
+      postedIds.add(id);
+      localStorage.setItem(POSTED_QUESTION_IDS_KEY, JSON.stringify(Array.from(postedIds)));
+
+      let textToRecord = questionText;
+      if (!textToRecord) {
+        const found = this.getQuestionById(id);
+        if (found) textToRecord = found.question;
+      }
+
+      if (textToRecord) {
+        const normKey = this.normalizeTextKey(textToRecord);
+        if (normKey) {
+          const postedTexts = this.getPostedTextsSet();
+          postedTexts.add(normKey);
+          localStorage.setItem(POSTED_QUESTION_TEXTS_KEY, JSON.stringify(Array.from(postedTexts)));
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to record posted question key:', e);
+    }
+
     const q = this.getQuestionById(id);
     if (!q) return;
 
@@ -193,9 +238,35 @@ export class QuestionLoader {
 
     const all: NormalizedQuestion[] = [];
     const seenIds = new Set<string>();
+    const seenTexts = new Set<string>();
+    const postedIds = this.getPostedIdsSet();
+    const postedTexts = this.getPostedTextsSet();
     const overrides = this.getEditedOverrides();
 
-    // 1. Built-in datasets
+    // 1. Custom User Uploaded Questions (priority)
+    const customList = this.getCustomQuestionsFromStorage();
+    customList.forEach(q => {
+      const normKey = this.normalizeTextKey(q.question);
+      if (seenIds.has(q.id) || (normKey && seenTexts.has(normKey))) {
+        return; // strictly skip duplicate
+      }
+      seenIds.add(q.id);
+      if (normKey) seenTexts.add(normKey);
+
+      if (overrides[q.id]) {
+        Object.assign(q, overrides[q.id]);
+      }
+      if (postedIds.has(q.id) || (normKey && postedTexts.has(normKey))) {
+        q.posted = true;
+        q.contentStatus = 'POSTED';
+      }
+
+      q.contentStatus = q.contentStatus || 'READY';
+      q.timesUsed = q.timesUsed || 0;
+      all.push(q);
+    });
+
+    // 2. Built-in 32 DSSSB TGT Syllabus Datasets
     for (const dataset of rawDatasets) {
       const items = Array.isArray(dataset.data) ? dataset.data : [];
       items.forEach((item, index) => {
@@ -204,16 +275,25 @@ export class QuestionLoader {
           index,
         });
 
-        let finalId = normalized.id;
-        if (seenIds.has(finalId)) {
-          finalId = `${finalId}_${dataset.fileName.replace('.json', '')}`;
-          normalized.id = finalId;
+        const normKey = this.normalizeTextKey(normalized.question);
+
+        // Strict duplicate suppression: NEVER allow same ID or identical question text twice
+        if (seenIds.has(normalized.id) || (normKey && seenTexts.has(normKey))) {
+          return; // Skip duplicate question entirely
         }
-        seenIds.add(finalId);
+
+        seenIds.add(normalized.id);
+        if (normKey) seenTexts.add(normKey);
 
         // Apply override if user previously edited
-        if (overrides[finalId]) {
-          Object.assign(normalized, overrides[finalId]);
+        if (overrides[normalized.id]) {
+          Object.assign(normalized, overrides[normalized.id]);
+        }
+
+        // Apply posted status if previously posted
+        if (postedIds.has(normalized.id) || (normKey && postedTexts.has(normKey))) {
+          normalized.posted = true;
+          normalized.contentStatus = 'POSTED';
         }
 
         normalized.contentStatus = normalized.contentStatus || 'READY';
@@ -221,20 +301,6 @@ export class QuestionLoader {
         all.push(normalized);
       });
     }
-
-    // 2. Custom User Uploaded Questions
-    const customList = this.getCustomQuestionsFromStorage();
-    customList.forEach(q => {
-      if (!seenIds.has(q.id)) {
-        seenIds.add(q.id);
-        if (overrides[q.id]) {
-          Object.assign(q, overrides[q.id]);
-        }
-        q.contentStatus = q.contentStatus || 'READY';
-        q.timesUsed = q.timesUsed || 0;
-        all.unshift(q); // Custom questions visible at top
-      }
-    });
 
     cachedNormalizedQuestions = all;
     return all;

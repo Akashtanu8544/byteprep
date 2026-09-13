@@ -192,6 +192,9 @@ export interface BrandKitConfig {
   defaultOutroDuration?: number;
   logoDataUrl?: string;
   fontFamily?: string;
+  backgroundImageUrl?: string; // Custom background image (base64 or URL)
+  liveImageToVideoUrl?: string; // Live image to video asset backdrop (base64 or URL)
+  savedTemplates?: { id: string; name: string; config: Partial<BrandKitConfig> }[];
 }
 
 export interface LanguageSettings {
@@ -269,6 +272,7 @@ export interface ShortConfig {
   audioTrackName?: string;
   audioTrackDuration?: number;
   customAudioDataUrl?: string;
+  bgmVolume?: number; // 0.1 to 1.0 (default 0.6)
   // Permanent Watermark & Logo Overlay
   watermarkType?: 'none' | 'logo' | 'text';
   watermarkLogoUrl?: string;
@@ -506,6 +510,12 @@ export interface ChallengeSettings {
   appUrl: string;
   defaultLanguage?: ContentLanguage;
   defaultVoiceStyle?: VoiceStyle;
+  // Video Background Music (BGM) Prefixed Settings
+  bgmEnabled?: boolean;
+  bgmTrackId?: string;
+  customBgmDataUrl?: string;
+  customBgmName?: string;
+  bgmVolume?: number;
 }
 
 export interface UserStats {

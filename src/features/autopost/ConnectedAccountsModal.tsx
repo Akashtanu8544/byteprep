@@ -23,6 +23,7 @@ import {
   Unlock,
   Check,
   Share2,
+  ArrowLeft,
 } from 'lucide-react';
 import { SocialAccountConfig } from '../../types';
 import { StorageService } from '../../services/storageService';
@@ -43,12 +44,14 @@ interface SocialLoginModalProps {
   isOpen: boolean;
   onClose: () => void;
   onAccountsUpdated?: () => void;
+  isFullPage?: boolean;
 }
 
 export const ConnectedAccountsModal: React.FC<SocialLoginModalProps> = ({
   isOpen,
   onClose,
   onAccountsUpdated,
+  isFullPage = false,
 }) => {
   const [accounts, setAccounts] = useState<SocialAccountConfig[]>(
     StorageService.getSocialAccounts()
@@ -289,63 +292,68 @@ export const ConnectedAccountsModal: React.FC<SocialLoginModalProps> = ({
 
   const totalLoggedIn = [isYouTubeLoggedIn, isFbLoggedIn, isIgLoggedIn, isTtLoggedIn, isWebhookActive].filter(Boolean).length;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md animate-fadeIn">
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-2xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
-        {/* Modal Header */}
-        <div className="px-6 py-5 border-b border-slate-800 flex items-center justify-between bg-slate-950/60">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-rose-500 to-amber-500 flex items-center justify-center text-white shadow-lg shadow-rose-500/20">
-              <ShieldCheck className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-lg font-black text-white">Social Media Login & Access</h2>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                  {totalLoggedIn} of 5 Active
-                </span>
-              </div>
-              <p className="text-xs text-slate-400">
-                Log in to your social accounts to grant publishing access for YouTube Shorts, IG Reels, FB Reels & TikTok.
-              </p>
+  const cardContent = (
+    <div className="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-2xl flex flex-col shadow-2xl overflow-hidden">
+      {/* Header */}
+      <div className="px-5 sm:px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/60">
+        <div className="flex items-center gap-3">
+          {isFullPage && (
+            <button
+              type="button"
+              onClick={onClose}
+              className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl transition-colors cursor-pointer"
+              title="Back"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+          )}
+          <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-rose-500 to-amber-500 flex items-center justify-center text-white shadow-lg shadow-rose-500/20">
+            <ShieldCheck className="w-5 h-5" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h1 className="text-lg font-black text-white">Accounts</h1>
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                {totalLoggedIn}/5 Connected
+              </span>
             </div>
           </div>
+        </div>
+        {!isFullPage && (
           <button
             onClick={onClose}
             className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
-        </div>
+        )}
+      </div>
 
-        {/* Modal Body */}
-        <div className="p-6 space-y-4 overflow-y-auto flex-1 custom-scrollbar">
-          {/* Quick 1-Click "Log In & Grant Access to All" Banner */}
-          <div className="p-4.5 bg-gradient-to-r from-rose-950/40 via-purple-950/40 to-indigo-950/40 border border-rose-500/30 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-lg">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-rose-500/20 border border-rose-500/30 flex items-center justify-center text-rose-400 shrink-0">
-                <Sparkles className="w-5 h-5" />
-              </div>
-              <div>
-                <p className="text-sm font-black text-white">1-Click Fast Pass: Authorize All Platforms</p>
-                <p className="text-xs text-slate-300">
-                  Instantly log in and grant full video publishing access to YouTube, Instagram, Facebook, and TikTok.
-                </p>
-              </div>
+      {/* Modal Body */}
+      <div className="p-5 sm:p-6 space-y-4 overflow-y-auto flex-1 custom-scrollbar">
+        {/* Quick 1-Click Fast Pass */}
+        <div className="p-4 bg-gradient-to-r from-rose-950/40 via-purple-950/40 to-indigo-950/40 border border-rose-500/30 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-lg">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-rose-500/20 border border-rose-500/30 flex items-center justify-center text-rose-400 shrink-0">
+              <Sparkles className="w-4 h-4" />
             </div>
-            <button
-              onClick={handleGrantAccessToAll}
-              disabled={loadingPlatform === 'all'}
-              className="w-full sm:w-auto px-4 py-2.5 bg-gradient-to-r from-rose-500 to-indigo-500 hover:from-rose-400 hover:to-indigo-400 text-white text-xs font-black rounded-xl shadow-lg shadow-rose-500/30 transition-all flex items-center justify-center gap-2 cursor-pointer shrink-0 disabled:opacity-50"
-            >
-              {loadingPlatform === 'all' ? (
-                <RefreshCw className="w-4 h-4 animate-spin" />
-              ) : (
-                <Unlock className="w-4 h-4" />
-              )}
-              <span>Grant Full Access to All</span>
-            </button>
+            <div>
+              <p className="text-xs font-black text-white">Authorize All Platforms</p>
+            </div>
           </div>
+          <button
+            onClick={handleGrantAccessToAll}
+            disabled={loadingPlatform === 'all'}
+            className="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-rose-500 to-indigo-500 hover:from-rose-400 hover:to-indigo-400 text-white text-xs font-black rounded-xl shadow-lg shadow-rose-500/30 transition-all flex items-center justify-center gap-2 cursor-pointer shrink-0 disabled:opacity-50"
+          >
+            {loadingPlatform === 'all' ? (
+              <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+            ) : (
+              <Unlock className="w-3.5 h-3.5" />
+            )}
+            <span>Connect All</span>
+          </button>
+        </div>
 
           {/* Status Message Feedback */}
           {statusMessage && (
@@ -740,7 +748,7 @@ export const ConnectedAccountsModal: React.FC<SocialLoginModalProps> = ({
             >
               <div className="flex items-center gap-2">
                 <Info className="w-4 h-4 text-sky-400" />
-                <span>Customize Channel Handles & Display Names</span>
+                <span>Handles & Names</span>
               </div>
               {expandedDetails ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
             </button>
@@ -750,7 +758,7 @@ export const ConnectedAccountsModal: React.FC<SocialLoginModalProps> = ({
                 {accounts.map(acc => (
                   <div key={acc.id} className="space-y-1">
                     <label className="text-[11px] font-bold text-slate-400 block capitalize">
-                      {acc.name} Handle:
+                      {acc.name}:
                     </label>
                     <input
                       type="text"
@@ -767,20 +775,33 @@ export const ConnectedAccountsModal: React.FC<SocialLoginModalProps> = ({
         </div>
 
         {/* Modal Footer */}
-        <div className="px-6 py-4 border-t border-slate-800 bg-slate-950/70 flex items-center justify-between">
+        <div className="px-5 sm:px-6 py-3.5 border-t border-slate-800 bg-slate-950/70 flex items-center justify-between">
           <div className="flex items-center gap-2 text-xs text-slate-400">
             <Radio className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
-            <span>
-              {totalLoggedIn} of 5 Social Media Platforms Logged In & Ready
-            </span>
+            <span>{totalLoggedIn}/5 Connected</span>
           </div>
           <button
             onClick={onClose}
-            className="px-5 py-2.5 bg-rose-500 hover:bg-rose-400 text-white font-bold text-xs rounded-xl shadow-lg shadow-rose-500/25 transition-all cursor-pointer"
+            className="px-5 py-2 bg-rose-500 hover:bg-rose-400 text-white font-bold text-xs rounded-xl shadow-lg shadow-rose-500/25 transition-all cursor-pointer"
           >
-            Done & Save Access
+            Done
           </button>
         </div>
+      </div>
+  );
+
+  if (isFullPage) {
+    return (
+      <div className="w-full max-w-3xl mx-auto py-4 sm:py-6 px-3 sm:px-6 animate-fadeIn">
+        {cardContent}
+      </div>
+    );
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/85 backdrop-blur-md animate-fadeIn">
+      <div className="max-w-2xl w-full max-h-[92vh] flex flex-col my-auto">
+        {cardContent}
       </div>
     </div>
   );

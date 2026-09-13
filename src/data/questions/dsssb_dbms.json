@@ -1,0 +1,1602 @@
+[
+  {
+    "id": "db_er_01",
+    "question": "In the three-schema database architecture (ANSI/SPARC), which level describes how data is physically stored on disk storage?",
+    "options": [
+      "External Level (View Level)",
+      "Conceptual Level (Logical Level)",
+      "Internal Level (Physical Level)",
+      "Application Level"
+    ],
+    "correctAnswer": 2,
+    "explanation": "The Internal (Physical) Level describes physical storage structures, access paths, block organizations, and indexing mechanisms on disk.",
+    "subject": "Database Management Systems",
+    "topic": "Database Management Systems & ER Model",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_er_02",
+    "question": "What is \"Physical Data Independence\"?",
+    "options": [
+      "The ability to modify the conceptual schema without altering external views",
+      "The ability to modify the physical schema (storage devices, file structures, indexes) without altering the conceptual schema",
+      "Having no physical hard drive",
+      "Storing data without tables"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Physical Data Independence insulates the conceptual schema from changes made to physical storage structures and disk configurations.",
+    "subject": "Database Management Systems",
+    "topic": "Database Management Systems & ER Model",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_er_03",
+    "question": "In an Entity-Relationship (ER) diagram, how are Entities, Attributes, and Relationships visually symbolized according to Chen’s notation?",
+    "options": [
+      "Entities = Rectangles, Attributes = Ellipses, Relationships = Diamonds",
+      "Entities = Circles, Attributes = Squares, Relationships = Lines",
+      "Entities = Triangles, Attributes = Rectangles, Relationships = Stars",
+      "Entities = Diamonds, Attributes = Rectangles, Relationships = Ellipses"
+    ],
+    "correctAnswer": 0,
+    "explanation": "In standard Chen notation: Rectangles represent Entity Sets, Ellipses/Ovals represent Attributes, and Diamonds represent Relationships.",
+    "subject": "Database Management Systems",
+    "topic": "Database Management Systems & ER Model",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_er_04",
+    "question": "What is a \"Weak Entity Set\" in an ER diagram?",
+    "options": [
+      "An entity set with no attributes",
+      "An entity set that does not possess a primary key of its own and depends on an identifying owner entity set",
+      "An entity set stored on temporary media",
+      "An entity set with only foreign keys"
+    ],
+    "correctAnswer": 1,
+    "explanation": "A weak entity set lacks a primary key and is identified by combining its partial key (discriminator) with the primary key of its owner entity.",
+    "subject": "Database Management Systems",
+    "topic": "Database Management Systems & ER Model",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_er_05",
+    "question": "How is a Weak Entity set represented in an ER diagram?",
+    "options": [
+      "Dashed circle",
+      "Double Rectangle (with identifying relationship shown as Double Diamond)",
+      "Dotted Diamond",
+      "Bold Triangle"
+    ],
+    "correctAnswer": 1,
+    "explanation": "A weak entity is drawn as a Double Rectangle, and its identifying relationship with the owner entity is drawn as a Double Diamond.",
+    "subject": "Database Management Systems",
+    "topic": "Database Management Systems & ER Model",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_er_06",
+    "question": "In an ER diagram, how is a Multi-Valued Attribute (e.g., PhoneNumbers where an entity can have several) represented?",
+    "options": [
+      "Dashed Ellipse",
+      "Double Ellipse",
+      "Rectangle with double borders",
+      "Underlined Oval"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Multi-valued attributes that can hold more than one value for a single entity instance are symbolized by Double Ellipses.",
+    "subject": "Database Management Systems",
+    "topic": "Database Management Systems & ER Model",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_er_07",
+    "question": "How is a Derived Attribute (such as \"Age\" derived from \"DateOfBirth\") represented in an ER diagram?",
+    "options": [
+      "Double Ellipse",
+      "Dashed / Dotted Ellipse",
+      "Double Rectangle",
+      "Hexagon"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Derived attributes (whose values can be calculated from other existing attributes) are represented by Dashed (dotted) Ellipses.",
+    "subject": "Database Management Systems",
+    "topic": "Database Management Systems & ER Model",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_er_08",
+    "question": "What is the \"Cardinality Ratio\" of a relationship?",
+    "options": [
+      "The total number of attributes in the entity",
+      "The maximum number of relationship instances in which an entity can participate (1:1, 1:N, M:N)",
+      "The total rows in the database",
+      "The number of primary keys"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Cardinality ratios specify the maximum number of entities of one set associated with entities of another set (One-to-One, One-to-Many, Many-to-Many).",
+    "subject": "Database Management Systems",
+    "topic": "Database Management Systems & ER Model",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_er_09",
+    "question": "What is \"Total Participation\" (existence dependency) of an entity set in a relationship?",
+    "options": [
+      "Every entity in the entity set MUST participate in at least one instance of the relationship",
+      "Only one entity can participate",
+      "Entities can optionally participate",
+      "Entities must have unique values"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Total participation means every member of the entity set must be associated with the relationship, represented by a Double Line in ER diagrams.",
+    "subject": "Database Management Systems",
+    "topic": "Database Management Systems & ER Model",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_er_10",
+    "question": "When mapping a Many-to-Many (M:N) relationship into a relational database schema, what is required?",
+    "options": [
+      "Add a foreign key to entity table A only",
+      "Create a new separate relation (junction/bridge table) whose primary key comprises foreign keys referencing both participating tables",
+      "Combine both tables into a single table",
+      "Use a view instead of a table"
+    ],
+    "correctAnswer": 1,
+    "explanation": "An M:N relationship cannot be represented with a single foreign key; it requires a separate join/junction relation combining primary keys of both entities.",
+    "subject": "Database Management Systems",
+    "topic": "Database Management Systems & ER Model",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_er_11",
+    "question": "What is a \"Composite Attribute\"?",
+    "options": [
+      "An attribute that can be divided into smaller sub-parts (e.g., Address composed of Street, City, State, PinCode)",
+      "An attribute that contains multiple values",
+      "An attribute with numeric values only",
+      "A primary key made of two fields"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Composite attributes can be subdivided into smaller component attributes that have their own independent meanings.",
+    "subject": "Database Management Systems",
+    "topic": "Database Management Systems & ER Model",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_er_12",
+    "question": "What is Generalization in Extended ER (EER) modeling?",
+    "options": [
+      "Extracting common attributes from multiple lower-level entity sets to define a generalized higher-level superclass entity (bottom-up approach)",
+      "Splitting an entity into many parts",
+      "Deleting redundant records",
+      "Creating secondary indexes"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Generalization is the bottom-up synthesis of multiple entity sets into a higher-level superclass based on shared common features.",
+    "subject": "Database Management Systems",
+    "topic": "Database Management Systems & ER Model",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_er_13",
+    "question": "What is Specialization in EER modeling?",
+    "options": [
+      "Top-down design process of defining sub-groupings of an entity set that possess distinctive specialized attributes",
+      "Bottom-up merging of tables",
+      "Creating database backups",
+      "Enforcing NOT NULL constraints"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Specialization is the top-down refinement of a high-level entity into lower-level subclasses with specific distinctive characteristics.",
+    "subject": "Database Management Systems",
+    "topic": "Database Management Systems & ER Model",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_er_14",
+    "question": "In an ER model, how is the Partial Key (Discriminator) of a weak entity set indicated on an attribute ellipse?",
+    "options": [
+      "Solid underline",
+      "Dashed / Dotted underline",
+      "Double underline",
+      "Bold font"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The discriminator or partial key of a weak entity set is indicated with a dashed underline inside its attribute ellipse.",
+    "subject": "Database Management Systems",
+    "topic": "Database Management Systems & ER Model",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_er_15",
+    "question": "What is a Recursive (Unary) Relationship?",
+    "options": [
+      "A relationship that calls itself indefinitely",
+      "A relationship where the same entity set participates more than once in different roles (e.g., Employee \"manages\" Employee)",
+      "A circular foreign key between 3 tables",
+      "A relationship with no primary key"
+    ],
+    "correctAnswer": 1,
+    "explanation": "A recursive or unary relationship exists when an entity set is related to itself (e.g., Course \"prerequisite to\" Course).",
+    "subject": "Database Management Systems",
+    "topic": "Database Management Systems & ER Model",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_er_16",
+    "question": "What is the Data Dictionary (or System Catalog) in a DBMS?",
+    "options": [
+      "A spellchecker for queries",
+      "A repository of metadata containing definitions, schemas, constraints, user privileges, and storage details of the database",
+      "A list of all customer passwords",
+      "A collection of SQL error messages"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The data dictionary stores metadata (data about data): table schemas, view definitions, integrity constraints, and security permissions.",
+    "subject": "Database Management Systems",
+    "topic": "Database Management Systems & ER Model",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_er_17",
+    "question": "What is Logical Data Independence?",
+    "options": [
+      "The ability to modify the conceptual schema without altering existing external schemas or application programs",
+      "Moving database from Linux to Windows",
+      "Running SQL queries in parallel",
+      "Changing index types"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Logical Data Independence shields user views and application code from structural expansions or changes in the conceptual schema.",
+    "subject": "Database Management Systems",
+    "topic": "Database Management Systems & ER Model",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_er_18",
+    "question": "What is the degree of a relationship in an ER model?",
+    "options": [
+      "The number of participating entity sets in the relationship (e.g., Binary = 2, Ternary = 3)",
+      "The total attributes in the relationship",
+      "The number of rows in the table",
+      "The number of primary keys"
+    ],
+    "correctAnswer": 0,
+    "explanation": "The degree of a relationship refers to the number of entity types that associate through that relationship type.",
+    "subject": "Database Management Systems",
+    "topic": "Database Management Systems & ER Model",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_er_19",
+    "question": "What is an Identifying Owner Entity in relation to a weak entity?",
+    "options": [
+      "The user who created the table",
+      "The strong entity set upon whose primary key the weak entity relies for existential identification",
+      "The database administrator account",
+      "The root node in a B-tree"
+    ],
+    "correctAnswer": 1,
+    "explanation": "A weak entity cannot exist without its identifying owner entity; deleting the owner entity cascades to delete all associated weak entities.",
+    "subject": "Database Management Systems",
+    "topic": "Database Management Systems & ER Model",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_er_20",
+    "question": "Which constraint in EER specifies that an entity can be a member of at most one subclass (subclasses are mutually exclusive)?",
+    "options": [
+      "Disjointness Constraint (d)",
+      "Overlapping Constraint (o)",
+      "Total Completeness",
+      "Partial Completeness"
+    ],
+    "correctAnswer": 0,
+    "explanation": "The Disjointness constraint specifies that subclasses must be disjoint (an entity cannot belong to more than one subclass simultaneously).",
+    "subject": "Database Management Systems",
+    "topic": "Database Management Systems & ER Model",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_rel_01",
+    "question": "In the Relational Model proposed by E.F. Codd, what do the terms Relation, Tuple, and Attribute correspond to in common terminology?",
+    "options": [
+      "Table, Row (Record), and Column (Field) respectively",
+      "Row, Table, and Key",
+      "Database, Table, and Row",
+      "File, Index, and Block"
+    ],
+    "correctAnswer": 0,
+    "explanation": "In relational terminology: a Relation is a 2D Table, a Tuple is an individual Row/Record, and an Attribute is a Column/Field.",
+    "subject": "Database Management Systems",
+    "topic": "Relational Model & Relational Algebra",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_rel_02",
+    "question": "What is the \"Degree\" (Arity) of a relation?",
+    "options": [
+      "The total number of tuples (rows) in the relation",
+      "The total number of attributes (columns) in the relation schema",
+      "The number of primary keys",
+      "The number of foreign keys"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The Degree (Arity) of a relation is the number of attributes (columns). The Cardinality is the number of tuples (rows).",
+    "subject": "Database Management Systems",
+    "topic": "Relational Model & Relational Algebra",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_rel_03",
+    "question": "What is the \"Cardinality\" of a relation?",
+    "options": [
+      "The total number of columns",
+      "The total number of tuples (rows) currently in the relation",
+      "The memory footprint in MB",
+      "The count of unique indexes"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Cardinality refers to the total count of tuples (rows) present in the relation at a given instant.",
+    "subject": "Database Management Systems",
+    "topic": "Relational Model & Relational Algebra",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_rel_04",
+    "question": "What does the Entity Integrity Constraint mandate?",
+    "options": [
+      "Foreign key values must match primary key values",
+      "No primary key attribute value can be NULL",
+      "Every table must have at least 10 rows",
+      "All attributes must be strings"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Entity Integrity requires that no component of a primary key may accept a NULL value, ensuring every tuple is uniquely identifiable.",
+    "subject": "Database Management Systems",
+    "topic": "Relational Model & Relational Algebra",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_rel_05",
+    "question": "What does the Referential Integrity Constraint require regarding Foreign Keys?",
+    "options": [
+      "Foreign key columns must never be NULL",
+      "A foreign key value in a referencing relation must either match an existing primary key value in the referenced relation, or be entirely NULL",
+      "Foreign keys cannot be indexed",
+      "Referenced tables must be in the same schema"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Referential integrity dictates that foreign key references must remain valid: every foreign key value must exist in the referenced primary key or be NULL.",
+    "subject": "Database Management Systems",
+    "topic": "Relational Model & Relational Algebra",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_rel_06",
+    "question": "Which Relational Algebra operation selects horizontal rows that satisfy a specified predicate condition?",
+    "options": [
+      "Projection (π)",
+      "Selection (σ)",
+      "Join (⋈)",
+      "Division (÷)"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The Selection operator (lowercase sigma σ) filters rows/tuples based on a boolean condition (e.g., σ_{salary > 50000}(Employee)).",
+    "subject": "Database Management Systems",
+    "topic": "Relational Model & Relational Algebra",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_rel_07",
+    "question": "Which Relational Algebra operation selects vertical columns from a relation and automatically eliminates duplicate tuples?",
+    "options": [
+      "Selection (σ)",
+      "Projection (π)",
+      "Cartesian Product (×)",
+      "Intersection (∩)"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The Projection operator (pi π) extracts specified columns across all tuples, discarding omitted attributes and filtering duplicate rows.",
+    "subject": "Database Management Systems",
+    "topic": "Relational Model & Relational Algebra",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_rel_08",
+    "question": "If Relation R has 5 tuples and 3 attributes, and Relation S has 4 tuples and 2 attributes, what are the cardinality and degree of their Cartesian Product (R × S)?",
+    "options": [
+      "Cardinality = 20, Degree = 5",
+      "Cardinality = 9, Degree = 6",
+      "Cardinality = 20, Degree = 6",
+      "Cardinality = 5, Degree = 3"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Cartesian Product Cardinality = |R| * |S| = 5 * 4 = 20 rows. Degree = Deg(R) + Deg(S) = 3 + 2 = 5 columns.",
+    "subject": "Database Management Systems",
+    "topic": "Relational Model & Relational Algebra",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_rel_09",
+    "question": "What are the fundamental relational algebra operators that form a complete set (all other operations can be derived from them)?",
+    "options": [
+      "Selection (σ), Projection (π), Union (∪), Set Difference (-), Cartesian Product (×)",
+      "Join (⋈), Division (÷), Intersection (∩)",
+      "Select, Insert, Update, Delete",
+      "Count, Sum, Avg, Min, Max"
+    ],
+    "correctAnswer": 0,
+    "explanation": "The five foundational primitive operators are Selection, Projection, Union, Set Difference, and Cartesian Product.",
+    "subject": "Database Management Systems",
+    "topic": "Relational Model & Relational Algebra",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_rel_10",
+    "question": "What prerequisite is mandatory for two relations to participate in Union (∪), Intersection (∩), or Set Difference (-)?",
+    "options": [
+      "They must have the same number of rows",
+      "They must be Union-Compatible (same number of attributes with compatible data type domains)",
+      "They must share the same primary key",
+      "They must belong to the same database file"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Two relations are union-compatible if they have the exact same degree and corresponding attributes have identical or compatible underlying domains.",
+    "subject": "Database Management Systems",
+    "topic": "Relational Model & Relational Algebra",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_rel_11",
+    "question": "What is a Natural Join (R ⋈ S)?",
+    "options": [
+      "A cross product with no condition",
+      "An equijoin performed over all common attribute names shared by both relations, projecting away the duplicate join columns",
+      "A join that retains unmatched rows with NULLs",
+      "A self join on primary keys"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Natural Join automatically equates attributes with identical names in both relations and suppresses the duplicate attribute in the output schema.",
+    "subject": "Database Management Systems",
+    "topic": "Relational Model & Relational Algebra",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_rel_12",
+    "question": "Which relational algebra operation is designed to handle queries containing the phrase \"for all\" (universal quantification, e.g., \"Find students enrolled in ALL courses\")?",
+    "options": [
+      "Cartesian Product",
+      "Theta Join",
+      "Division Operator (÷)",
+      "Outer Join"
+    ],
+    "correctAnswer": 2,
+    "explanation": "The Division operator (R ÷ S) produces tuples from R that are associated with all tuples in relation S.",
+    "subject": "Database Management Systems",
+    "topic": "Relational Model & Relational Algebra",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_rel_13",
+    "question": "What does a Left Outer Join (R ⟕ S) produce in its result relation?",
+    "options": [
+      "Only matching tuples from both relations",
+      "All matching tuples, plus tuples from the left relation R that have no match in S (with NULLs for S attributes)",
+      "All tuples from S only",
+      "The Cartesian product of R and S"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Left Outer Join preserves all rows from the left relation R; if no match exists in S, attributes of S are populated with NULL values.",
+    "subject": "Database Management Systems",
+    "topic": "Relational Model & Relational Algebra",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_rel_14",
+    "question": "What is a Candidate Key in a relational schema?",
+    "options": [
+      "Any attribute with numbers",
+      "A minimal superkey (a set of attributes that uniquely identifies tuples with no extraneous attributes)",
+      "A foreign key pointing to another table",
+      "The first column of a table"
+    ],
+    "correctAnswer": 1,
+    "explanation": "A candidate key is a minimal superkey; if any attribute is removed from it, it loses the property of uniqueness.",
+    "subject": "Database Management Systems",
+    "topic": "Relational Model & Relational Algebra",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_rel_15",
+    "question": "What is the difference between a Superkey and a Candidate Key?",
+    "options": [
+      "A superkey is always smaller than a candidate key",
+      "Every candidate key is a superkey, but a superkey may contain extraneous attributes not necessary for unique identification",
+      "Superkeys can contain NULLs",
+      "There is no difference"
+    ],
+    "correctAnswer": 1,
+    "explanation": "A superkey is any attribute set guaranteeing uniqueness. A candidate key is a minimal superkey containing no redundant attributes.",
+    "subject": "Database Management Systems",
+    "topic": "Relational Model & Relational Algebra",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_rel_16",
+    "question": "What is a Primary Key?",
+    "options": [
+      "The candidate key chosen by the database designer to uniquely identify tuples in a relation",
+      "The key with the largest numeric value",
+      "The first attribute created in SQL",
+      "A key that can store NULLs"
+    ],
+    "correctAnswer": 0,
+    "explanation": "The primary key is the designated candidate key whose values are permanently used to distinguish tuples in the relation.",
+    "subject": "Database Management Systems",
+    "topic": "Relational Model & Relational Algebra",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_rel_17",
+    "question": "What is an Alternate Key?",
+    "options": [
+      "A candidate key that was NOT selected as the primary key",
+      "A backup hard disk",
+      "A foreign key",
+      "A composite primary key"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Any candidate key not selected as the primary key is referred to as an alternate (secondary) key.",
+    "subject": "Database Management Systems",
+    "topic": "Relational Model & Relational Algebra",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_rel_18",
+    "question": "What is Relational Calculus fundamentally characterized by compared to Relational Algebra?",
+    "options": [
+      "Relational Algebra is procedural (specifies how to retrieve data); Relational Calculus is declarative (non-procedural, specifies what data to retrieve)",
+      "Relational calculus uses matrices",
+      "Relational algebra is only for numbers",
+      "They are completely unrelated models"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Codd showed equivalence between relational algebra (procedural) and relational calculus (declarative logic: Tuple Relational Calculus and Domain Relational Calculus).",
+    "subject": "Database Management Systems",
+    "topic": "Relational Model & Relational Algebra",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_rel_19",
+    "question": "What is the Rename operator symbolized by in Relational Algebra?",
+    "options": [
+      "Lowercase rho (ρ)",
+      "Uppercase sigma (Σ)",
+      "Lowercase pi (π)",
+      "Gamma (γ)"
+    ],
+    "correctAnswer": 0,
+    "explanation": "The rename operator is denoted by lowercase rho ρ: ρ_{S(B1, B2)}(R) renames relation R to S with new column names.",
+    "subject": "Database Management Systems",
+    "topic": "Relational Model & Relational Algebra",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_rel_20",
+    "question": "What is Codd’s Theorem?",
+    "options": [
+      "Every relational database must use SQL",
+      "Relational Algebra and safe Tuple Relational Calculus (or Domain Relational Calculus) are equivalent in expressive power",
+      "All tables must be in 3NF",
+      "Databases cannot store images"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Codd’s Theorem proves the formal equivalence between procedural relational algebra and declarative relational calculus (defining \"relational completeness\").",
+    "subject": "Database Management Systems",
+    "topic": "Relational Model & Relational Algebra",
+    "difficulty": "hard",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_sql_01",
+    "question": "Which SQL statement category do CREATE, ALTER, DROP, and TRUNCATE belong to?",
+    "options": [
+      "DML (Data Manipulation Language)",
+      "DDL (Data Definition Language)",
+      "DCL (Data Control Language)",
+      "TCL (Transaction Control Language)"
+    ],
+    "correctAnswer": 1,
+    "explanation": "DDL (Data Definition Language) commands define, modify, and delete the physical and logical database schema structures.",
+    "subject": "Database Management Systems",
+    "topic": "SQL & Query Optimization",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_sql_02",
+    "question": "Which SQL command removes all rows from a table, cannot be selectively filtered with a WHERE clause, and deallocates data pages quickly?",
+    "options": [
+      "DELETE",
+      "DROP",
+      "TRUNCATE",
+      "REMOVE"
+    ],
+    "correctAnswer": 2,
+    "explanation": "TRUNCATE TABLE is a DDL operation that empties a table by deallocating pages, running much faster than row-by-row DELETE without firing DELETE triggers.",
+    "subject": "Database Management Systems",
+    "topic": "SQL & Query Optimization",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_sql_03",
+    "question": "What is the difference between WHERE and HAVING clauses in SQL?",
+    "options": [
+      "WHERE filters individual rows before grouping; HAVING filters aggregated groups after GROUP BY",
+      "WHERE is used only with numbers",
+      "HAVING cannot use comparison operators",
+      "There is no difference"
+    ],
+    "correctAnswer": 0,
+    "explanation": "WHERE filters tuples prior to aggregation; HAVING filters grouped summaries produced by GROUP BY and aggregate functions.",
+    "subject": "Database Management Systems",
+    "topic": "SQL & Query Optimization",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_sql_04",
+    "question": "In SQL pattern matching with LIKE, what do the percent \"%\" and underscore \"_\" wildcard characters match?",
+    "options": [
+      "% matches zero or more characters; _ matches exactly one single character",
+      "% matches one character; _ matches any string",
+      "% matches digits; _ matches letters",
+      "They are exact match indicators"
+    ],
+    "correctAnswer": 0,
+    "explanation": "In standard SQL: \"%\" represents any sequence of zero or more characters, and \"_\" represents any single character.",
+    "subject": "Database Management Systems",
+    "topic": "SQL & Query Optimization",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_sql_05",
+    "question": "What is the default sorting order of the ORDER BY clause if ASC or DESC is omitted?",
+    "options": [
+      "DESC (Descending)",
+      "ASC (Ascending)",
+      "Random",
+      "Order of disk insertion"
+    ],
+    "correctAnswer": 1,
+    "explanation": "If not explicitly specified, ORDER BY defaults to ASC (ascending numerical/alphabetical order).",
+    "subject": "Database Management Systems",
+    "topic": "SQL & Query Optimization",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_sql_06",
+    "question": "How does SQL treat NULL in three-valued logic (3VL)?",
+    "options": [
+      "NULL == NULL evaluates to TRUE",
+      "Comparisons with NULL (e.g., salary = NULL) evaluate to UNKNOWN (neither TRUE nor FALSE)",
+      "NULL equals 0",
+      "NULL is an empty string"
+    ],
+    "correctAnswer": 1,
+    "explanation": "In SQL’s three-valued logic, comparisons with NULL evaluate to UNKNOWN; the IS NULL predicate must be used instead of = NULL.",
+    "subject": "Database Management Systems",
+    "topic": "SQL & Query Optimization",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_sql_07",
+    "question": "What is a \"Correlated Subquery\" in SQL?",
+    "options": [
+      "A subquery that runs once before the outer query",
+      "A subquery that references columns from the enclosing outer query and must be evaluated once for each row processed by the outer query",
+      "A query with two SELECT statements",
+      "A query using UNION"
+    ],
+    "correctAnswer": 1,
+    "explanation": "A correlated subquery cannot be executed independently of the outer query; it executes repeatedly for each candidate row of the outer query.",
+    "subject": "Database Management Systems",
+    "topic": "SQL & Query Optimization",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_sql_08",
+    "question": "What is the purpose of the SQL command GRANT and REVOKE?",
+    "options": [
+      "Transaction control (TCL)",
+      "Security and user privilege management (DCL - Data Control Language)",
+      "Table creation",
+      "Data retrieval"
+    ],
+    "correctAnswer": 1,
+    "explanation": "GRANT (bestows access privileges on database objects) and REVOKE (withdraws privileges) constitute Data Control Language (DCL).",
+    "subject": "Database Management Systems",
+    "topic": "SQL & Query Optimization",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_sql_09",
+    "question": "What is the function of the COALESCE(arg1, arg2, ..., argN) function in SQL?",
+    "options": [
+      "Returns the average of all non-null arguments",
+      "Returns the first non-null expression among its arguments",
+      "Converts strings to uppercase",
+      "Counts distinct values"
+    ],
+    "correctAnswer": 1,
+    "explanation": "COALESCE evaluates arguments sequentially and returns the value of the first non-NULL argument encountered.",
+    "subject": "Database Management Systems",
+    "topic": "SQL & Query Optimization",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_sql_10",
+    "question": "What is the effect of the UNION operator versus UNION ALL?",
+    "options": [
+      "UNION removes duplicate rows from the combined result set; UNION ALL retains all rows including duplicates",
+      "UNION ALL sorts the result set",
+      "UNION cannot combine tables",
+      "UNION is only for numerical columns"
+    ],
+    "correctAnswer": 0,
+    "explanation": "UNION performs a distinct sort to eliminate duplicate rows; UNION ALL concatenates result sets directly without deduplication, executing faster.",
+    "subject": "Database Management Systems",
+    "topic": "SQL & Query Optimization",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_sql_11",
+    "question": "What is a Database View?",
+    "options": [
+      "A physical copy of table data stored in RAM",
+      "A virtual table defined by a saved SQL query whose data is dynamically generated upon access",
+      "A screenshot of table results",
+      "A visual GUI theme"
+    ],
+    "correctAnswer": 1,
+    "explanation": "A View is a virtual table containing no physical data of its own; its rows are computed dynamically by executing its defining query.",
+    "subject": "Database Management Systems",
+    "topic": "SQL & Query Optimization",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_sql_12",
+    "question": "What is a \"Clustered Index\" in a relational database engine?",
+    "options": [
+      "An index stored in a separate file with random pointers",
+      "An index that dictates the actual physical storage order of data rows on disk (only one clustered index allowed per table)",
+      "An index made of multiple columns",
+      "A hash table index"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Because physical rows can be stored in only one physical sequence on disk, a table can have exactly one clustered index (typically on the primary key).",
+    "subject": "Database Management Systems",
+    "topic": "SQL & Query Optimization",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_sql_13",
+    "question": "What is a \"Non-Clustered (Secondary) Index\"?",
+    "options": [
+      "An index where leaf nodes contain pointers (RowIDs/primary keys) to the physical data rows rather than the data rows themselves",
+      "An unindexed table",
+      "An index stored in memory only",
+      "An index without keys"
+    ],
+    "correctAnswer": 0,
+    "explanation": "A secondary index maintains an index structure separate from data rows; its leaf level stores key values and pointers to data pages.",
+    "subject": "Database Management Systems",
+    "topic": "SQL & Query Optimization",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_sql_14",
+    "question": "In Cost-Based Query Optimization, what heuristic rule should be pushed down as early as possible in a query tree?",
+    "options": [
+      "Perform Projections and Joins before Selections",
+      "Perform Selections (σ) and Projections (π) as early as possible to reduce the cardinality and size of intermediate relations before costly Joins",
+      "Always compute full Cartesian product first",
+      "Sort the tables at the root"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Pushing selections down the relational algebra tree filters rows early, minimizing intermediate data volume passed into downstream joins.",
+    "subject": "Database Management Systems",
+    "topic": "SQL & Query Optimization",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_sql_15",
+    "question": "What is an EXPLAIN (or EXPLAIN PLAN) command used for in SQL databases?",
+    "options": [
+      "To generate a text description of the SQL syntax",
+      "To display the execution plan chosen by the query optimizer (index scans, hash joins, estimated costs)",
+      "To convert queries to relational calculus",
+      "To debug stored procedures"
+    ],
+    "correctAnswer": 1,
+    "explanation": "EXPLAIN outlines the physical execution strategy (table scan vs index seek, join algorithms, estimated cost) generated by the query optimizer.",
+    "subject": "Database Management Systems",
+    "topic": "SQL & Query Optimization",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_sql_16",
+    "question": "Which join algorithm is typically chosen by a query engine when both input relations are already sorted on the join key?",
+    "options": [
+      "Nested Loop Join",
+      "Sort-Merge Join",
+      "Hash Join",
+      "Block Nested Loop Join"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Sort-Merge Join scans both sorted relations simultaneously in linear O(N + M) time like the merge phase of merge sort.",
+    "subject": "Database Management Systems",
+    "topic": "SQL & Query Optimization",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_sql_17",
+    "question": "When is a Hash Join algorithm preferred by a relational query optimizer?",
+    "options": [
+      "When joining two huge unsorted relations where memory is sufficient to build an in-memory hash table of the smaller relation",
+      "When relations have only 1 row",
+      "When join keys are floating points",
+      "When sorting is free"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Hash Join builds an in-memory hash table on the join attribute of the smaller relation, then probes it with tuples from the larger relation.",
+    "subject": "Database Management Systems",
+    "topic": "SQL & Query Optimization",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_sql_18",
+    "question": "What is the SQL standard window function DENSE_RANK() behavior compared to RANK()?",
+    "options": [
+      "DENSE_RANK() leaves gaps in ranking sequence after ties; RANK() does not",
+      "RANK() leaves gaps in sequence after ties (e.g., 1, 2, 2, 4); DENSE_RANK() assigns consecutive integers without gaps (e.g., 1, 2, 2, 3)",
+      "DENSE_RANK() is only for integers",
+      "They produce identical outputs always"
+    ],
+    "correctAnswer": 1,
+    "explanation": "RANK() leaves gaps when duplicate values occur (1, 1, 3); DENSE_RANK() increments sequentially without skipping ranks (1, 1, 2).",
+    "subject": "Database Management Systems",
+    "topic": "SQL & Query Optimization",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_sql_19",
+    "question": "What is an \"Index Seek\" versus an \"Index Scan\"?",
+    "options": [
+      "An Index Seek navigates the B-tree directly using the search key in O(log n); an Index Scan traverses the entire index leaf sequence",
+      "Index scan is faster than seek",
+      "Seek requires scanning all table pages",
+      "There is no difference"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Index Seek directly traverses B-tree nodes from root to leaf to pinpoint specific rows; Index Scan reads all index leaf blocks sequentially.",
+    "subject": "Database Management Systems",
+    "topic": "SQL & Query Optimization",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_sql_20",
+    "question": "What is the purpose of the CHECK constraint in SQL?",
+    "options": [
+      "To check user credentials",
+      "To specify a boolean condition that all inserted or updated values in a column must satisfy",
+      "To check disk space",
+      "To verify foreign keys"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The CHECK constraint enforces domain integrity by validating that values meet a specified predicate (e.g., CHECK (age >= 18)).",
+    "subject": "Database Management Systems",
+    "topic": "SQL & Query Optimization",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_norm_01",
+    "question": "What is the primary objective of Database Normalization?",
+    "options": [
+      "To maximize the number of tables",
+      "To eliminate data redundancy, prevent modification anomalies (insert, update, delete), and ensure data integrity",
+      "To encrypt database passwords",
+      "To merge all columns into a single flat file"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Normalization decomposes relations to eliminate insertion, deletion, and update anomalies while minimizing data duplication.",
+    "subject": "Database Management Systems",
+    "topic": "Database Normalization (1NF to BCNF)",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_norm_02",
+    "question": "What requirement must a relational table satisfy to be in First Normal Form (1NF)?",
+    "options": [
+      "All non-prime attributes must be functionally dependent on the primary key",
+      "Every attribute domain must contain only atomic (indivisible) values, with no repeating groups or multi-valued attributes",
+      "It must have no foreign keys",
+      "It must be in BCNF"
+    ],
+    "correctAnswer": 1,
+    "explanation": "1NF requires that each column contains only atomic (single) values and each row is unique with no repeating arrays or composite fields.",
+    "subject": "Database Management Systems",
+    "topic": "Database Normalization (1NF to BCNF)",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_norm_03",
+    "question": "What is a \"Partial Functional Dependency\"?",
+    "options": [
+      "When a non-prime attribute depends on only a proper subset of a composite candidate key",
+      "When an attribute depends on itself",
+      "When a candidate key is split across tables",
+      "When a column has NULL values"
+    ],
+    "correctAnswer": 0,
+    "explanation": "A partial dependency occurs when attribute Y depends on X, where X is a proper subset of a composite candidate key.",
+    "subject": "Database Management Systems",
+    "topic": "Database Normalization (1NF to BCNF)",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_norm_04",
+    "question": "What requirement must a relation satisfy to achieve Second Normal Form (2NF)?",
+    "options": [
+      "It must be in 1NF and contain NO partial functional dependencies (all non-prime attributes must be fully functionally dependent on the entire primary key)",
+      "It must have no transitive dependencies",
+      "Every determinant must be a candidate key",
+      "It must have at least 2 candidate keys"
+    ],
+    "correctAnswer": 0,
+    "explanation": "2NF eliminates partial dependencies; every non-key attribute must depend on the whole primary key, not just part of it.",
+    "subject": "Database Management Systems",
+    "topic": "Database Normalization (1NF to BCNF)",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_norm_05",
+    "question": "If a relation in 1NF has a single-attribute primary key (non-composite), can it violate 2NF?",
+    "options": [
+      "Yes, always",
+      "No, it is automatically in 2NF because no proper subset of the key can exist",
+      "Only if it has foreign keys",
+      "Only if it has duplicate rows"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Since a single-attribute key has no proper subsets, partial dependencies cannot exist; thus, any 1NF relation with a single-attribute key is automatically in 2NF.",
+    "subject": "Database Management Systems",
+    "topic": "Database Normalization (1NF to BCNF)",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_norm_06",
+    "question": "What is a \"Transitive Functional Dependency\"?",
+    "options": [
+      "X -> Y and Y -> Z, where Y is not a candidate key, causing X -> Z indirectly",
+      "X -> Y and Y -> X",
+      "X -> NULL",
+      "A dependency between two foreign keys"
+    ],
+    "correctAnswer": 0,
+    "explanation": "A transitive dependency occurs when non-key attribute Z depends on non-key attribute Y, which in turn depends on candidate key X.",
+    "subject": "Database Management Systems",
+    "topic": "Database Normalization (1NF to BCNF)",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_norm_07",
+    "question": "What are the criteria for a relation to be in Third Normal Form (3NF)?",
+    "options": [
+      "For every non-trivial functional dependency X -> Y, either X is a superkey OR Y is a prime attribute (part of a candidate key)",
+      "All determinants must be foreign keys",
+      "It must contain no atomic values",
+      "It must have no candidate keys"
+    ],
+    "correctAnswer": 0,
+    "explanation": "In 3NF (which implies 2NF), every non-trivial FD X -> Y requires X to be a superkey or Y to be a prime attribute (eliminating transitive dependencies).",
+    "subject": "Database Management Systems",
+    "topic": "Database Normalization (1NF to BCNF)",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_norm_08",
+    "question": "What is Boyce-Codd Normal Form (BCNF)?",
+    "options": [
+      "A stricter form of 3NF where for EVERY non-trivial functional dependency X -> Y, X MUST be a superkey",
+      "A form that allows multi-valued dependencies",
+      "A form with only binary relationships",
+      "A denormalized table structure"
+    ],
+    "correctAnswer": 0,
+    "explanation": "BCNF eliminates the 3NF loophole; for every functional dependency X -> Y, the determinant X must strictly be a candidate/superkey.",
+    "subject": "Database Management Systems",
+    "topic": "Database Normalization (1NF to BCNF)",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_norm_09",
+    "question": "Can every relation be decomposed into BCNF while simultaneously guaranteeing both Lossless Join and Dependency Preservation?",
+    "options": [
+      "Yes, always",
+      "No; BCNF decomposition always guarantees Lossless Join, but Dependency Preservation is not always achievable (3NF guarantees both)",
+      "BCNF never guarantees lossless join",
+      "Neither can be preserved"
+    ],
+    "correctAnswer": 1,
+    "explanation": "BCNF decomposition can sometimes lose functional dependencies; 3NF is the highest normal form that always guarantees both Lossless Join and Dependency Preservation.",
+    "subject": "Database Management Systems",
+    "topic": "Database Normalization (1NF to BCNF)",
+    "difficulty": "hard",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_norm_10",
+    "question": "What is a \"Lossless-Join Decomposition\"?",
+    "options": [
+      "Decomposing a relation R into R1 and R2 such that R1 ⋈ R2 reproduces the original relation R with NO spurious tuples generated",
+      "A decomposition that loses no columns",
+      "A decomposition with zero rows",
+      "A decomposition with foreign keys"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Lossless join ensures that natural join of decomposed relations yields exactly the original relation R without generating false/spurious tuples.",
+    "subject": "Database Management Systems",
+    "topic": "Database Normalization (1NF to BCNF)",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_norm_11",
+    "question": "For a decomposition of R into R1 and R2 to be Lossless, what condition must hold regarding their common attribute(s)?",
+    "options": [
+      "(R1 ∩ R2) -> R1 OR (R1 ∩ R2) -> R2 (the common attribute must be a superkey of at least one of the decomposed relations)",
+      "R1 and R2 must have no common attributes",
+      "R1 ∪ R2 must be empty",
+      "Both must have identical rows"
+    ],
+    "correctAnswer": 0,
+    "explanation": "By Heath’s theorem, a binary decomposition is lossless if and only if the shared attribute set functionally determines all attributes of R1 or R2.",
+    "subject": "Database Management Systems",
+    "topic": "Database Normalization (1NF to BCNF)",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_norm_12",
+    "question": "What is Fourth Normal Form (4NF) designed to eliminate?",
+    "options": [
+      "Partial dependencies",
+      "Transitive dependencies",
+      "Multi-Valued Dependencies (MVD: X ->> Y)",
+      "Spurious primary keys"
+    ],
+    "correctAnswer": 2,
+    "explanation": "4NF eliminates non-trivial Multi-Valued Dependencies (MVDs) where independent 1-to-many relationships are combined in a single relation.",
+    "subject": "Database Management Systems",
+    "topic": "Database Normalization (1NF to BCNF)",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_norm_13",
+    "question": "What is Fifth Normal Form (5NF / Project-Join Normal Form PJNF)?",
+    "options": [
+      "A normal form dealing with Join Dependencies (JD) that cannot be decomposed into smaller tables without loss",
+      "A form that combines 1NF and 4NF",
+      "A form without foreign keys",
+      "A table with 5 columns"
+    ],
+    "correctAnswer": 0,
+    "explanation": "5NF eliminates join dependencies, ensuring that every non-trivial join dependency in relation R is implied by its candidate keys.",
+    "subject": "Database Management Systems",
+    "topic": "Database Normalization (1NF to BCNF)",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_norm_14",
+    "question": "Given relation R(A, B, C, D) with FDs: {A -> B, B -> C, C -> D}. What is the Candidate Key of R?",
+    "options": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Closure of A: A+ = {A, B, C, D}. Since A determines all attributes of R and no proper subset of A can do so, A is the sole candidate key.",
+    "subject": "Database Management Systems",
+    "topic": "Database Normalization (1NF to BCNF)",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_norm_15",
+    "question": "Given relation R(A, B, C) with FD {AB -> C, C -> A}. What normal form is R in?",
+    "options": [
+      "1NF only",
+      "2NF only",
+      "3NF",
+      "BCNF"
+    ],
+    "correctAnswer": 2,
+    "explanation": "Candidate keys are AB and BC. In C -> A, C is not a superkey, but A is a prime attribute (part of candidate key AB). Hence R is in 3NF, but NOT BCNF.",
+    "subject": "Database Management Systems",
+    "topic": "Database Normalization (1NF to BCNF)",
+    "difficulty": "hard",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_norm_16",
+    "question": "What are Armstrong’s Axioms for functional dependencies?",
+    "options": [
+      "Reflexivity, Augmentation, and Transitivity",
+      "Commutativity, Associativity, Distributivity",
+      "Atomicity, Consistency, Isolation",
+      "Select, Project, Join"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Armstrong’s Axioms are sound and complete inference rules: Reflexivity (if Y ⊆ X, then X -> Y), Augmentation, and Transitivity.",
+    "subject": "Database Management Systems",
+    "topic": "Database Normalization (1NF to BCNF)",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_norm_17",
+    "question": "What is a \"Canonical Cover\" (Minimal Cover) of a set of functional dependencies?",
+    "options": [
+      "A minimal equivalent set of FDs with no redundant dependencies and no extraneous attributes on the left or right side",
+      "The set of all candidate keys",
+      "The closure of all attributes",
+      "A set of primary keys"
+    ],
+    "correctAnswer": 0,
+    "explanation": "A canonical cover is an irreducible minimal set of functional dependencies having the same closure as the original FD set.",
+    "subject": "Database Management Systems",
+    "topic": "Database Normalization (1NF to BCNF)",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_norm_18",
+    "question": "What is Denormalization in database engineering, and why is it intentionally used in Data Warehouses?",
+    "options": [
+      "Corrupting tables",
+      "Deliberately introducing controlled redundancy into a normalized schema to reduce costly JOIN operations and boost read query performance",
+      "Removing primary keys",
+      "Converting SQL to NoSQL"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Denormalization trades storage and update overhead to eliminate complex multi-table joins in high-read analytical OLAP systems.",
+    "subject": "Database Management Systems",
+    "topic": "Database Normalization (1NF to BCNF)",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_norm_19",
+    "question": "What is a Prime Attribute?",
+    "options": [
+      "An attribute with prime number values",
+      "An attribute that is a member of at least one candidate key of the relation",
+      "An attribute created first",
+      "A primary key with auto-increment"
+    ],
+    "correctAnswer": 1,
+    "explanation": "An attribute that forms part of any candidate key is called a prime attribute; all other attributes are non-prime attributes.",
+    "subject": "Database Management Systems",
+    "topic": "Database Normalization (1NF to BCNF)",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_norm_20",
+    "question": "Given relation R(A, B, C, D) with FDs {A -> B, B -> C, C -> D}. What normal form is R in?",
+    "options": [
+      "1NF only",
+      "2NF",
+      "3NF",
+      "BCNF"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Key is A. In B -> C, B is not a key and C is not prime, representing a transitive dependency. However, B is not a subset of key A, so no partial dependency exists. R is in 2NF (not 3NF).",
+    "subject": "Database Management Systems",
+    "topic": "Database Normalization (1NF to BCNF)",
+    "difficulty": "hard",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_tx_01",
+    "question": "What do the ACID properties of database transactions stand for?",
+    "options": [
+      "Atomicity, Consistency, Isolation, Durability",
+      "Association, Concurrency, Integrity, Distribution",
+      "Availability, Consistency, Isolation, Partition",
+      "Action, Control, Index, Database"
+    ],
+    "correctAnswer": 0,
+    "explanation": "ACID guarantees transaction reliability: Atomicity (all-or-nothing), Consistency (state integrity), Isolation (concurrency control), Durability (persistence).",
+    "subject": "Database Management Systems",
+    "topic": "Transactions & Concurrency Control",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_tx_02",
+    "question": "Which ACID property ensures that all operations in a transaction execute to completion or none take effect (All-or-Nothing)?",
+    "options": [
+      "Atomicity",
+      "Consistency",
+      "Isolation",
+      "Durability"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Atomicity ensures that if a transaction fails midway, all partial modifications are rolled back, leaving the database unmodified.",
+    "subject": "Database Management Systems",
+    "topic": "Transactions & Concurrency Control",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_tx_03",
+    "question": "Which component of the DBMS architecture is responsible for ensuring Atomicity and Durability?",
+    "options": [
+      "Concurrency Control Manager",
+      "Recovery Manager (using write-ahead logging and checkpoints)",
+      "Query Optimizer",
+      "Buffer Pool Manager"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The Recovery Manager maintains write-ahead logs (WAL) and executes REDO/UNDO operations after crashes to enforce Atomicity and Durability.",
+    "subject": "Database Management Systems",
+    "topic": "Transactions & Concurrency Control",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_tx_04",
+    "question": "What is the \"Write-Ahead Logging\" (WAL) protocol?",
+    "options": [
+      "Writing data to disk before user clicks submit",
+      "Ensuring that log records describing database modifications are written to non-volatile storage BEFORE the actual data pages are flushed to disk",
+      "Writing queries in a text editor first",
+      "Logging user login attempts"
+    ],
+    "correctAnswer": 1,
+    "explanation": "WAL mandates that log entries (undo/redo information) must be persisted to disk prior to overwriting database buffer pages on disk.",
+    "subject": "Database Management Systems",
+    "topic": "Transactions & Concurrency Control",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_tx_05",
+    "question": "What is a \"Dirty Read\" concurrency anomaly?",
+    "options": [
+      "Reading data from an unformatted disk",
+      "A transaction reads uncommitted data written by another concurrent transaction that later rolls back (aborts)",
+      "Reading data over an insecure network",
+      "A query reading corrupted sectors"
+    ],
+    "correctAnswer": 1,
+    "explanation": "A dirty read occurs when T1 modifies a row without committing, T2 reads this modified value, and T1 subsequently rolls back.",
+    "subject": "Database Management Systems",
+    "topic": "Transactions & Concurrency Control",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_tx_06",
+    "question": "What is an \"Unrepeatable Read\" (Fuzzy Read) anomaly?",
+    "options": [
+      "A query failing with syntax error",
+      "A transaction reads a row, another transaction updates or deletes that row and commits, and the first transaction rereads the row finding different values",
+      "Reading a row twice with identical output",
+      "Reading a table in reverse"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Unrepeatable read happens when subsequent reads of the same row within transaction T1 produce different values because T2 modified and committed it.",
+    "subject": "Database Management Systems",
+    "topic": "Transactions & Concurrency Control",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_tx_07",
+    "question": "What is a \"Phantom Read\" anomaly?",
+    "options": [
+      "A transaction re-executes a range query and discovers new \"phantom\" rows that were inserted and committed by another transaction in the interim",
+      "Reading deleted records from trash",
+      "Reading empty tables",
+      "A query running in the background"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Phantom reads occur when transaction T2 inserts new records matching a range condition that T1 was operating on.",
+    "subject": "Database Management Systems",
+    "topic": "Transactions & Concurrency Control",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_tx_08",
+    "question": "Which SQL Isolation Level prevents Dirty Reads, Unrepeatable Reads, AND Phantom Reads?",
+    "options": [
+      "Read Uncommitted",
+      "Read Committed",
+      "Repeatable Read",
+      "Serializable"
+    ],
+    "correctAnswer": 3,
+    "explanation": "Serializable is the highest isolation level, completely eliminating dirty reads, non-repeatable reads, and phantoms by behaving as if transactions run serially.",
+    "subject": "Database Management Systems",
+    "topic": "Transactions & Concurrency Control",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_tx_09",
+    "question": "What is a \"Conflict Serializable\" schedule in DBMS?",
+    "options": [
+      "A schedule that produces identical outputs on all queries",
+      "A schedule that can be transformed into a serial schedule by a sequence of non-conflicting adjacent operation swaps",
+      "A schedule where transactions never abort",
+      "A schedule with no writes"
+    ],
+    "correctAnswer": 1,
+    "explanation": "A schedule is conflict serializable if its precedence (serialization) graph contains no directed cycles.",
+    "subject": "Database Management Systems",
+    "topic": "Transactions & Concurrency Control",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_tx_10",
+    "question": "Two operations in a schedule are in conflict if they belong to different transactions, access the exact same data item, and:",
+    "options": [
+      "Both are Read operations",
+      "At least one of the operations is a Write operation",
+      "Both are Commit operations",
+      "Both use primary keys"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Operations conflict if they are issued by different transactions on the same item and at least one is a write (Read-Write, Write-Read, Write-Write).",
+    "subject": "Database Management Systems",
+    "topic": "Transactions & Concurrency Control",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_tx_11",
+    "question": "How is conflict serializability formally tested?",
+    "options": [
+      "By counting total transactions",
+      "By constructing a Precedence Graph (Serialization Graph) and verifying that it has NO directed cycles",
+      "By checking table row counts",
+      "By measuring CPU clock cycles"
+    ],
+    "correctAnswer": 1,
+    "explanation": "A schedule is conflict serializable if and only if its precedence graph is a Directed Acyclic Graph (DAG).",
+    "subject": "Database Management Systems",
+    "topic": "Transactions & Concurrency Control",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_tx_12",
+    "question": "What is the Two-Phase Locking (2PL) protocol rule?",
+    "options": [
+      "Transactions must lock tables twice",
+      "A transaction must acquire all locks in an expanding Growing Phase, and once it releases its first lock (Shrinking Phase), it can acquire NO new locks",
+      "Transactions must run on 2 processors",
+      "Locks must be shared by 2 users"
+    ],
+    "correctAnswer": 1,
+    "explanation": "2PL divides transaction execution into a Growing Phase (only lock acquisitions) and a Shrinking Phase (only lock releases), guaranteeing conflict serializability.",
+    "subject": "Database Management Systems",
+    "topic": "Transactions & Concurrency Control",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_tx_13",
+    "question": "Does the basic Two-Phase Locking (2PL) protocol guarantee freedom from Deadlocks?",
+    "options": [
+      "Yes, 2PL eliminates all deadlocks",
+      "No; basic 2PL guarantees conflict serializability, but transactions can still deadlock",
+      "Only if using shared locks",
+      "Only on multi-core systems"
+    ],
+    "correctAnswer": 1,
+    "explanation": "While 2PL ensures conflict serializability, transactions can hold locks while waiting for locks held by others, leading to deadlocks.",
+    "subject": "Database Management Systems",
+    "topic": "Transactions & Concurrency Control",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_tx_14",
+    "question": "What is \"Strict 2PL\" (Strict Two-Phase Locking)?",
+    "options": [
+      "A variant where all exclusive (write) locks held by a transaction are retained until the transaction commits or aborts",
+      "A protocol with no locks",
+      "A protocol that executes in 2 milliseconds",
+      "A lock on memory buses"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Strict 2PL prevents cascading rollbacks and dirty reads by holding all exclusive locks until transaction completion (commit/abort).",
+    "subject": "Database Management Systems",
+    "topic": "Transactions & Concurrency Control",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_tx_15",
+    "question": "What is \"Rigorous 2PL\"?",
+    "options": [
+      "All locks (both shared and exclusive) are held until transaction commit or abort",
+      "Locks are never granted",
+      "Transactions are executed sequentially",
+      "Only reads are allowed"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Rigorous 2PL holds all shared and exclusive locks until the transaction completes, producing schedules that can be serialized in their commit order.",
+    "subject": "Database Management Systems",
+    "topic": "Transactions & Concurrency Control",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_tx_16",
+    "question": "What is a \"Cascading Abort\" (Cascading Rollback)?",
+    "options": [
+      "A server rebooting",
+      "When the failure of one transaction forces multiple other dependent concurrent transactions that read its uncommitted data to roll back as well",
+      "A primary key constraint violation",
+      "A network socket timeout"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Cascading aborts occur when transactions read uncommitted dirty data; when the producing transaction aborts, all dependent transactions must also be rolled back.",
+    "subject": "Database Management Systems",
+    "topic": "Transactions & Concurrency Control",
+    "difficulty": "easy",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_tx_17",
+    "question": "What is a \"Recoverable Schedule\"?",
+    "options": [
+      "A schedule that can be restored from tape",
+      "A schedule where for every transaction T_j that reads data written by T_i, transaction T_i commits BEFORE T_j commits",
+      "A schedule with zero aborts",
+      "A schedule with no write operations"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Recoverability requires that transactions do not commit until all transactions whose dirty writes they observed have already successfully committed.",
+    "subject": "Database Management Systems",
+    "topic": "Transactions & Concurrency Control",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_tx_18",
+    "question": "What is the Thomas Write Rule in timestamp-based concurrency control?",
+    "options": [
+      "All writes must be logged to text files",
+      "If a write operation arrives with a timestamp older than the data item’s write timestamp (W-TS), the write is safely ignored instead of aborting the transaction",
+      "Writes must be strictly serialized by thread ID",
+      "Writes cannot occur on weekends"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Thomas Write Rule safely discards obsolete (outdated) write operations without aborting, allowing some non-conflict serializable but view-serializable schedules.",
+    "subject": "Database Management Systems",
+    "topic": "Transactions & Concurrency Control",
+    "difficulty": "hard",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_tx_19",
+    "question": "What is a \"Checkpoint\" in database recovery systems?",
+    "options": [
+      "A pause where all in-memory dirty buffer blocks and log records are flushed to disk, recording a checkpoint record in the log to limit recovery scan time",
+      "A password check",
+      "A backup to external USB drive",
+      "A syntax check on queries"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Checkpoints persist active dirty buffers and flush logs, bounding the REDO/UNDO work needed during crash recovery to the latest checkpoint.",
+    "subject": "Database Management Systems",
+    "topic": "Transactions & Concurrency Control",
+    "difficulty": "medium",
+    "exam": "DSSSB TGT CS"
+  },
+  {
+    "id": "db_tx_20",
+    "question": "In the Wait-Die deadlock prevention scheme based on transaction timestamps (where older transactions have smaller timestamps):",
+    "options": [
+      "If older requests a resource held by younger: older waits; if younger requests held by older: younger dies (aborts)",
+      "Younger transactions always wait",
+      "All transactions die immediately",
+      "Transactions share locks freely"
+    ],
+    "correctAnswer": 0,
+    "explanation": "In Wait-Die (non-preemptive): an older transaction is allowed to wait for a younger one, but a younger transaction requesting from an older one dies immediately.",
+    "subject": "Database Management Systems",
+    "topic": "Transactions & Concurrency Control",
+    "difficulty": "hard",
+    "exam": "DSSSB TGT CS"
+  }
+]

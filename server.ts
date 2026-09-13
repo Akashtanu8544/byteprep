@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import {
   generateQuizWithGemini,
+  generateDsssbTgtDailyQuiz,
   suggestSeriesTitlesWithGemini,
   generatePostCaptionsWithGemini
 } from './server/geminiService.js';
@@ -17,6 +18,23 @@ const app = express();
 const PORT = Number(process.env.PORT) || 3000;
 
 app.use(express.json({ limit: '50mb' }));
+
+// API route for AI DSSSB TGT PYQ Daily Quiz Generation
+app.post(['/api/telegram/generate-dsssb-daily', '/api/ai/generate-dsssb-daily'], async (req, res) => {
+  try {
+    const { subject, topic, count, yearPattern } = req.body;
+    const questions = await generateDsssbTgtDailyQuiz({
+      subject: subject || 'All Core Computer Science',
+      topic: topic || 'DSSSB TGT Computer Science Syllabus',
+      count: Number(count) || 10,
+      yearPattern: yearPattern || '2021-2025 PYQ Pattern',
+    });
+    res.json({ success: true, questions, total: questions.length });
+  } catch (error: any) {
+    console.error('Error generating DSSSB TGT PYQ quiz with Gemini:', error);
+    res.status(500).json({ error: error.message || 'Failed to generate DSSSB TGT questions' });
+  }
+});
 
 // API route for Smart Quiz Generator
 app.post('/api/generate-quiz', async (req, res) => {
@@ -333,6 +351,217 @@ app.post('/api/social/publish', async (req, res) => {
   } catch (error: any) {
     console.error('Error publishing short:', error);
     res.status(500).json({ error: error.message || 'Publishing failed' });
+  }
+});
+
+// Telegram Bot Diagnostic & Connection Test API
+app.post('/api/telegram/test-bot', async (req, res) => {
+  try {
+    const { botToken, chatId } = req.body;
+    if (!botToken) {
+      return res.status(400).json({ success: false, error: 'Bot Token is required.' });
+    }
+
+    const cleanBotToken = String(botToken).trim().replace(/^bot/i, '').replace(/[\s\r\n]+/g, '');
+    
+    // 1. Verify Bot Token via getMe
+    const meRes = await fetch(`https://api.telegram.org/bot${cleanBotToken}/getMe`);
+    let meData: any;
+    try {
+      meData = await meRes.json();
+    } catch {
+      return res.status(400).json({ success: false, error: 'Invalid response from Telegram API server.' });
+    }
+
+    if (!meRes.ok || !meData.ok) {
+      return res.status(400).json({
+        success: false,
+        error: meData.description || 'Unauthorized: Invalid Bot Token. Please copy the exact token from @BotFather.'
+      });
+    }
+
+    const botInfo = {
+      id: meData.result.id,
+      username: meData.result.username ? `@${meData.result.username}` : 'Bot',
+      firstName: meData.result.first_name,
+    };
+
+    // 2. If chatId provided, test chat access via getChat
+    let chatInfo: any = null;
+    if (chatId && String(chatId).trim()) {
+      let cleanChatId = String(chatId).trim().replace(/[\s\r\n]+/g, '');
+      cleanChatId = cleanChatId.replace(/^(https?:\/\/)?(www\.)?(t\.me|telegram\.me)\//i, '');
+      if (!/^-?\d+$/.test(cleanChatId) && !cleanChatId.startsWith('@')) {
+        cleanChatId = '@' + cleanChatId;
+      }
+
+      const chatRes = await fetch(`https://api.telegram.org/bot${cleanBotToken}/getChat?chat_id=${encodeURIComponent(cleanChatId)}`);
+      let chatData: any;
+      try {
+        chatData = await chatRes.json();
+      } catch {
+        chatData = {};
+      }
+
+      if (!chatRes.ok || !chatData.ok) {
+        let hint = chatData.description || 'Could not access chat';
+        if (hint.includes('chat not found')) {
+          hint = `Channel "${cleanChatId}" not found. Verify the @username spelling. If it's a private channel, the bot MUST be added as an Administrator first, or use the numerical Chat ID.`;
+        } else if (hint.includes('bot is not a member') || hint.includes('Forbidden')) {
+          hint = `Bot is not a member of "${cleanChatId}". Add ${botInfo.username} as an Administrator in your channel.`;
+        }
+        return res.json({
+          success: true,
+          bot: botInfo,
+          chatError: hint,
+          chatResolvedId: cleanChatId
+        });
+      }
+
+      chatInfo = {
+        id: chatData.result.id,
+        title: chatData.result.title || chatData.result.username || 'Chat',
+        type: chatData.result.type,
+      };
+    }
+
+    res.json({
+      success: true,
+      bot: botInfo,
+      chat: chatInfo,
+      message: `Bot ${botInfo.username} connected successfully!`
+    });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message || 'Connection test failed' });
+  }
+});
+
+// Telegram Bot Interactive Quiz Poll API
+app.post('/api/telegram/post-poll', async (req, res) => {
+  try {
+    const { botToken, chatId, question, options, correctAnswer, explanation, isAnonymous } = req.body;
+
+    if (!botToken || !chatId || !question || !options || options.length < 2) {
+      return res.status(400).json({ error: 'Missing required parameters. Bot Token, Channel/Chat ID, Question, and at least 2 Options are required.' });
+    }
+
+    // 1. Sanitize & Normalize Bot Token
+    const cleanBotToken = String(botToken).trim().replace(/^bot/i, '').replace(/[\s\r\n]+/g, '');
+
+    // 2. Sanitize & Normalize Chat ID / Channel handle
+    let cleanChatId = String(chatId).trim().replace(/[\s\r\n]+/g, '');
+    cleanChatId = cleanChatId.replace(/^(https?:\/\/)?(www\.)?(t\.me|telegram\.me)\//i, '');
+    if (!/^-?\d+$/.test(cleanChatId) && !cleanChatId.startsWith('@')) {
+      cleanChatId = '@' + cleanChatId;
+    }
+
+    // Strict Telegram API constraints truncation/validation
+    // Question: 1-300 characters
+    let cleanQuestion = String(question).trim();
+    if (cleanQuestion.length > 300) {
+      cleanQuestion = cleanQuestion.slice(0, 297) + '...';
+    }
+
+    // Options: 1-100 characters each, 2 to 10 choices
+    const cleanOptions = options.slice(0, 10).map((opt: string) => {
+      let trimmed = String(opt || '').trim();
+      if (trimmed.length > 100) {
+        trimmed = trimmed.slice(0, 97) + '...';
+      }
+      return trimmed || 'Option';
+    });
+
+    if (cleanOptions.length < 2) {
+      return res.status(400).json({ error: 'Telegram requires at least 2 valid answer choices.' });
+    }
+
+    // Explanation: 0-200 characters (Telegram limits quiz explanation to 200 chars)
+    let cleanExplanation = String(explanation || '').trim();
+    if (cleanExplanation.length > 200) {
+      cleanExplanation = cleanExplanation.slice(0, 197) + '...';
+    }
+
+    // Parse correct option index safely
+    let correctIndex = 0;
+    if (typeof correctAnswer === 'number') {
+      correctIndex = correctAnswer;
+    } else if (typeof correctAnswer === 'string') {
+      const trimmedAns = correctAnswer.trim().toUpperCase();
+      if (/^\d+$/.test(trimmedAns)) {
+        correctIndex = parseInt(trimmedAns, 10);
+      } else if (trimmedAns === 'A' || trimmedAns === 'OPTION A') correctIndex = 0;
+      else if (trimmedAns === 'B' || trimmedAns === 'OPTION B') correctIndex = 1;
+      else if (trimmedAns === 'C' || trimmedAns === 'OPTION C') correctIndex = 2;
+      else if (trimmedAns === 'D' || trimmedAns === 'OPTION D') correctIndex = 3;
+      else if (trimmedAns === 'E' || trimmedAns === 'OPTION E') correctIndex = 4;
+      else {
+        const idx = cleanOptions.findIndex(o => o.toLowerCase() === trimmedAns.toLowerCase());
+        if (idx !== -1) correctIndex = idx;
+      }
+    }
+    correctIndex = Math.max(0, Math.min(cleanOptions.length - 1, correctIndex));
+
+    // Determine is_anonymous:
+    // CRITICAL: Telegram Channels (@handle or IDs like -100...) reject non-anonymous polls with error:
+    // "Bad Request: non-anonymous polls can't be sent to channel chats"
+    const isChannel = cleanChatId.startsWith('@') || cleanChatId.startsWith('-100');
+    const resolvedIsAnonymous = isChannel ? true : (isAnonymous !== false);
+
+    const targetUrl = `https://api.telegram.org/bot${cleanBotToken}/sendPoll`;
+    
+    const response = await fetch(targetUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: cleanChatId,
+        question: cleanQuestion,
+        options: cleanOptions,
+        is_anonymous: resolvedIsAnonymous,
+        type: 'quiz',
+        correct_option_id: correctIndex,
+        explanation: cleanExplanation || undefined,
+      })
+    });
+
+    let data: any;
+    try {
+      const text = await response.text();
+      data = text ? JSON.parse(text) : {};
+    } catch (e) {
+      data = { ok: false, description: 'Invalid response from Telegram server' };
+    }
+
+    if (response.ok && data.ok) {
+      res.json({
+        success: true,
+        message: 'Successfully posted interactive quiz to Telegram!',
+        poll: data.result
+      });
+    } else {
+      let desc = data.description || 'Telegram API rejected poll delivery.';
+      let helpTip = '';
+
+      if (desc.includes('chat not found')) {
+        helpTip = `Target chat "${cleanChatId}" was not found. Please verify the channel @username. If the channel is private, add the bot as Administrator first.`;
+      } else if (desc.includes('bot is not a member') || desc.includes('Forbidden: bot was kicked') || desc.includes('chat_admin_required')) {
+        helpTip = `The bot is not an Administrator in "${cleanChatId}". Open Telegram Channel Settings > Administrators > Add Administrator > search for your bot and grant "Post Messages" permission.`;
+      } else if (desc.includes('not enough rights') || desc.includes('have no rights to send a message') || desc.includes('CHAT_WRITE_FORBIDDEN')) {
+        helpTip = `The bot is in the channel but lacks "Post Messages" permission. Go to Channel Settings > Administrators > your bot > enable "Post Messages".`;
+      } else if (desc.includes('Unauthorized')) {
+        helpTip = `Invalid Bot Token. Please check that you copied the complete token from @BotFather.`;
+      } else if (desc.includes('non-anonymous polls')) {
+        helpTip = `Telegram channels only accept anonymous polls. Enable the "Anonymous Poll" checkbox.`;
+      }
+
+      res.status(400).json({
+        error: helpTip ? `${desc} (${helpTip})` : desc,
+        rawDescription: desc,
+        resolvedChatId: cleanChatId,
+      });
+    }
+  } catch (error: any) {
+    console.error('Telegram bot post poll error:', error);
+    res.status(500).json({ error: error.message || 'Internal Telegram Bot API helper failed' });
   }
 });
 

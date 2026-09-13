@@ -151,7 +151,7 @@ export const ShortsPreview: React.FC<ShortsPreviewProps> = ({
       </div>
 
       {/* 9:16 Vertical Screen Box */}
-      <div className="relative w-[280px] h-[497px] sm:w-[320px] sm:h-[568px] rounded-2xl overflow-hidden border-2 border-slate-700 shadow-2xl bg-slate-950 flex items-center justify-center">
+      <div className="relative w-full max-w-[280px] sm:max-w-[320px] aspect-[9/16] rounded-2xl overflow-hidden border-2 border-slate-700 shadow-2xl bg-slate-950 flex items-center justify-center">
         <canvas
           ref={canvasRef}
           width={CANVAS_WIDTH}

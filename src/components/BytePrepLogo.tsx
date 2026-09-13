@@ -1,4 +1,5 @@
 import React from 'react';
+import { BrandKitService } from '../services/brandKitService';
 
 interface BytePrepLogoProps {
   size?: number;
@@ -15,6 +16,32 @@ export const BytePrepLogo: React.FC<BytePrepLogoProps> = ({
   showText = false,
   className = '',
 }) => {
+  const brandKit = BrandKitService.getBrandKit();
+  if (brandKit?.logoDataUrl) {
+    return (
+      <div className={`flex items-center gap-2.5 ${className}`}>
+        <img
+          src={brandKit.logoDataUrl}
+          alt={brandKit.brandName || "Logo"}
+          style={{ width: size, height: size, objectFit: 'contain' }}
+          className="rounded-xl shrink-0 shadow-md"
+        />
+        {showText && (
+          <div className="flex flex-col">
+            <span className="text-white font-black text-sm tracking-tight leading-none">
+              {brandKit.brandName}
+            </span>
+            {brandKit.brandTagline && (
+              <span className="text-[9px] text-slate-400 font-bold mt-1.5 max-w-[150px] truncate">
+                {brandKit.brandTagline}
+              </span>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className={`flex items-center gap-2.5 ${className}`}>
       <svg
@@ -146,6 +173,8 @@ export const BytePrepLogo: React.FC<BytePrepLogoProps> = ({
   );
 };
 
+const logoImageCache = new Map<string, HTMLImageElement>();
+
 /**
  * Helper to draw BytePrep Logo on HTML5 Canvas (for video frames, intro/outro, thumbnails, footer)
  */
@@ -155,6 +184,24 @@ export function drawCanvasBytePrepLogo(
   centerY: number,
   size: number
 ) {
+  const brandKit = BrandKitService.getBrandKit();
+  if (brandKit?.logoDataUrl) {
+    let img = logoImageCache.get(brandKit.logoDataUrl);
+    if (!img) {
+      img = new Image();
+      img.src = brandKit.logoDataUrl;
+      logoImageCache.set(brandKit.logoDataUrl, img);
+    }
+    if (img.complete || img.naturalWidth > 0) {
+      ctx.save();
+      const x = centerX - size / 2;
+      const y = centerY - size / 2;
+      ctx.drawImage(img, x, y, size, size);
+      ctx.restore();
+      return;
+    }
+  }
+
   ctx.save();
   ctx.translate(centerX - size / 2, centerY - size / 2);
   const scale = size / 200;

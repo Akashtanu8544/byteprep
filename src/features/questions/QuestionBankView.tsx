@@ -3,6 +3,8 @@ import { NormalizedQuestion } from '../../types';
 import { QuestionLoader } from '../../services/questionLoader';
 import { QuestionEditorModal } from './QuestionEditorModal';
 import { IssueReportModal } from '../issues/IssueReportModal';
+import { HtmlQuizMakerModal } from './HtmlQuizMakerModal';
+import { TelegramBotQuizModal } from './TelegramBotQuizModal';
 import {
   Upload,
   FileCode,
@@ -26,6 +28,15 @@ import {
   Edit3,
   Flag,
   Zap,
+  Smartphone,
+  Bot,
+  Globe,
+  Database,
+  Cpu,
+  Binary,
+  ShieldCheck,
+  Award,
+  ChevronRight,
 } from 'lucide-react';
 
 interface QuestionBankViewProps {
@@ -89,6 +100,9 @@ export const QuestionBankView: React.FC<QuestionBankViewProps> = ({
   // Modals state
   const [editingQuestion, setEditingQuestion] = useState<NormalizedQuestion | null>(null);
   const [reportingQuestion, setReportingQuestion] = useState<NormalizedQuestion | null>(null);
+  const [isHtmlQuizOpen, setIsHtmlQuizOpen] = useState<boolean>(false);
+  const [isTelegramOpen, setIsTelegramOpen] = useState<boolean>(false);
+  const [telegramSubjectTarget, setTelegramSubjectTarget] = useState<string>('All');
 
   // Paste JSON State
   const [jsonText, setJsonText] = useState<string>('');
@@ -199,7 +213,49 @@ export const QuestionBankView: React.FC<QuestionBankViewProps> = ({
     URL.revokeObjectURL(url);
   };
 
+  const handleOpenTelegramWithSubject = (subject: string) => {
+    setTelegramSubjectTarget(subject);
+    setIsTelegramOpen(true);
+  };
+
   const subjects = ['All', ...QuestionLoader.getAllSubjects()];
+
+  // Subject statistics for Subject Cards
+  const allSubjectsList = QuestionLoader.getAllSubjects();
+  const subjectCardData = allSubjectsList.map(sub => {
+    const subQuestions = questions.filter(q => q.subject.toLowerCase() === sub.toLowerCase());
+    const unposted = subQuestions.filter(q => !q.posted && (!q.timesUsed || q.timesUsed === 0)).length;
+    let icon = <BookOpen className="w-5 h-5 text-sky-400" />;
+    let colorClass = 'border-sky-500/30 bg-sky-950/20';
+
+    if (sub.toLowerCase().includes('network')) {
+      icon = <Globe className="w-5 h-5 text-sky-400" />;
+      colorClass = 'border-sky-500/30 bg-sky-950/20';
+    } else if (sub.toLowerCase().includes('operat') || sub.toLowerCase().includes('os')) {
+      icon = <Cpu className="w-5 h-5 text-indigo-400" />;
+      colorClass = 'border-indigo-500/30 bg-indigo-950/20';
+    } else if (sub.toLowerCase().includes('dbms') || sub.toLowerCase().includes('data')) {
+      icon = <Database className="w-5 h-5 text-amber-400" />;
+      colorClass = 'border-amber-500/30 bg-amber-950/20';
+    } else if (sub.toLowerCase().includes('struct') || sub.toLowerCase().includes('algo')) {
+      icon = <Binary className="w-5 h-5 text-emerald-400" />;
+      colorClass = 'border-emerald-500/30 bg-emerald-950/20';
+    } else if (sub.toLowerCase().includes('cyber') || sub.toLowerCase().includes('logic')) {
+      icon = <ShieldCheck className="w-5 h-5 text-rose-400" />;
+      colorClass = 'border-rose-500/30 bg-rose-950/20';
+    } else if (sub.toLowerCase().includes('mock') || sub.toLowerCase().includes('tgt')) {
+      icon = <Award className="w-5 h-5 text-purple-400" />;
+      colorClass = 'border-purple-500/30 bg-purple-950/20';
+    }
+
+    return {
+      name: sub,
+      count: subQuestions.length,
+      unposted,
+      icon,
+      colorClass,
+    };
+  });
 
   const filteredQuestions = questions.filter(q => {
     const matchesSubject = filterSubject === 'All' || q.subject.toLowerCase() === filterSubject.toLowerCase();
@@ -221,76 +277,85 @@ export const QuestionBankView: React.FC<QuestionBankViewProps> = ({
   });
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8 space-y-6">
+    <div className="max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-6 space-y-5">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2 text-xs font-bold text-slate-400">
-            <span className="text-sky-400 uppercase font-black">Knowledge Base</span>
-            <span>•</span>
-            <span>{questions.length} Verified CS Questions</span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-white mt-1">
-            Question Bank & Admin Studio
-          </h1>
-        </div>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <h1 className="text-xl sm:text-2xl font-black text-white">
+          Questions
+        </h1>
 
         <div className="flex items-center gap-2 flex-wrap">
+          <button
+            onClick={() => handleOpenTelegramWithSubject(filterSubject === 'All' ? 'All' : filterSubject)}
+            className="flex items-center gap-1.5 px-3.5 py-2 bg-gradient-to-r from-sky-400 to-blue-600 hover:brightness-110 text-slate-950 font-black text-xs rounded-xl shadow-lg shadow-sky-500/20 transition-all cursor-pointer"
+          >
+            <Bot className="w-4 h-4 text-slate-950" />
+            <span>Telegram Quiz</span>
+          </button>
+
+          <button
+            onClick={() => setIsHtmlQuizOpen(true)}
+            className="flex items-center gap-1.5 px-3 py-2 bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 font-bold text-xs rounded-xl transition-all cursor-pointer"
+          >
+            <Smartphone className="w-4 h-4 text-sky-400" />
+            <span>Quiz Maker</span>
+          </button>
+
           {onOpenAiQuiz && (
             <button
               onClick={onOpenAiQuiz}
-              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-400 hover:to-indigo-500 text-white font-black text-xs rounded-xl shadow-lg transition-all cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-2 bg-slate-900 border border-slate-800 hover:border-purple-500 text-purple-300 font-bold text-xs rounded-xl transition-all cursor-pointer"
             >
-              <Sparkles className="w-4 h-4" />
-              <span>AI Quiz Generator</span>
+              <Sparkles className="w-4 h-4 text-purple-400" />
+              <span>AI Quiz</span>
             </button>
           )}
 
           <button
             onClick={handleExportJson}
-            className="flex items-center gap-2 px-3.5 py-2 bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 font-bold text-xs rounded-xl transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-2 bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 font-bold text-xs rounded-xl transition-all cursor-pointer"
           >
             <Download className="w-4 h-4" />
-            <span>Export JSON</span>
+            <span>Export</span>
           </button>
         </div>
       </div>
 
       {/* Tabs Bar */}
-      <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
+      <div className="flex items-center gap-2 border-b border-slate-800 pb-3 overflow-x-auto">
         <button
           onClick={() => setActiveTab('browse')}
-          className={`px-4 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer ${
+          className={`px-3.5 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer whitespace-nowrap ${
             activeTab === 'browse'
               ? 'bg-sky-500 text-slate-950 font-black shadow-lg shadow-sky-500/20'
               : 'text-slate-400 hover:text-white bg-slate-900 border border-slate-800'
           }`}
         >
-          Browse Questions ({questions.length})
+          Browse ({questions.length})
         </button>
 
         <button
           onClick={() => setActiveTab('upload')}
-          className={`px-4 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer flex items-center gap-1.5 ${
+          className={`px-3.5 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
             activeTab === 'upload'
               ? 'bg-sky-500 text-slate-950 font-black shadow-lg shadow-sky-500/20'
               : 'text-slate-400 hover:text-white bg-slate-900 border border-slate-800'
           }`}
         >
           <Upload className="w-3.5 h-3.5" />
-          <span>Upload JSON</span>
+          <span>Upload</span>
         </button>
 
         <button
           onClick={() => setActiveTab('paste')}
-          className={`px-4 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer flex items-center gap-1.5 ${
+          className={`px-3.5 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
             activeTab === 'paste'
               ? 'bg-sky-500 text-slate-950 font-black shadow-lg shadow-sky-500/20'
               : 'text-slate-400 hover:text-white bg-slate-900 border border-slate-800'
           }`}
         >
           <Code2 className="w-3.5 h-3.5" />
-          <span>Paste JSON</span>
+          <span>Paste</span>
         </button>
       </div>
 
@@ -317,15 +382,84 @@ export const QuestionBankView: React.FC<QuestionBankViewProps> = ({
 
       {/* BROWSE TAB */}
       {activeTab === 'browse' && (
-        <div className="space-y-4">
-          {/* Search & Filter Bar */}
+        <div className="space-y-6">
+          {/* Subject Overview Bento Grid (Questions Separated by Subjects) */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-black uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                <BookOpen className="w-4 h-4 text-sky-400" />
+                Questions Separated by Subjects ({subjectCardData.length} Subjects)
+              </span>
+              {filterSubject !== 'All' && (
+                <button
+                  onClick={() => setFilterSubject('All')}
+                  className="text-[11px] text-sky-400 hover:text-sky-300 font-bold cursor-pointer"
+                >
+                  Show All Subjects
+                </button>
+              )}
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2.5">
+              {subjectCardData.map(card => {
+                const isActive = filterSubject.toLowerCase() === card.name.toLowerCase();
+                return (
+                  <div
+                    key={card.name}
+                    className={`rounded-2xl border p-3 transition-all shadow-md flex flex-col justify-between gap-2 ${
+                      isActive
+                        ? 'border-sky-500 bg-sky-950/40 ring-1 ring-sky-500/50'
+                        : `${card.colorClass} hover:border-slate-700`
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className="p-1.5 rounded-xl bg-slate-900/90 border border-slate-800 shrink-0">
+                        {card.icon}
+                      </div>
+                      <div className="min-w-0">
+                        <h3 className="text-xs font-black text-white truncate">{card.name}</h3>
+                        <p className="text-[10px] text-slate-400 font-medium">
+                          {card.count} MCQs
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Action buttons inside subject card */}
+                    <div className="flex items-center gap-1 pt-1.5 border-t border-slate-800/80">
+                      <button
+                        onClick={() => setFilterSubject(isActive ? 'All' : card.name)}
+                        className={`flex-1 py-1 px-1.5 rounded-lg text-[10px] font-bold text-center transition-colors cursor-pointer ${
+                          isActive
+                            ? 'bg-sky-500 text-slate-950 font-black'
+                            : 'bg-slate-900 hover:bg-slate-800 text-slate-300'
+                        }`}
+                      >
+                        {isActive ? 'Active' : 'Filter'}
+                      </button>
+
+                      <button
+                        onClick={() => handleOpenTelegramWithSubject(card.name)}
+                        className="p-1 bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-500/30 rounded-lg text-[10px] font-bold flex items-center gap-0.5 cursor-pointer transition-colors"
+                        title="Telegram"
+                      >
+                        <Bot className="w-3 h-3" />
+                        <span>Post 5</span>
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Search & Filter Controls */}
           <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-3 shadow-lg">
             <div className="relative flex-1 w-full">
               <input
                 type="text"
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                placeholder="Search by keyword, topic, subject, or explanation..."
+                placeholder="Search questions by keyword, topic, subject, or explanation..."
                 className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-sky-500 pl-10"
               />
               <Search className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -362,9 +496,23 @@ export const QuestionBankView: React.FC<QuestionBankViewProps> = ({
                   onChange={e => setOnlyCustom(e.target.checked)}
                   className="w-3.5 h-3.5 accent-sky-500"
                 />
-                <span>Custom Uploads Only</span>
+                <span className="hidden sm:inline">Custom Only</span>
               </label>
             </div>
+          </div>
+
+          {/* Filter Status Badge */}
+          <div className="flex items-center justify-between text-xs text-slate-400">
+            <span>Showing <strong>{filteredQuestions.length}</strong> of {questions.length} questions {filterSubject !== 'All' ? `in "${filterSubject}"` : ''}</span>
+            {filteredQuestions.length > 0 && (
+              <button
+                onClick={() => handleOpenTelegramWithSubject(filterSubject)}
+                className="text-sky-400 hover:text-sky-300 font-bold flex items-center gap-1 cursor-pointer"
+              >
+                <Bot className="w-3.5 h-3.5" />
+                <span>Auto-Post 5 from this view</span>
+              </button>
+            )}
           </div>
 
           {/* Question List Cards */}
@@ -485,14 +633,13 @@ export const QuestionBankView: React.FC<QuestionBankViewProps> = ({
                       </div>
 
                       <div className="flex items-center gap-2 flex-wrap">
-                        {/* 1-to-Many Content Pack Button */}
                         {onSelectForContentPack && (
                           <button
                             onClick={() => onSelectForContentPack(q)}
                             className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-slate-950 font-black text-xs rounded-xl shadow transition-all cursor-pointer"
                           >
                             <Sparkles className="w-3.5 h-3.5 fill-current" />
-                            <span>Generate Content Pack (1-to-Many)</span>
+                            <span>Content Pack (1-to-Many)</span>
                           </button>
                         )}
 
@@ -516,10 +663,10 @@ export const QuestionBankView: React.FC<QuestionBankViewProps> = ({
 
                         {onSelectForPoll && (
                           <button
-                            onClick={() => onSelectForPoll(q.id)}
+                            onClick={() => handleOpenTelegramWithSubject(q.subject)}
                             className="flex items-center gap-1 px-3 py-1.5 bg-sky-500/15 hover:bg-sky-500/25 border border-sky-500/30 text-sky-300 text-xs font-bold rounded-xl cursor-pointer"
                           >
-                            <Share2 className="w-3.5 h-3.5" />
+                            <Bot className="w-3.5 h-3.5" />
                             <span>Telegram Poll</span>
                           </button>
                         )}
@@ -659,6 +806,21 @@ export const QuestionBankView: React.FC<QuestionBankViewProps> = ({
           onClose={() => setReportingQuestion(null)}
         />
       )}
+
+      {/* HTML Interactive Quiz Maker Modal */}
+      <HtmlQuizMakerModal
+        isOpen={isHtmlQuizOpen}
+        onClose={() => setIsHtmlQuizOpen(false)}
+        allQuestions={questions}
+      />
+
+      {/* Telegram Bot Quiz Modal */}
+      <TelegramBotQuizModal
+        isOpen={isTelegramOpen}
+        onClose={() => setIsTelegramOpen(false)}
+        allQuestions={questions}
+        initialSubject={telegramSubjectTarget}
+      />
     </div>
   );
 };
